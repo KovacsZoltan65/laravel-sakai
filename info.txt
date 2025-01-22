@@ -1,0 +1,26 @@
+https://github.com/slametriky/laravel-sakai
+
+
+superadmin@superadmin.com | superadmin
+admin@admin.com | admin
+operator@operator.com | operator
+
+
+// ===============================
+// CSOMAGOK
+// ===============================
+prettier:
+    npm install --dev prettier
+    package.json
+        "scripts": {
+            ...
+            "format": "prettier --write .",
+            ...
+        },
+
+
+@import probléma:
+    npm install -g sass-migrator
+    sass-migrator module --migrate-deps your-entrypoint.scss
+
+    sass-migrator module --migrate-deps F:\wamp64\www\softc\laravel-sakai\resources\js\sakai\assets\styles.scss
