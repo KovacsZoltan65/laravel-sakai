@@ -8,10 +8,10 @@ class CompanyService extends BaseService {
     url = "/companies";
 
     getCompanies() {
-        console.log('asdasd');
-        let a = this.get(this.url);
-        console.log('a',a);
-        return a;
+        //console.log('asdasd');
+        let res = this.get(this.url);
+        console.log('res',res);
+        return res;
     }
 
     getCompany(id) {

@@ -19,11 +19,13 @@ class Company extends Model
         'phone',
     ];
 
-    public function scopeSearch(Builder $query, string $search)
+    public function scopeSearch(Builder $query, ?string $search)
     {
-        return $query->when($search, function ($query, string $search) {
+        $retval = $query->when($search, function ($query, string $search) {
             $query->where('name', 'like', "%{$search}%");
         });
+
+        return $retval;
     }
 
     public function scopeActive(Builder $query): Builder

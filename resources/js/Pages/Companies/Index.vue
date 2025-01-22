@@ -43,6 +43,7 @@ const fetchItems = async () => {
 
     await CompanyService.getCompanies()
         .then((response) => {
+            console.log('response', response);
             data.companies = response.data;
         })
         .catch((error) => {
@@ -99,7 +100,9 @@ watch(
     <AppLayout>
         <div class="card">
 
-            {{ data.companies }}
+            <div>
+                <pre>{{ JSON.stringify(data.companies, null, 2) }}</pre>
+            </div>
 
         </div>
     </AppLayout>

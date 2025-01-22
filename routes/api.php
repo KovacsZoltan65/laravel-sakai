@@ -20,3 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/companies', [CompanyController::class, 'getCompanies'])->name('api.companies');
+/*
+Route::get('/companies', function(Request $reques){
+    dd('route');
+});
+*/

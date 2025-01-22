@@ -35,12 +35,26 @@ class CompanyController extends Controller
         });
     }
 
-    public function getCompanies(Request $request) {
+    public function getCompanies(Request $request)
+    {
         try {
             $_companies = $this->companyRepository->getCompanies($request);
-            $companies = CompanyResource::collection($_companies)->pagination(10);
-dd($companies);
-            return response()->json($companies, Response::HTTP_OK);
+            
+            // Resource kollekcióval formázás
+            $companiesResource = CompanyResource::collection($_companies);
+            
+            $retval = [
+                'data' => $companiesResource->items(),
+                'pagination' => [
+                    'current_page' => $_companies->currentPage(),
+                    'per_page' => $_companies->perPage(),
+                    'total' => $_companies->total(),
+                    'last_page' => $_companies->lastPage(),
+                ]
+            ];
+            
+            return response()->json($retval, Response::HTTP_OK);
+            
         } catch( QueryException $ex ) {
             \Log::info('getCompanies QueryException: ' . print_r($ex->getMessage(), true));
         } catch( \Exception $ex ) {

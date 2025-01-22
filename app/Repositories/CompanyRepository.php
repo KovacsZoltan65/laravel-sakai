@@ -2,11 +2,12 @@
 
 namespace App\Repositories;
 
-use Prettus\Repository\Eloquent\BaseRepository;
-use Prettus\Repository\Criteria\RequestCriteria;
 use App\Interfaces\CompanyRepositoryInterface;
-use App\Validators\CompanyRepositoryValidator;
 use App\Models\Company;
+use Exception;
+use Illuminate\Http\Request;
+use Prettus\Repository\Criteria\RequestCriteria;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
  * Class CompanyRepositoryRepositoryEloquent.
@@ -15,6 +16,24 @@ use App\Models\Company;
  */
 class CompanyRepository extends BaseRepository implements CompanyRepositoryInterface
 {
+    public function getCompanies(Request $request)
+    {
+        try {
+            // Keresési kulcsszó kinyerése a request-ből
+            $search = $request->get('search');
+
+            // Keresési lekérdezés végrehajtása a scopeSearch metódussal
+            $companyQuery = Company::query()->search($search);
+
+            // Oldaltörés
+            $ret_val = $companyQuery->paginate(10);
+
+            return $ret_val;
+        } catch( Exception $ex ) {
+            throw $ex;
+        }
+    }
+    
     /**
      * Specify Model class name
      *
