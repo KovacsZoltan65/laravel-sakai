@@ -24,7 +24,7 @@ class CompanyController extends Controller
     {
         return inertia('Companies/Index', [
             'filters' => $request->all(['search', 'field', 'order']),
-            'title' => 'Company',
+            'title' => 'Companies',
         ]);
     }
 
@@ -37,14 +37,17 @@ class CompanyController extends Controller
 
     public function getCompanies(Request $request)
     {
+\Log::info('CompanyController@getCompanies $request: ' . print_r($request->all(), true));
         try {
             $_companies = $this->companyRepository->getCompanies($request);
-            
+
             // Resource kollekcióval formázás
             $companiesResource = CompanyResource::collection($_companies);
-            
+
             $retval = [
                 'data' => $companiesResource->items(),
+                'title' => 'Companies',
+                'filters' => $request->all(['search', 'field', 'order']),
                 'pagination' => [
                     'current_page' => $_companies->currentPage(),
                     'per_page' => $_companies->perPage(),
@@ -52,9 +55,9 @@ class CompanyController extends Controller
                     'last_page' => $_companies->lastPage(),
                 ]
             ];
-            
+\Log::info('$retval: ' . print_r($retval, true));
             return response()->json($retval, Response::HTTP_OK);
-            
+
         } catch( QueryException $ex ) {
             \Log::info('getCompanies QueryException: ' . print_r($ex->getMessage(), true));
         } catch( \Exception $ex ) {

@@ -35,14 +35,20 @@ class PermissionController extends Controller
             $permissions->where('name', 'LIKE', "%" . $request->search . "%");
             $permissions->orWhere('guard_name', 'LIKE', "%" . $request->search . "%");
         }
+        
         if ($request->has(['field', 'order'])) {
             $permissions->orderBy($request->field, $request->order);
         }
-        return Inertia::render('Permission/Index', [
+        
+        $params = [
             'title'         => 'Permission',
             'filters'       => $request->all(['search', 'field', 'order']),
             'permissions'   => $permissions->paginate(10),
-        ]);
+        ];
+        
+\Log::info('PermissionController@index $params: ' . print_r($params, true));
+        
+        return Inertia::render('Permission/Index', $params);
     }
 
     public function store(PermissionStoreRequest $request)
