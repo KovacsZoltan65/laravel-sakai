@@ -57,8 +57,9 @@ const onDateChange2 = (filterModel, filterCallback) => {
 onMounted(async () => {
     CompanyService.getCompanies()
         .then((response) => {
-            console.log(response.data);
+            console.log('response.data',response.data);
             exampleData.value = response.data;
+            console.log('exampleData.value',exampleData.value);
         })
         .catch((error) => {
             console.log(error);
@@ -88,7 +89,7 @@ onMounted(async () => {
 <template>
     <DataTable
         v-model:filters="filters" 
-        :value="exampleData" 
+        :value="exampleData.data" 
         paginator showGridlines 
         :rows="10" 
         dataKey="id"
@@ -112,10 +113,30 @@ onMounted(async () => {
         <template #empty> No items found. </template>
         <template #loading> Loading items data. Please wait. </template>
 
-        <Column field="name" header="name" style="min-width: 12rem"></Column>
+        <Column field="name" header="name" style="min-width: 12rem">
+            <template #body="slotProps">
+                <span>{{ slotProps.data.name }}</span>
+            </template>
+            <template #filter="{ filterModel, filterCallback }">
+                <InputText 
+                    v-model="filters['name'].value" 
+                    @update:modelValue="onDateChange(filterModel, filterCallback)"
+                />
+            </template>
+        </Column>
         <Column field="email" header="email" style="min-width: 12rem"></Column>
         <Column field="address" header="address" style="min-width: 12rem"></Column>
-        <Column field="phone" header="phone" style="min-width: 12rem"></Column>
+        <Column field="phone" header="phone" style="min-width: 12rem">
+            <template #body="slotProps">
+                <span>{{ slotProps.data.phone }}</span>
+            </template>
+            <template #filter="{ filterModel, filterCallback }">
+                <InputText 
+                    v-model="filters['phone'].value" 
+                    @update:modelValue="onDateChange(filterModel, filterCallback)"
+                />
+            </template>
+        </Column>
 
     </DataTable>
 </template>
