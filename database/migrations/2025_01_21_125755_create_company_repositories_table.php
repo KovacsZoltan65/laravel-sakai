@@ -12,11 +12,16 @@ return new class extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('company_repositories', function(Blueprint $table) {
-            $table->increments('id');
+            Schema::create('company_repositories', function(Blueprint $table) {
+                $table->increments('id');
 
-            $table->timestamps();
-		});
+                $table->string('name', 255);
+                $table->string('email', 255);
+                $table->string('address', 255);
+                $table->string('phone', 255);
+                
+                $table->timestamps();
+            });
 	}
 
 	/**
@@ -26,6 +31,6 @@ return new class extends Migration
 	 */
 	public function down()
 	{
-		Schema::drop('company_repositories');
+            Schema::drop('company_repositories');
 	}
 };
