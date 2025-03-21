@@ -1,142 +1,131 @@
 <script setup>
-
-/*
- * https://github.com/primefaces/primevue/issues/6648
- */
 import { onMounted, reactive, ref, watch, computed } from "vue";
-import { DataTable } from 'primevue';
-
+import { usePage, useForm } from "@inertiajs/vue3";
+import pkg from "lodash";
+const { _, debounce, pickBy } = pkg;
 import { router } from "@inertiajs/vue3";
-import CompanyService from "@/service/CompanyService";
+import { loadToast } from "@/composables/loadToast";
 
-//const id = ref(router.params.id);
-const apiUrl = `/api/getCompanies`;
+import AppLayout from "@/sakai/layout/AppLayout.vue";
+import Create from "@/Pages/Companies/Create.vue";
+import Edit from "@/Pages/Companies/Edit.vue";
+import Delete from "@/Pages/Companies/Delete.vue";
+import CompanyService from "@/service/CompanyService.js";
 
-const globalFilterFields = ref(["item_no", "item_type", "date"]);
-const filters = ref({
-    global: { value: '' },
-    name: { value: null, matchMode: 'contains' },
-    email: { value: null, matchMode: 'contains' },
-    address: { value: null, matchMode: 'contains' },
-    phone: { value: null, matchMode: 'contains' },
+const loading = ref(true);
+
+const props = defineProps({
+    title: String,
+    filters: Object,
+    perPage: Number,
 });
 
-const exampleData = ref([]);
-const loading = ref(false);
+loadToast();
 
-const onDateChange = (filterModel, filterCallback) => {
-    console.log(filterModel.value);
-    filterModel.value = filterModel.value.map((date) => {
-        if (date instanceof Date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Pad month to 'MM' format
-            const day = String(date.getDate()).padStart(2, '0'); // Pad day to 'DD' format
-            return `${year}-${month}-${day}`; // Format as 'yyyy-mm-dd'
-        }
-        return date; // Return original value if it's not a Date
-    });
-    console.log(filterModel.value);
-    filterCallback();
-};
+const deleteDialog = ref(false);
+const form = useForm({});
 
-const onDateChange2 = (filterModel, filterCallback) => {
-    console.log(filterModel.value);
-    filterModel.value = filterModel.value.map((date) => {
-        if (date instanceof Date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Pad month to 'MM' format
-            const day = String(date.getDate()).padStart(2, '0'); // Pad day to 'DD' format
-            return `${year}-${month}-${day}`; // Format as 'yyyy-mm-dd'
-        }
-        return date; // Return original value if it's not a Date
-    });
-    console.log(filterModel.value);
-    filterCallback();
-};
+const data = reactive({
+    params: {
+        search: props.filters.search,
+        field: props.filters.field,
+        order: props.filters.order,
+        createOpen: false,
+        editOpen: false,
+        deleteOpen: false,
+    },
+    companies: null,
+    company: null,
+    pagination: {
+        current_page: 1,
+        last_page: 0,
+        per_page: 10,
+        rows: 0
+    }
+});
 
-onMounted(async () => {
-    CompanyService.getCompanies()
-        .then((response) => {
-            console.log('response.data',response.data);
-            exampleData.value = response.data;
-            console.log('exampleData.value',exampleData.value);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-        .finally(() => {
-            //
-        });
-    /*
+const fetchItems = async () => {
     loading.value = true;
-    await axios
-        .get(apiUrl)
+
+    await CompanyService.getCompanies()
         .then((response) => {
-            console.log(response.data);
-            exampleData.value = response.data;
+            //console.log('response', response);
+            //console.log('response.data.data', response.data.data);
+            //console.log('response.data.pagination', response.data.pagination);
+
+            data.companies = response.data.data;
+            //console.log('data.companies',data.companies);
+
+            data.pagination = response.data.pagination;
+            //console.log('data.pagination',data.pagination);
+
+            //data.pagination.current_page = data.companies.pagination.current_page;
+            //data.pagination.last_page = data.companies.pagination.last_page;
+            //data.pagination.per_page = data.companies.pagination.per_page;
+            //data.pagination.total = data.companies.pagination.total;
+            //console.log('data.pagination', data.pagination);
+
         })
         .catch((error) => {
-            console.log(error);
+            console.error("getCompanies API Error:", error);
         })
         .finally(() => {
             loading.value = false;
         });
-    */
+};
+
+onMounted(() => {
+    fetchItems();
 });
 
+const onPageChange = (event) => {
+    router.get(
+        route('api.companies'),
+        { page: event.page + 1 },
+        { preserveState: true }
+    );
+};
+/*
+watch(
+    () => _.cloneDeep(data.params),
+    debounce(() => {
+        let params = pickBy(data.params);
+        console.log('params', params);
+        router.get(route('api.companies'), params, {
+            replace: true,
+            preserveState: true,
+            preserveScroll: true,
+        })
+    }, 150),
+);
+*/
 </script>
 
 <template>
-    <DataTable
-        v-model:filters="filters" 
-        :value="exampleData.data" 
-        paginator showGridlines 
-        :rows="10" 
-        dataKey="id"
-        filterDisplay="row" 
-        :loading="loading" 
-        :globalFilterFields="globalFilterFields"
-        :rowsPerPageOptions="[10, 25, 50, 100]"
-        paginatorTemplate="CurrentPageReport RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
-    >
-        <template #header>
-            <div class="flex justify-end">
-                <IconField>
-                    <InputIcon>
-                        <i class="pi pi-search" />
-                    </InputIcon>
-                    <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
-                </IconField>
+    <AppLayout>
+        <div class="card">
+
+            <DataTable lazy paginator :value="data.companies" ref="dt" dataKey="id" :rows="data.pagination.per_page"
+                :totalRecords="data.pagination.total"
+                :first="(data.pagination.current_page - 1) * data.pagination.per_page" @page="onPageChange"
+                tableStyle="min-width: 50rem">
+                <Column field="name" header="name" />
+                <Column field="email" header="email" />
+                <Column field="address" header="address" />
+                <Column field="phone" header="phone" />
+            </DataTable>
+
+            <div>
+                <!--<pre>pagination.total: {{ data.companies.pagination.total }} </pre>-->
+                <!--<pre>pagination.per_page: {{ data.companies.pagination.per_page }} </pre>-->
+                <!--<pre>pagination.current_page: {{ data.companies.pagination.current_page }} </pre>-->
+
+                <!--<pre>pagination: {{ data.companies.pagination }}</pre>-->
+                <!--<pre>data: {{ JSON.stringify(data.companies.data, null, 2) }}</pre>-->
+                <!--<pre>data.companies: {{ JSON.stringify(data.companies, null, 2) }}</pre>-->
+                <!--<pre>data: {{ JSON.stringify(data, null, 2) }}</pre>-->
             </div>
-        </template>
-        <template #empty> No items found. </template>
-        <template #loading> Loading items data. Please wait. </template>
 
-        <Column field="name" header="name" style="min-width: 12rem">
-            <template #body="slotProps">
-                <span>{{ slotProps.data.name }}</span>
-            </template>
-            <template #filter="{ filterModel, filterCallback }">
-                <InputText 
-                    v-model="filters['name'].value" 
-                    @update:modelValue="onDateChange(filterModel, filterCallback)"
-                />
-            </template>
-        </Column>
-        <Column field="email" header="email" style="min-width: 12rem"></Column>
-        <Column field="address" header="address" style="min-width: 12rem"></Column>
-        <Column field="phone" header="phone" style="min-width: 12rem">
-            <template #body="slotProps">
-                <span>{{ slotProps.data.phone }}</span>
-            </template>
-            <template #filter="{ filterModel, filterCallback }">
-                <InputText 
-                    v-model="filters['phone'].value" 
-                    @update:modelValue="onDateChange(filterModel, filterCallback)"
-                />
-            </template>
-        </Column>
-
-    </DataTable>
+        </div>
+    </AppLayout>
 </template>
