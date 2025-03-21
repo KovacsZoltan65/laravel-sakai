@@ -62,9 +62,9 @@ watchEffect(() => {
                         autocomplete="off"
                         placeholder="Name"
                     />
-                    <small v-if="form.errors.name" class="text-red-500">{{
-                        form.errors.name
-                    }}</small>
+                    <small v-if="form.errors.name" class="text-red-500">
+                        {{ form.errors.name }}
+                    </small>
                 </div>
 
                 <div class="flex flex-col gap-2">
