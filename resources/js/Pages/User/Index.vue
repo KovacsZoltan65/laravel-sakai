@@ -1,5 +1,6 @@
 <script setup>
 import AppLayout from "@/sakai/layout/AppLayout.vue";
+import { Head } from "@inertiajs/vue3";
 import Create from "@/Pages/User/Create.vue";
 import Edit from "@/Pages/User/Edit.vue";
 import { usePage, useForm } from "@inertiajs/vue3";
@@ -82,7 +83,10 @@ watch(
 </script>
 
 <template>
-    <app-layout>
+    <AppLayout>
+
+        <Head :title="props.title" />
+
         <div class="card">
 
             <!-- CREATE MODAL -->
@@ -228,7 +232,7 @@ watch(
                 </template>
             </Dialog>
         </div>
-    </app-layout>
+    </AppLayout>
 </template>
 
 <style scoped lang="scss"></style>

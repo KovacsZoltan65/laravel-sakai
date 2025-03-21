@@ -1,5 +1,6 @@
 <script setup>
 import AppLayout from "@/sakai/layout/AppLayout.vue";
+import { Head } from "@inertiajs/vue3";
 import Create from "@/Pages/Permission/Create.vue";
 import Edit from "@/Pages/Permission/Edit.vue";
 import { usePage, useForm } from "@inertiajs/vue3";
@@ -69,7 +70,10 @@ watch(
 </script>
 
 <template>
-    <app-layout>
+    <AppLayout>
+
+        <Head :title="props.title" />
+
         <div class="card">
             <Create
                 :show="data.createOpen"
@@ -181,7 +185,7 @@ watch(
                 </template>
             </Dialog>
         </div>
-    </app-layout>
+    </AppLayout>
 </template>
 
 <style scoped lang="scss"></style>

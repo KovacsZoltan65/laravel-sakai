@@ -1,4 +1,5 @@
 <script setup>
+import { Head } from "@inertiajs/vue3";
 import { onMounted, reactive, ref, watch, computed } from "vue";
 import { usePage, useForm } from "@inertiajs/vue3";
 import pkg from "lodash";
@@ -44,6 +45,19 @@ const data = reactive({
     }
 });
 
+const deleteData = () => {
+    deleteDialog.value = false;
+
+    form.delete(route("", data.companies?.id), {
+        preverseScroll: true,
+        onSuccess: () => {
+            form.reset();
+        },
+        onError: () => null,
+        onFinish: () => null,
+    });
+};
+
 const fetchItems = async () => {
     loading.value = true;
 
@@ -85,7 +99,7 @@ const onPageChange = (event) => {
         { preserveState: true }
     );
 };
-/*
+
 watch(
     () => _.cloneDeep(data.params),
     debounce(() => {
@@ -98,11 +112,14 @@ watch(
         })
     }, 150),
 );
-*/
+
 </script>
 
 <template>
     <AppLayout>
+
+        <Head :title="props.title" />
+        
         <div class="card">
 
             <DataTable lazy paginator :value="data.companies" ref="dt" dataKey="id" :rows="data.pagination.per_page"
@@ -113,6 +130,32 @@ watch(
                 <Column field="email" header="email" />
                 <Column field="address" header="address" />
                 <Column field="phone" header="phone" />
+                <Column :exportable="false" style="min-width: 12rem">
+                    <template #body="slotProps">
+                        <Button
+                            v-show="true"
+                            icon="pi pi-pencil"
+                            outlined
+                            rounded
+                            class="mr-2"
+                            @click="
+                                ((data.editOpen = true),
+                                (data.permission = slotProps.data))
+                            "
+                        />
+                        <Button
+                            v-show="true"
+                            icon="pi pi-trash"
+                            outlined
+                            rounded
+                            severity="danger"
+                            @click="
+                                deleteDialog = true;
+                                data.permission = slotProps.data;
+                            "
+                        />
+                    </template>
+                </Column>
             </DataTable>
 
             <div>
