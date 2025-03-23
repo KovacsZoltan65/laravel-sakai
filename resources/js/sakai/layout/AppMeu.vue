@@ -16,9 +16,9 @@ const model = ref([
     {
         label: "administration",
         items: [
-            { label: "users", icon: "pi pi-fw pi-users", to: "/users", can: "read users" },
-            { label: "roles", icon: "pi pi-fw pi-users", to: "/roles", can: "read roles" },
-            { label: "permissions", icon: "pi pi-fw pi-users", to: "/permissions", can: "read permissions" },
+            { label: "users", icon: "pi pi-fw pi-users", to: "/user", can: "read user" },
+            { label: "roles", icon: "pi pi-fw pi-users", to: "/role", can: "read role" },
+            { label: "permissions", icon: "pi pi-fw pi-users", to: "/permission", can: "read permission" },
         ],
     },
     {
@@ -32,11 +32,7 @@ const model = ref([
                     { label: "cities", icon: "pi pi-fw pi-map-marker", to: "/cities" },
                 ],
             },
-            {
-                label: "subdomain_states",
-                icon: "",
-                to: "/subdomain_states",
-            },
+            { label: "subdomain_states", icon: "", to: "/subdomain_states", },
         ],
     },
     {
