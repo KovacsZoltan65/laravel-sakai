@@ -104,6 +104,8 @@ const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
             <div class="layout-topbar-menu hidden lg:block">
                 <div class="layout-topbar-menu-content">
                     <div class="relative">
+
+                        <!-- PROFILE -->
                         <button
                             type="button"
                             class="layout-topbar-action"
@@ -119,15 +121,19 @@ const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
                             <i class="pi pi-user"></i>
                             <span>Profile</span>
                         </button>
+
                         <div
                             class="hidden bg-white shadow-md absolute right-0 mt-2 w-48 py-2 rounded-md"
                         >
+
+                            <!-- LOG OUT -->
                             <DropdownLink
                                 :href="route('logout')"
                                 method="post"
                                 as="button"
                             >
-                                Log Out
+                            <i class="pi pi-user"></i>&nbsp;
+                                <span>Log Out</span>
                             </DropdownLink>
                             <!-- <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button> -->
                         </div>

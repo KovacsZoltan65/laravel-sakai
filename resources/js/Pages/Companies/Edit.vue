@@ -42,9 +42,8 @@ watchEffect(() => {
 
 <template>
     <Dialog
-        v-model:visible="props.show"
-        position="top"
-        modal
+        v-model:visible="props.show" modal
+        position="center"
         :header="'Update ' + props.title"
         :style="{ width: '30rem' }"
         :closable="false"
@@ -111,7 +110,7 @@ watchEffect(() => {
                         {{ form.errors.phone }}
                     </small>
                 </div>
-                
+
                 <div class="flex justify-end gap-2">
                     <Button
                         type="button"
@@ -119,7 +118,7 @@ watchEffect(() => {
                         severity="secondary"
                         @click="emit('close')"
                     ></Button>
-                    
+
                     <Button type="submit" label="Update"></Button>
                 </div>
             </div>

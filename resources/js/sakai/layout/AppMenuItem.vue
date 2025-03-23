@@ -47,6 +47,7 @@ watch(
             newVal === itemKey.value || newVal.startsWith(itemKey.value + "-");
     },
 );
+
 const itemClick = (event, item) => {
     if (item.disabled) {
         event.preventDefault();
@@ -72,10 +73,6 @@ const itemClick = (event, item) => {
 
     setActiveMenuItem(foundItemKey);
 };
-
-// const checkActiveRoute = (item) => {
-//     return route.path === item.to;
-// };
 </script>
 
 <template>
@@ -85,35 +82,42 @@ const itemClick = (event, item) => {
             'active-menuitem': isActiveMenu,
         }"
     >
-        <!-- <div v-if="root && item.visible !== false" class="layout-menuitem-root-text">{{ item.label }}</div> -->
+        <!-- Csoportcímke (csak root szinten) -->
+        <div
+            v-if="root && item.label && item.visible !== false"
+            class="menu-group-label"
+        >
+            {{ item.label }}
+        </div>
+
+        <!-- Menüpont -->
         <a
             v-if="(!item.to || item.items) && item.visible !== false"
-            :href="item.url"
+            :href="item.url || '#'"
             @click="itemClick($event, item, index)"
             :class="item.class"
             :target="item.target"
             tabindex="0"
         >
-            <i :class="item.icon" class="layout-menuitem-icon"></i>
+            <i :class="item.icon" class="layout-menuitem-icon" v-if="item.icon"></i>
             <span class="layout-menuitem-text">{{ item.label }}</span>
             <i
                 class="pi pi-fw pi-angle-down layout-submenu-toggler"
                 v-if="item.items"
             ></i>
         </a>
+
         <nav-link
             v-if="item.to && !item.items && item.visible !== false"
             @click="itemClick($event, item, index)"
             :href="item.to"
             :class="[item.class, { 'active-route': $page.url === item.to }]"
         >
-            <i :class="item.icon" class="layout-menuitem-icon"></i>
+            <i :class="item.icon" class="layout-menuitem-icon" v-if="item.icon"></i>
             <span class="layout-menuitem-text">{{ item.label }}</span>
-            <i
-                class="pi pi-fw pi-angle-down layout-submenu-toggler"
-                v-if="item.items"
-            ></i>
         </nav-link>
+
+        <!-- Almenük -->
         <Transition
             v-if="item.items && item.visible !== false"
             name="layout-submenu"
@@ -122,7 +126,7 @@ const itemClick = (event, item) => {
                 <app-menu-item
                     v-show="!child?.can || can([child.can])"
                     v-for="(child, i) in item.items"
-                    :key="child"
+                    :key="child.label + i"
                     :index="i"
                     :item="child"
                     :parentItemKey="itemKey"
@@ -133,4 +137,21 @@ const itemClick = (event, item) => {
     </li>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.layout-submenu {
+    list-style: none;
+    padding-left: 1rem;
+
+    li {
+        margin-left: 0.5rem;
+    }
+}
+.menu-group-label {
+    padding: 0.75rem 1rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #6c757d;
+    letter-spacing: 0.05em;
+}
+</style>

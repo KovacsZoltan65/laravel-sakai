@@ -203,6 +203,7 @@ watch(
                 </Column>
             </DataTable>
 
+            <!-- DELETE MODAL -->
             <Dialog
                 v-model:visible="deleteDialog"
                 :style="{ width: '450px' }"

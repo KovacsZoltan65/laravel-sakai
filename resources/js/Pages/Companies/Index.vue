@@ -119,13 +119,51 @@ watch(
     <AppLayout>
 
         <Head :title="props.title" />
-        
+
         <div class="card">
 
-            <DataTable lazy paginator :value="data.companies" ref="dt" dataKey="id" :rows="data.pagination.per_page"
+            <!-- CREATE MODAL -->
+            <Create
+                :show="data.createOpen"
+                @close="data.createOpen = false"
+                title="Company"
+            />
+
+            <!-- EDIT MODAL -->
+            <Edit
+                :show="data.editOpen"
+                @close="data.editOpen = false"
+                :company="data.company"
+                title="Edit Company"
+            />
+
+            <!-- CREATE BUTTON -->
+            <Button
+                v-show="true"
+                label="Create"
+                @click="data.createOpen = true"
+                icon="pi pi-plus"
+            />
+
+            <!-- DELETE MODAL -->
+            <Delete
+                :show="data.deleteDialog"
+                @close="data.deleteDialog = false"
+                title="Delete Company"
+            />
+
+            <DataTable
+                lazy paginator
+                :value="data.companies"
+                ref="dt"
+                dataKey="id"
+                :rows="data.pagination.per_page"
                 :totalRecords="data.pagination.total"
-                :first="(data.pagination.current_page - 1) * data.pagination.per_page" @page="onPageChange"
-                tableStyle="min-width: 50rem">
+                :first="(data.pagination.current_page - 1) * data.pagination.per_page"
+                @page="onPageChange"
+                tableStyle="min-width: 50rem"
+            >
+
                 <Column field="name" header="name" />
                 <Column field="email" header="email" />
                 <Column field="address" header="address" />
@@ -138,10 +176,7 @@ watch(
                             outlined
                             rounded
                             class="mr-2"
-                            @click="
-                                ((data.editOpen = true),
-                                (data.permission = slotProps.data))
-                            "
+                            @click="((data.editOpen = true), (data.company = slotProps.data))"
                         />
                         <Button
                             v-show="true"
@@ -149,10 +184,8 @@ watch(
                             outlined
                             rounded
                             severity="danger"
-                            @click="
-                                deleteDialog = true;
-                                data.permission = slotProps.data;
-                            "
+                            @click="deleteDialog = true;
+                                data.company = slotProps.data;"
                         />
                     </template>
                 </Column>

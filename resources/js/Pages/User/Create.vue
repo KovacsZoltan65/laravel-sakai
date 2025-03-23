@@ -39,9 +39,8 @@ watchEffect(() => {
 
 <template>
     <Dialog
-        v-model:visible="props.show"
-        position="top"
-        modal
+        v-model:visible="props.show" modal
+        position="center"
         :header="'Add ' + props.title"
         :style="{ width: '30rem' }"
         :closable="false"

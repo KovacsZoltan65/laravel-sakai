@@ -24,3 +24,7 @@ prettier:
     sass-migrator module --migrate-deps your-entrypoint.scss
 
     sass-migrator module --migrate-deps F:\wamp64\www\softc\laravel-sakai\resources\js\sakai\assets\styles.scss
+
+
+npm cache verify
+npm dadhe clear --force
