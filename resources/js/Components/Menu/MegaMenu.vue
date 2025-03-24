@@ -5,12 +5,13 @@ import { ref } from 'vue';
 const items = ref([
     {
         label: "home",
+        icon: 'pi pi-home',
         items: [
             [
                 {
-                    label: "dashboards",
+                    label: 'Dashboards',
                     items: [
-                        { label: "Dashboard" },
+                        { label: "Dashboard", icon: "pi pi-fw pi-home", url: '/dashboard' },
                     ],
                 },
             ]
@@ -20,19 +21,54 @@ const items = ref([
         label: "administration",
         items: [
             [
-                { 
-                    label: "users", items: [
-                        {label: "users", icon: "pi pi-fw pi-users", to: "/user", can: "read users"}
+                {
+                    label: 'Users, Roles & Permissions',
+                    items: [
+                        {label: 'Users', url: '/user', icon: "pi pi-fw pi-user", can: "read users"},
+                        {label: 'Roles', url: '/role', icon: "pi pi-fw pi-user-plus", can: "read roles"},
+                        {label: 'Permissions', url: '/permission', icon: "pi pi-fw pi-lock", can: "read permissions"},
                     ]
-                },
-                { 
-                    label: "roles", icon: "pi pi-fw pi-users", to: "/role", can: "read role" 
-                },
-                { 
-                    label: "permissions", icon: "pi pi-fw pi-users", to: "/permission", can: "read permission" 
-                },
+                }
+            ],[
+                {
+                    label: 'Services',
+                    items: [
+                        {label: 'Companies', url: '/companies', icon: "pi pi-fw pi-briefcase", can: "read comapanies"},
+                        {label: 'Persons'},
+                        {label: 'Entities'}
+                    ]
+                }
+            ],[
+                {
+                    label: 'Geo',
+                    items: [
+                        { label: 'Countries', icon: 'pi pi-fw pi-map-marker' }, 
+                        { label: 'States', icon: 'pi pi-fw pi-map-marker'}, 
+                        { label: 'Cities', icon: 'pi pi-fw pi-map-marker'}
+                    ]
+                }
             ]
         ],
+    },
+    {
+        label: "System",
+        items: [
+            [{
+                label: 'Logs',
+                items: [
+                    {label: 'System Logs'},
+                    {label: 'User Logs'},
+                ]
+            }],
+            [{
+                label: 'Settings',
+                items: [
+                    {label: 'App Settings'},
+                    {label: 'Company Settings'},
+                    {label: 'User Settings'}
+                ]
+            }]
+        ]
     },
     /* Furniture */
     {

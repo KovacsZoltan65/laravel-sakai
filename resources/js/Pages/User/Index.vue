@@ -1,5 +1,8 @@
 <script setup>
-import AppLayout from "@/sakai/layout/AppLayout.vue";
+
+//import AppLayout from "@/sakai/layout/AppLayout.vue";
+import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
+
 import { Head } from "@inertiajs/vue3";
 import Create from "@/Pages/User/Create.vue";
 import Edit from "@/Pages/User/Edit.vue";
@@ -83,7 +86,7 @@ watch(
 </script>
 
 <template>
-    <AppLayout>
+    <AuthLayout>
 
         <Head :title="props.title" />
 
@@ -233,7 +236,7 @@ watch(
                 </template>
             </Dialog>
         </div>
-    </AppLayout>
+    </AuthLayout>
 </template>
 
 <style scoped lang="scss"></style>

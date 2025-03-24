@@ -7,12 +7,13 @@ const { _, debounce, pickBy } = pkg;
 import { router } from "@inertiajs/vue3";
 import { loadToast } from "@/composables/loadToast";
 
-import AppLayout from "@/sakai/layout/AppLayout.vue";
-import AppLayout2 from "../../Layouts/AuthenticatedLayout.vue";
+//import AppLayout from "@/sakai/layout/AppLayout.vue";
+import AuthLayout from "../../Layouts/AuthenticatedLayout.vue";
 
 import Create from "@/Pages/Companies/Create.vue";
 import Edit from "@/Pages/Companies/Edit.vue";
 import Delete from "@/Pages/Companies/Delete.vue";
+
 import CompanyService from "@/service/CompanyService.js";
 
 const loading = ref(true);
@@ -115,44 +116,78 @@ watch(
     }, 150),
 );
 
+const onUpload = (event) => {
+    console.log('onUpload', event);
+};
+
+const exportCSV = () => {
+    dt.value.exportCSV();
+};
+
 </script>
 
 <template>
-    <AppLayout2>
+    <AuthLayout>
 
         <Head :title="props.title" />
 
+        <!-- CREATE MODAL -->
+        <Create
+            :show="data.createOpen"
+            @close="data.createOpen = false"
+            title="Company"
+        />
+        
+        <!-- EDIT MODAL -->
+        <Edit
+            :show="data.editOpen"
+            @close="data.editOpen = false"
+            :company="data.company"
+            title="Company"
+        />
+
+        <!-- DELETE MODAL -->
+        <Delete
+            :show="data.deleteDialog"
+            @close="data.deleteDialog = false"
+            title="Company"
+        />
+
         <div class="card">
 
-            <!-- CREATE MODAL -->
-            <Create
-                :show="data.createOpen"
-                @close="data.createOpen = false"
-                title="Company"
-            />
+            <Toolbar class="mb-6">
 
-            <!-- EDIT MODAL -->
-            <Edit
-                :show="data.editOpen"
-                @close="data.editOpen = false"
-                :company="data.company"
-                title="Edit Company"
-            />
+                <template #start>
+                    <!-- CREATE BUTTON -->
+                    <Button
+                        v-show="true"
+                        label="Create"
+                        @click="data.createOpen = true"
+                        icon="pi pi-plus"
+                    />
+                </template>
 
-            <!-- CREATE BUTTON -->
-            <Button
-                v-show="true"
-                label="Create"
-                @click="data.createOpen = true"
-                icon="pi pi-plus"
-            />
+                <template #end>
+                    <FileUpload
+                        mode="basic"
+                        accept="image/*"
+                        :maxFileSize="1000000"
+                        label="Import"
+                        customUpload auto
+                        chooseLabel="Import"
+                        class="mr-2"
+                        :chooseButtonProps="{ severity: 'secondary' }"
+                        @upload="onUpload"
+                    />
+                    <Button
+                        label="Export"
+                        icon="pi pi-upload"
+                        severity="secondary"
+                        @click="exportCSV($event)"
+                    />
+                </template>
 
-            <!-- DELETE MODAL -->
-            <Delete
-                :show="data.deleteDialog"
-                @close="data.deleteDialog = false"
-                title="Delete Company"
-            />
+            </Toolbar>
 
             <DataTable
                 lazy paginator
@@ -205,5 +240,5 @@ watch(
             </div>
 
         </div>
-    </AppLayout2>
+    </AuthLayout>
 </template>

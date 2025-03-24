@@ -1,0 +1,13 @@
+home
+  dashboards
+    dashboard 1
+
+administration
+    Admin
+        users
+        roles
+        permissions
+    Services
+        companies
+        persons
+        entities

@@ -55,6 +55,9 @@ class CompanyController extends Controller
                 ]
             ];
             
+\Log::info('$request->all(): ' . print_r($request->all(), true));
+\Log::info('retval: ' . print_r($retval, true));
+
             return response()->json($retval, Response::HTTP_OK);
         } catch( QueryException $ex ) {
             \Log::info('getCompanies QueryException: ' . print_r($ex->getMessage(), true));
