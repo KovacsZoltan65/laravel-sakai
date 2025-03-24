@@ -2,11 +2,14 @@
 import { MegaMenu } from 'primevue';
 import { ref } from 'vue';
 
-import { computed } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+//import { computed } from 'vue';
+//import { usePage } from '@inertiajs/vue3';
 
-const page = usePage();
-const userCan = computed(() => page.props.auth.can ?? {});
+import { usePermissions } from '@/composables/usePermissions';
+const { has } = usePermissions();
+
+//const page = usePage();
+//const userCan = computed(() => page.props.auth.can ?? {});
 
 const items = ref([
     {
@@ -30,9 +33,24 @@ const items = ref([
                 {
                     label: 'Users, Roles & Permissions',
                     items: [
-                        {label: 'Users', url: '/user', icon: "pi pi-fw pi-user", visible: hasPermission('read users')},
-                        {label: 'Roles', url: '/role', icon: "pi pi-fw pi-user-plus", can: "read role"},
-                        {label: 'Permissions', url: '/permission', icon: "pi pi-fw pi-lock", can: "read permission"},
+                        {
+                            label: 'Users',
+                            url: '/user',
+                            icon: "pi pi-fw pi-user",
+                            visible: has('read users'),
+                        },
+                        {
+                            label: 'Roles',
+                            url: '/role',
+                            icon: "pi pi-fw pi-user-plus",
+                            visible: has("read role"),
+                        },
+                        {
+                            label: 'Permissions',
+                            url: '/permission',
+                            icon: "pi pi-fw pi-lock",
+                            visible: has("read permission")
+                        },
                     ]
                 }
             ],[
@@ -272,10 +290,11 @@ const items = ref([
     }
 ]);
 */
-
+/*
 function hasPermission(permission) {
     return !!page.props.auth?.can?.[permission];
 };
+*/
 /*
 function filterMenuItems(items, can) {
     return items.map(item => {
