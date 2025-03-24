@@ -119,7 +119,11 @@ watchEffect(() => {
                         @click="emit('close')"
                     ></Button>
 
-                    <Button type="submit" label="Update"></Button>
+                    <Button 
+                        type="submit" 
+                        label="Update" 
+                        icon="pi pi-save"
+                    />
                 </div>
             </div>
         </form>

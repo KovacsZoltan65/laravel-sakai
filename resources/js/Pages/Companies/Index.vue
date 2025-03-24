@@ -8,6 +8,8 @@ import { router } from "@inertiajs/vue3";
 import { loadToast } from "@/composables/loadToast";
 
 import AppLayout from "@/sakai/layout/AppLayout.vue";
+import AppLayout2 from "../../Layouts/AuthenticatedLayout.vue";
+
 import Create from "@/Pages/Companies/Create.vue";
 import Edit from "@/Pages/Companies/Edit.vue";
 import Delete from "@/Pages/Companies/Delete.vue";
@@ -116,7 +118,7 @@ watch(
 </script>
 
 <template>
-    <AppLayout>
+    <AppLayout2>
 
         <Head :title="props.title" />
 
@@ -203,5 +205,5 @@ watch(
             </div>
 
         </div>
-    </AppLayout>
+    </AppLayout2>
 </template>

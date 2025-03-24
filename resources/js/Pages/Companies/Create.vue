@@ -116,7 +116,11 @@ watchEffect(() => {
                         severity="secondary"
                         @click="emit('close')"
                     ></Button>
-                    <Button type="submit" label="Save"></Button>
+                    <Button 
+                        type="submit" 
+                        label="Save"
+                        icon="pi pi-save"
+                    />
                 </div>
 
             </div>
