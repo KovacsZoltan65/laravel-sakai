@@ -131,13 +131,15 @@ const exportCSV = () => {
 
         <Head :title="props.title" />
 
+
+
         <!-- CREATE MODAL -->
         <Create
             :show="data.createOpen"
             @close="data.createOpen = false"
             title="Company"
         />
-        
+
         <!-- EDIT MODAL -->
         <Edit
             :show="data.editOpen"

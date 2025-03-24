@@ -2,6 +2,12 @@
 import { MegaMenu } from 'primevue';
 import { ref } from 'vue';
 
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+const userCan = computed(() => page.props.auth.can ?? {});
+
 const items = ref([
     {
         label: "home",
@@ -24,9 +30,9 @@ const items = ref([
                 {
                     label: 'Users, Roles & Permissions',
                     items: [
-                        {label: 'Users', url: '/user', icon: "pi pi-fw pi-user", can: "read users"},
-                        {label: 'Roles', url: '/role', icon: "pi pi-fw pi-user-plus", can: "read roles"},
-                        {label: 'Permissions', url: '/permission', icon: "pi pi-fw pi-lock", can: "read permissions"},
+                        {label: 'Users', url: '/user', icon: "pi pi-fw pi-user", visible: hasPermission('read users')},
+                        {label: 'Roles', url: '/role', icon: "pi pi-fw pi-user-plus", can: "read role"},
+                        {label: 'Permissions', url: '/permission', icon: "pi pi-fw pi-lock", can: "read permission"},
                     ]
                 }
             ],[
@@ -42,8 +48,8 @@ const items = ref([
                 {
                     label: 'Geo',
                     items: [
-                        { label: 'Countries', icon: 'pi pi-fw pi-map-marker' }, 
-                        { label: 'States', icon: 'pi pi-fw pi-map-marker'}, 
+                        { label: 'Countries', icon: 'pi pi-fw pi-map-marker' },
+                        { label: 'States', icon: 'pi pi-fw pi-map-marker'},
                         { label: 'Cities', icon: 'pi pi-fw pi-map-marker'}
                     ]
                 }
@@ -265,6 +271,35 @@ const items = ref([
         ]
     }
 ]);
+*/
+
+function hasPermission(permission) {
+    return !!page.props.auth?.can?.[permission];
+};
+/*
+function filterMenuItems(items, can) {
+    return items.map(item => {
+        if (item.items) {
+            const filteredSubItems = filterMenuItems(item.items, can);
+            return { ...item, items: filteredSubItems };
+        }
+
+        if (!item.can || can[item.can]) {
+            return item;
+        }
+
+        return null;
+    }).filter(Boolean);
+}
+
+const filteredItems = computed(() => {
+    return items.value.map(group => ({
+        ...group,
+        items: group.items.map(column =>
+            filterMenuItems(column, userCan.value)
+        ).filter(column => column.length > 0)
+    })).filter(group => group.items.length > 0);
+});
 */
 </script>
 
