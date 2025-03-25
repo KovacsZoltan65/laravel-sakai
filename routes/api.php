@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\CompanyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +18,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/companies', [CompanyController::class, 'getCompanies'])->name('api.companies');
+// COMPANIES
+//Route::middleware( 'auth:sanctum')->get( '/companies',  [App\Http\Controllers\CompanyController::class, 'getCompanies']);
+Route::get(uri: '/companies', action: [App\Http\Controllers\CompanyController::class, 'getCompanies'])->name('api.companies');
+
+// PERSONS
+Route::get(
+    uri: '/persons', 
+    action: [App\Http\Controllers\PersonController::class, 'getPersons']
+)->name(name: 'api.persons');
+
 /*
 Route::get('/companies', function(Request $reques){
     dd('route');

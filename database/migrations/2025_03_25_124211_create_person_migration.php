@@ -9,15 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('companies', function (Blueprint $table) {
+        Schema::create('persons', function(Blueprint $table) {
             $table->id();
+
             $table->string('name');
-            $table->string('email')->nullable();
-            $table->string('address')->nullable();
-            $table->string('phone')->nullable();
+            $table->string('email');
+            $table->string('address');
+            $table->string('phone');
             $table->integer('active')->default(1);
+            
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('companies');
+        Schema::dropIfExists('persons');
     }
 };

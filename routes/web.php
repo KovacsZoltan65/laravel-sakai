@@ -56,6 +56,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         '/companies',
         [App\Http\Controllers\CompanyController::class, 'index']
     )->name('companies.index');
+
+    // PERSONS
+    Route::get(
+        uri: '/persons', 
+        action: [App\Http\Controllers\PersonController::class, 'index']
+    )->name('persons.index');
 });
 
 Route::get('/form', function () {

@@ -94,7 +94,6 @@ const fetchItems = async () => {
 onMounted(() => {
     fetchItems();
 });
-
 const onPageChange = (event) => {
     router.get(
         route('api.companies'),
@@ -102,6 +101,8 @@ const onPageChange = (event) => {
         { preserveState: true }
     );
 };
+
+const clearFilter = () => {};
 
 watch(
     () => _.cloneDeep(data.params),
@@ -130,8 +131,6 @@ const exportCSV = () => {
     <AuthLayout>
 
         <Head :title="props.title" />
-
-
 
         <!-- CREATE MODAL -->
         <Create
@@ -162,10 +161,19 @@ const exportCSV = () => {
                 <template #start>
                     <!-- CREATE BUTTON -->
                     <Button
-                        v-show="true"
+                        v-show="true" class="mr-2"
                         label="Create"
                         @click="data.createOpen = true"
                         icon="pi pi-plus"
+                    />
+
+                    <!-- SZŰRÉS TÖRLÉSE -->
+                    <Button
+                        type="button"
+                        icon="pi pi-filter-slash"
+                        label="Clear"
+                        outlined
+                        @click="clearFilter()"
                     />
                 </template>
 
@@ -202,6 +210,17 @@ const exportCSV = () => {
                 @page="onPageChange"
                 tableStyle="min-width: 50rem"
             >
+                <template #header>
+                    
+                    
+
+                    <!-- FELIRAT -->
+                    <div class="font-semibold text-xl mb-1">
+                        Companies
+                    </div>
+
+                    
+                </template>
 
                 <Column field="name" header="name" />
                 <Column field="email" header="email" />

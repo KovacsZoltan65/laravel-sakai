@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Repositories\CompanyRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class CompanyController extends Controller
 {
@@ -20,22 +22,22 @@ class CompanyController extends Controller
         $this->companyRepository = $companyRepository;
     }
 
-    public function index(Request $request)
+    public function index(Request $request): InertiaResponse
     {
-        return inertia('Companies/Index', [
+        return Inertia::render('Companies/Index', [
             'filters' => $request->all(['search', 'field', 'order']),
             'title' => 'Companies',
         ]);
     }
 
-    public function applySearch(Builder $query, string $search)
+    public function applySearch(Builder $query, string $search): Builder
     {
-        return $query->when($search, function ($query, string $search) {
+        return $query->when($search, function (Builder $query, string $search) {
             $query->where('name', 'like', "%{$search}%");
         });
     }
 
-    public function getCompanies(Request $request)
+    public function getCompanies(Request $request): JsonResponse
     {
         try {
             $_companies = $this->companyRepository->getCompanies($request);
