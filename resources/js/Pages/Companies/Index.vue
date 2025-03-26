@@ -99,7 +99,13 @@ const onPageChange = (event) => {
         route('api.companies'),
         { page: event.page + 1 },
         { preserveState: true }
-    );
+    ).then((response) => {
+        console.log('response', response);
+    }).catch((error) => {
+        console.log('error', error);
+    }).finally(() => {
+        console.log('finally');
+    });
 };
 
 const clearFilter = () => {};

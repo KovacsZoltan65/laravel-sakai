@@ -33,7 +33,10 @@ class CompanyRepository extends BaseRepository implements CompanyRepositoryInter
                 $_companies->orderBy($request->field, $request->order);
             }
             
-            return $_companies->paginate(10);
+            $page = $request->has('page') ? $request->page : 1;
+
+            $retval = $_companies->paginate(perPage: 10, columns: ['*'], pageName: 'page', page: $page);
+            return $retval;
             
             /*
             // Keresési kulcsszó kinyerése a request-ből

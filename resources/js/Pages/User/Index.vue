@@ -9,9 +9,11 @@ import Edit from "@/Pages/User/Edit.vue";
 import { usePage, useForm } from "@inertiajs/vue3";
 
 import { onMounted, reactive, ref, watch, computed } from "vue";
+
 import pkg from "lodash";
-import { router } from "@inertiajs/vue3";
 const { _, debounce, pickBy } = pkg;
+
+import { router } from "@inertiajs/vue3";
 import { loadToast } from "@/composables/loadToast";
 
 const props = defineProps({
@@ -119,9 +121,8 @@ watch(
 
             <!-- DATA TABLE -->
             <DataTable
-                lazy
+                lazy paginator
                 :value="users.data"
-                paginator
                 :rows="users.per_page"
                 :totalRecords="users.total"
                 :first="(users.current_page - 1) * users.per_page"

@@ -37,7 +37,7 @@ class CompanyController extends Controller
         });
     }
 
-    public function getCompanies(Request $request): JsonResponse
+    public function getCompanies(Request $request)
     {
         try {
             $_companies = $this->companyRepository->getCompanies($request);
@@ -56,9 +56,6 @@ class CompanyController extends Controller
                     'last_page' => $_companies->lastPage(),
                 ]
             ];
-            
-\Log::info('$request->all(): ' . print_r($request->all(), true));
-\Log::info('retval: ' . print_r($retval, true));
 
             return response()->json($retval, Response::HTTP_OK);
         } catch( QueryException $ex ) {

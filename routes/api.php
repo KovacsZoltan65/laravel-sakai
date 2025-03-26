@@ -20,7 +20,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // COMPANIES
 //Route::middleware( 'auth:sanctum')->get( '/companies',  [App\Http\Controllers\CompanyController::class, 'getCompanies']);
-Route::get(uri: '/companies', action: [App\Http\Controllers\CompanyController::class, 'getCompanies'])->name('api.companies');
+Route::get(
+    uri: '/companies', 
+    action: [App\Http\Controllers\CompanyController::class, 'getCompanies']
+)->name('api.companies');
 
 // PERSONS
 Route::get(
