@@ -92,7 +92,7 @@ const fetchItems = async () => {
 };
 
 onMounted(() => {
-    fetchItems();
+    //fetchItems();
 });
 const onPageChange = (event) => {
     router.get(
