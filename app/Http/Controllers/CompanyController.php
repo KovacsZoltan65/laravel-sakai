@@ -2,69 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CompanyResource;
+use App\Http\Requests\CompanyIndexRequest;
 use App\Models\Company;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use App\Repositories\CompanyRepository;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Inertia\Inertia;
-use Inertia\Response as InertiaResponse;
+use Inertia\Response AS InertiaResponse;
 
 class CompanyController extends Controller
 {
-    protected $companyRepository;
-
-    public function __construct(CompanyRepository $companyRepository)
+    public function __construct()
     {
-        $this->companyRepository = $companyRepository;
+        //
     }
 
-    public function index(Request $request): InertiaResponse
+    public function index(CompanyIndexRequest $request): InertiaResponse
     {
-        return Inertia::render('Companies/Index', [
-            'filters' => $request->all(['search', 'field', 'order']),
-            'title' => 'Companies',
-        ]);
-    }
+        $_companies = Company::query();
 
-    public function applySearch(Builder $query, string $search): Builder
-    {
-        return $query->when($search, function (Builder $query, string $search) {
-            $query->where('name', 'like', "%{$search}%");
-        });
-    }
-
-    public function getCompanies(Request $request): JsonResponse
-    {
-        try {
-            $_companies = $this->companyRepository->getCompanies($request);
-
-            // Resource kollekcióval formázás
-            $companiesResource = CompanyResource::collection($_companies);
-
-            $retval = [
-                'data' => $companiesResource->items(),
-                'title' => 'Companies',
-                'filters' => $request->all(['search', 'field', 'order']),
-                'pagination' => [
-                    'current_page' => $_companies->currentPage(),
-                    'per_page' => $_companies->perPage(),
-                    'total' => $_companies->total(),
-                    'last_page' => $_companies->lastPage(),
-                ]
-            ];
-            
-\Log::info('$request->all(): ' . print_r($request->all(), true));
-\Log::info('retval: ' . print_r($retval, true));
-
-            return response()->json($retval, Response::HTTP_OK);
-        } catch( QueryException $ex ) {
-            \Log::info('getCompanies QueryException: ' . print_r($ex->getMessage(), true));
-        } catch( \Exception $ex ) {
-            \Log::info('getCompanies Exception: ' . print_r($ex->getMessage(), true));
+        if( $request->has(key: 'search') ) {
+            $_companies->whereRaw("CONCAT(name, ' ', email, ' ', address, ' ', phone) LIKE ?", ["%{$request->search}%"]);
+            //$_companies->where(column: 'name', operator: 'LIKE', value: "%{$request->search}%");
+            //$_companies->orWhere(column: 'email', operator: 'LIKE', value: "%{$request->search}%");
+            //$_companies->orWhere(column: 'address', operator: 'LIKE', value: "%{$request->search}%");
+            //$_companies->orWhere(column: 'phone', operator: 'LIKE', value: "%{$request->search}%");
         }
+
+        if ($request->has('field') && $request->has('order')) {
+            $_companies->orderBy($request->field, $request->order);
+        }
+        //if( $request->hasMany( ['field', 'order'] ) ) {
+        //    $_companies->orderBy(column: $request->field, direction: $request->order);
+        //}
+
+        $page = $request->page ?? 1;
+
+        $companies = $_companies->paginate(
+            perPage: 10,
+            columns: ['*'],
+            pageName: 'page',
+            page: $page
+        );
+
+        $params = [
+            'title' => 'Companies',
+            'filters' => $request->all(['search', 'field', 'order']),
+            'companies' => $companies,
+        ];
+
+        return Inertia::render('Companies/Index', $params);
     }
 }

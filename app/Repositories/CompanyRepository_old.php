@@ -14,27 +14,27 @@ use Prettus\Repository\Eloquent\BaseRepository;
  *
  * @package namespace App\Repositories;
  */
-class CompanyRepository extends BaseRepository implements CompanyRepositoryInterface
+class CompanyRepository_old extends BaseRepository implements CompanyRepositoryInterface
 {
     public function getCompanies(Request $request)
     {
         try {
-            
+
             $_companies = Company::query();
-            
+
             if ( $request->has('search') ) {
                 $_companies->where('name', 'LIKE', "%{$request->search}%");
                 $_companies->orWhere('email', 'LIKE', "%{$request->search}%");
                 $_companies->orWhere('address', 'LIKE', "%{$request->search}%");
                 $_companies->orWhere('phone', 'LIKE', "%{$request->search}%");
             }
-            
+
             if( $request->has(['field', 'order']) ) {
                 $_companies->orderBy($request->field, $request->order);
             }
-            
+
             return $_companies->paginate(10);
-            
+
             /*
             // Keresési kulcsszó kinyerése a request-ből
             $search = $request->get('search');
@@ -51,7 +51,7 @@ class CompanyRepository extends BaseRepository implements CompanyRepositoryInter
             throw $ex;
         }
     }
-    
+
     /**
      * Specify Model class name
      *
