@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
 
             CompanySeeder::class,
             PersonSeeder::class,
+            EntitySeeder::class,
         ]);
     }
 }

@@ -27,4 +27,16 @@ prettier:
 
 
 npm cache verify
-npm dadhe clear --force
+npm cache clear --force
+
+// -------------------------------
+// ENTITIES
+// -------------------------------
+php artisan make:model Entity
+php artisan make:controller EntityController
+php artisan make:Request EntityIndexRequest
+
+php artisan make:migration CreateEntitiesTable
+php artisan make:seed EntitySeed
+php artisan make:factory EntityFactory
+php artisan make:resource EntityResource
