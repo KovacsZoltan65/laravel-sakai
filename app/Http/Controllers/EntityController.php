@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\EntityIndexRequest;
 use App\Http\Resources\EntityResource;
+use App\Models\Company;
 use App\Models\Entity;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -43,10 +44,15 @@ class EntityController extends Controller
 
         //$entityResource = EntityResource::collection(resource: $entities);
 
+        $companies = Company::active()->get()->select('name', 'id')->toArray();
+
+        $entities = $_entities->with('company')->paginate(perPage: 10, columns: ['*'], pageName: 'page', page: $page);
+
         $params = [
             'title' => 'Entity',
             'filters' => $request->all(['search', 'field', 'order']),
-            'entities' => $_entities->paginate(perPage: 10, columns: ['*'], pageName: 'page', page: $page),
+            'entities' => $entities,
+            'companies' => $companies,
             /*
             'pagination' => [
                 'current_page' => $entities->currentPage(),

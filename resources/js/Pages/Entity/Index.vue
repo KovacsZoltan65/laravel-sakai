@@ -3,6 +3,8 @@ import { onMounted, reactive, ref, watch, computed } from "vue";
 import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import { router } from "@inertiajs/vue3";
+import Create from "@/Pages/Entity/Create.vue";
+
 import pkg from "lodash";
 const { _, debounce, pickBy } = pkg;
 
@@ -38,8 +40,6 @@ watch(
     debounce(() => {
         let params = pickBy(data.params);
 
-console.log(params);
-
         router.get(route("entities.index"), params, {
             replace: true,
             preserveState: true,
@@ -56,6 +56,20 @@ console.log(params);
         <Head :title="props.title" />
 
         <div class="card">
+
+            <Create
+                :show="data.createOpen"
+                :title="props.title"
+                @close="data.createOpen = false"
+            />
+
+            <Button
+                v-show="true"
+                icon="pi pi-plus"
+                label="Create"
+                @click="data.createOpen = true"
+            />
+
             <DataTable
                 lazy paginator
                 :value="entities.data"
@@ -93,8 +107,9 @@ console.log(params);
                 <Column field="updated_at" header="Updated"></Column>
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
+                        
                         <Button
-                            v-show="can(['update entity'])"
+                            v-show="true"
                             icon="pi pi-pencil"
                             outlined
                             rounded
@@ -105,7 +120,7 @@ console.log(params);
                             "
                         />
                         <Button
-                            v-show="can(['delete entity'])"
+                            v-show="true"
                             icon="pi pi-trash"
                             outlined
                             rounded
@@ -115,6 +130,7 @@ console.log(params);
                                 data.entity = slotProps.data;
                             "
                         />
+                    
                     </template>
                 </Column>
             </DataTable>
