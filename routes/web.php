@@ -62,6 +62,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         uri: '/persons', 
         action: [App\Http\Controllers\PersonController::class, 'index']
     )->name('persons.index');
+
+    // ENTITIES
+    Route::get(
+        uri: '/entities', 
+        action: [App\Http\Controllers\EntityController::class, 'index']
+    )->name(name: 'entities.index');
 });
 
 Route::get('/form', function () {

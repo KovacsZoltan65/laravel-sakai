@@ -30,7 +30,13 @@ const onPageChange = (event) => {
         route('companies.index'),
         { preserveState: true },
         { preserveScroll: true }
-    );
+    ).then((response) => {
+        console.log('response', response);
+    }).catch((error) => {
+        console.log('error', error);
+    }).finally(() => {
+        console.log('finally');
+    });
 };
 
 watch(

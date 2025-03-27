@@ -3,24 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\Person;
+use App\Repositories\PersonRepository;
+use App\Http\Resources\PersonResource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
+use Exception;
 
 class PersonController extends Controller
 {
-    public function __construct()
+    protected PersonRepository $personRepository;
+
+    public function __construct(PersonRepository $personRepository)
     {
-        //
+        $this->personRepository = $personRepository;
     }
+    
     public function index(Request $request): InertiaResponse
     {
 \Log::info('PersonController::index()');
+
+\Log::info('request->all(): ' . print_r($request->all(), true));
+
         return Inertia::render(component: 'Persons/Index', props: [
-            //'filters' => $request->all(['search', 'field', 'order']),
+            'filters' => $request->all(['search', 'field', 'order']),
             'title' => 'Persons',
         ]);
     }
@@ -34,35 +44,26 @@ class PersonController extends Controller
 
     public function getPersons(Request $request)
     {
-        $_persons = Person::query();
+        try {
+            $_persons = $this->personRepository->getPersons($request);
+            $personResource = PersonResource::collection($_persons);
 
-        if( $request->has(key: 'search') ) {
-            $_persons->where(column: 'name', operator: 'LIKE', value: "%{$request->search}%");
-            $_persons->orWhere(column: 'email', operator: 'LIKE', value: "%{$request->search}%");
-            $_persons->orWhere(column: 'address', operator: 'LIKE', value: "%{$request->search}%");
-            $_persons->orWhere(column: 'phone', operator: 'LIKE', value: "%{$request->search}%");
+            $retval = [
+                'data' => $personResource->items(),
+                'title' => 'Persons',
+                'filters' => $request->all(['search', 'field', 'order']),
+                'pagination' => [
+                    'current_page' => $_persons->currentPage(),
+                    'per_page' => $_persons->perPage(),
+                    'total' => $_persons->total(),
+                    'last_page' => $_persons->lastPage(),
+                ],
+            ];
+        } catch( QueryException $ex ) {
+            \Log::info('getPersons QueryException: ' . print_r($ex->getMessage(), true));
+        } catch( Exception $ex ) {
+            \Log::info('getPersons Exception: ' . print_r($ex->getMessage(), true));
         }
-
-        if( $request->has(['field', 'order']) ) {
-            $_persons->orderBy(column: $request->field, direction: $request->order);
-        }
-
-        $persons = $_persons->paginate(perPage: 10, columns: ['*'], pageName: 'page', page: null);
-
-\Log::info('$_persons: ' . print_r($_persons, true));
-\Log::info('$persons: ' . print_r($persons, true));
-
-        $retval = [
-            'data' => $persons,
-            'title' => 'Persons',
-            'filters' => $request->all(['search', 'field', 'order']),
-            'pagination' => [
-                'current_page' => '',
-                'per_page' => '',
-                'total' => '',
-                'last_page' => '',
-            ],
-        ];
 
         return response()->json($retval, Response::HTTP_OK);
     }
