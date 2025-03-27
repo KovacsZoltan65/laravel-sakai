@@ -57,9 +57,9 @@ const items = ref([
                 {
                     label: 'Services',
                     items: [
-                        {label: 'Companies', url: '/companies', icon: "pi pi-fw pi-briefcase", can: "read comapany"},
-                        {label: 'Persons', url: '/persons', icon: "pi pi-fw pi-user", icon: "pi pi-fw pi-briefcase", can: "read person"},
-                        {label: 'Entities', icon: "pi pi-fw pi-user",}
+                        {label: 'Companies', url: '/companies', icon: "pi pi-fw pi-briefcase",},
+                        {label: 'Persons', url: '/persons', icon: "pi pi-fw pi-user",},
+                        {label: 'Entities', url: '/entities', icon: "pi pi-fw pi-user",}
                     ]
                 }
             ],[

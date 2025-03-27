@@ -39,20 +39,22 @@ class EntityController extends Controller
 
         $page = $request->page ?? 1;
 
-        $entities = $_entities->paginate(perPage: 10, columns: ['*'], pageName: 'page', page: $page);
+        //$entities = $_entities->paginate(perPage: 10, columns: ['*'], pageName: 'page', page: $page);
 
-        $entityResource = EntityResource::collection(resource: $entities);
+        //$entityResource = EntityResource::collection(resource: $entities);
 
         $params = [
-            'title'         => 'Permission',
-            'filters'       => $request->all(['search', 'field', 'order']),
-            'entities'   => $entityResource->items(),
+            'title' => 'Entity',
+            'filters' => $request->all(['search', 'field', 'order']),
+            'entities' => $_entities->paginate(perPage: 10, columns: ['*'], pageName: 'page', page: $page),
+            /*
             'pagination' => [
                 'current_page' => $entities->currentPage(),
                 'per_page' => $entities->perPage(),
                 'total' => $entities->total(),
                 'last_page' => $entities->lastPage(),
-            ]
+            ],
+            */
         ];
 
         return Inertia::render(component: 'Entity/Index', props: $params);

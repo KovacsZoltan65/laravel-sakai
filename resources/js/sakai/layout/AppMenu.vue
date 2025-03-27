@@ -40,6 +40,7 @@ const model = ref([
         items: [
             { label: "companies", icon: "pi pi-fw pi-briefcase", to: "/companies" },
             { label: "subdomains", icon: "", to: "/subdomains" },
+            { label: "entities", icon: "", to: "/entities" },
         ],
     },
 ]);
