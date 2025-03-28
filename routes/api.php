@@ -27,6 +27,13 @@ Route::get(
     action: [App\Http\Controllers\PersonController::class, 'getPersons']
 )->name(name: 'api.persons');
 
+// web.php vagy api.php
+Route::get(
+    uri: '/entities/fetch',
+    action: [App\Http\Controllers\EntityController::class, 'fetch']
+)->name(name: 'api.entities.fetch');
+
+
 /*
 Route::get('/companies', function(Request $reques){
     dd('route');
