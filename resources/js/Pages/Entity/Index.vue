@@ -5,6 +5,9 @@ import { Head } from "@inertiajs/vue3";
 //import { router } from "@inertiajs/vue3";
 import Create from "@/Pages/Entity/Create.vue";
 
+import { usePermissions } from '@/composables/usePermissions';
+const { has } = usePermissions();
+
 import pkg from "lodash";
 const { _, debounce, pickBy } = pkg;
 
@@ -85,24 +88,30 @@ watch(
             />
 
             <Button
-                v-show="true"
+                v-show="has('create entity')"
                 icon="pi pi-plus"
                 label="Create"
                 @click="data.createOpen = true"
+                class="mr-2"
             />
 
-            <ProgressSpinner v-if="isLoading" />
+            <Button
+                @click="fetchItems"
+                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
+            />
 
             <DataTable
-                v-if="entities && !isLoading"
+                v-if="entities"
                 :dataKey="'id'"
                 lazy paginator
                 :value="entities.data"
                 :rows="entities.per_page"
                 :totalRecords="entities.total"
                 :first="(entities.current_page - 1) * entities.per_page"
+                :loading="isLoading"
                 @page="onPageChange"
                 tableStyle="min-width: 50rem"
+
             >
                 <template #header>
                     <div class="flex justify-end">
@@ -117,6 +126,7 @@ watch(
                         </IconField>
                     </div>
                 </template>
+
                 <template #empty> No data found. </template>
                 <template #loading> Loading data. Please wait. </template>
 
@@ -129,18 +139,15 @@ watch(
                     <template #body="slotProps">
 
                         <Button
-                            v-show="true"
+                            v-show="has('update entity')"
                             icon="pi pi-pencil"
                             outlined
                             rounded
                             class="mr-2"
-                            @click="
-                                ((data.editOpen = true),
-                                (data.entity = slotProps.data))
-                            "
+                            @click="((data.editOpen = true),(data.entity = slotProps.data))"
                         />
                         <Button
-                            v-show="true"
+                            v-show="has('delete entity')"
                             icon="pi pi-trash"
                             outlined
                             rounded
