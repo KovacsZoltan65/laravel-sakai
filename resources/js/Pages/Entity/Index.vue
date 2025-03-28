@@ -36,6 +36,22 @@ const onPageChange = (event) => {
 };
 
 watch(
+    () => [data.params.search, data.params.field, data.params.order],
+    debounce(() => {
+        const params = pickBy({
+            search: data.params.search,
+            field: data.params.field,
+            order: data.params.order,
+        });
+    router.get(route("entities.index"), params, {
+        replace: true,
+        preserveState: true,
+        preserveScroll: true,
+    });
+  }, 300)
+);
+/*
+watch(
     () => _.cloneDeep(data.params),
     debounce(() => {
         let params = pickBy(data.params);
@@ -47,7 +63,7 @@ watch(
         });
     }, 150),
 );
-
+*/
 </script>
 
 <template>
@@ -102,12 +118,12 @@ watch(
                 </Column>
 
                 <Column field="name" header="Name"></Column>
-                
+
                 <Column field="created_at" header="Created"></Column>
                 <Column field="updated_at" header="Updated"></Column>
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
-                        
+
                         <Button
                             v-show="true"
                             icon="pi pi-pencil"
@@ -130,7 +146,7 @@ watch(
                                 data.entity = slotProps.data;
                             "
                         />
-                    
+
                     </template>
                 </Column>
             </DataTable>
