@@ -29,7 +29,7 @@ class EntityController extends Controller
         // az Eloquent lekérdezéskészítő használatával.
         //$_entities = Entity::query();
 
-        // Ha a kérés keresési paramétert tartalmaz, 
+        // Ha a kérés keresési paramétert tartalmaz,
         // szűrje le az entitásokat a keresési paraméter segítségével
         //if ($search = $request->search) {
         //    $_entities->whereRaw(sql: "(name LIKE ? OR email LIKE ?)", bindings: [
@@ -46,7 +46,10 @@ class EntityController extends Controller
 
         //$page = $request->page ?? 1;
 
-        $companies = Company::active()->get()->select('name', 'id')->toArray();
+        $companies = Company::active()
+            ->select('name', 'id')
+            ->get()
+            ->toArray();
 
         //$entities = $_entities->with('company')->paginate(perPage: 10, columns: ['*'], pageName: 'page', page: $page);
 
