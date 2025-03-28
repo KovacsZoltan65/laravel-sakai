@@ -1,6 +1,8 @@
 
 <script setup>
-import AppLayout from "@/sakai/layout/AppLayout.vue";
+//import AppLayout from "@/sakai/layout/AppLayout.vue";
+import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
+
 import Create from "@/Pages/User/Create.vue";
 import Edit from "@/Pages/User/Edit.vue";
 import { usePage, useForm } from '@inertiajs/vue3';
@@ -73,7 +75,7 @@ watch(
 </script>
 
 <template>
-    <app-layout>             
+    <AuthLayout>             
         <div class="card">            
             <Create
                 :show="data.createOpen"
@@ -142,7 +144,7 @@ watch(
                 </template>
             </Dialog>
         </div>
-    </app-layout>
+    </AuthLayout>
 </template>
 
 <style scoped lang="scss">

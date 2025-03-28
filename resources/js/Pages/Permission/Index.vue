@@ -1,6 +1,6 @@
 <script setup>
 //import AppLayout from "@/sakai/layout/AppLayout.vue";
-import AuthLayout from "../../Layouts/AuthenticatedLayout.vue";
+import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 import { Head } from "@inertiajs/vue3";
 import Create from "@/Pages/Permission/Create.vue";
