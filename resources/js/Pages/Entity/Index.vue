@@ -3,7 +3,7 @@ import { onMounted, reactive, ref, watch, computed } from "vue";
 import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 //import { router } from "@inertiajs/vue3";
-import Create from "@/Pages/Entity/Create.vue";
+import CreateModal from "@/Pages/Entity/Create.vue";
 
 import { usePermissions } from '@/composables/usePermissions';
 const { has } = usePermissions();
@@ -81,10 +81,11 @@ watch(
 
         <div class="card">
 
-            <Create
+            <CreateModal
                 :show="data.createOpen"
                 :title="props.title"
                 @close="data.createOpen = false"
+                @saved="fetchItems"
             />
 
             <Button

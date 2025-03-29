@@ -1,182 +1,92 @@
 <script setup>
-import { useForm } from "@inertiajs/vue3";
-import { watchEffect } from "vue";
+import { ref, computed } from "vue";
+
+import useVuelidate from "@vuelidate/core";
+import { helpers, maxLength, minLength, required } from "@vuelidate/validators";
 
 const props = defineProps({
     show: Boolean,
     title: String,
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "saved"]);
 
-const form = useForm({
-    name: "",
+// Form adatok
+const form = ref({
+    name: '',
+    email: '',
+    // ide jön minden egyéb mező
 });
 
-const create = () => {
-    form.post(route("entity.store"), {
-        preserveScroll: true,
-        onSuccess: () => {
-            emit("close");
-            form.reset();
-        },
-        onError: () => null,
-        onFinish: () => null,
-    });
+// Validációs szabályok
+const rules = computed(() => ({
+    name: { required, minLength: minLength(3), maxLength: maxLength(255) },
+    email: { required, email: helpers.isEmail },
+}));
+
+const v$ = useVuelidate(rules, form);
+
+// Mentés
+const save = async () => {
+    v$.value.$touch();
+    if (!v$.value.$invalid) {
+        try {
+            // Itt mehet az axios.post...
+            axios.post('/api/entities', form.value)
+
+            emit('saved', form.value);
+            closeModal();
+        } catch (e) {
+            console.error('Mentés sikertelen', e);
+        }
+    }
 };
 
-watchEffect(() => {
-    if (props.show) {
-        form.errors = {};
-    }
-});
+const closeModal = () => {
+    v$.value.$reset(); // 👈 hibák törlése
+    emit('close');
+};
+
 </script>
 
 <template>
     <Dialog
-        v-model:visible="props.show"
-        position="center"
-        modal
-        :header="'Add ' + props.title"
-        :style="{ width: '30rem' }"
-        :closable="false"
+        :visible="show"
+        :style="{ width: '550px' }" modal
+        header="Create Entity"
+        @hide="closeModal"
     >
-        <form @submit.prevent="create">
-            <div class="flex flex-col gap-4">
-
-                <!-- Name -->
-                <div class="flex flex-col gap-2">
-                    <label for="name">Name</label>
+        <div class="flex flex-col gap-6" style="margin-top: 17px;">
+            <!-- NAME -->
+            <div class="flex flex-col grow basis-0 gap-2">
+                <FloatLabel variant="on">
+                    <label for="name" class="block font-bold mb-3">
+                        Name
+                    </label>
                     <InputText
                         id="name"
                         v-model="form.name"
-                        class="flex-auto"
-                        autocomplete="off"
-                        placeholder="Name"
+                        fluid
                     />
-                    <small v-if="form.errors.name" class="text-red-500">{{
-                        form.errors.name
-                    }}</small>
-                </div>
-
-                <!-- Email -->
-                <div class="flex flex-col gap-2">
-                    <label for="email">Email</label>
-                    <InputText
-                        id="email"
-                        v-model="form.email"
-                        class="flex-auto"
-                        autocomplete="off"
-                        placeholder="Email"
-                    />
-                    <small v-if="form.errors.email" class="text-red-500">{{
-                        form.errors.email
-                    }}</small>
-                </div>
-
-                <!-- Start Date -->
-                <div class="flex flex-col gap-2">
-                    <label for="start_date">Start Date</label>
-                    <InputText
-                        id="start_date"
-                        v-model="form.start_date"
-                        class="flex-auto"
-                        autocomplete="off"
-                        placeholder="Start Date"
-                    />
-                    <small v-if="form.errors.start_date" class="text-red-500">{{
-                        form.errors.start_date
-                    }}</small>
-                </div>
-
-                <!-- End Date -->
-                <div class="flex flex-col gap-2">
-                    <label for="end_date">End Date</label>
-                    <InputText
-                        id="end_date"
-                        v-model="form.end_date"
-                        class="flex-auto"
-                        autocomplete="off"
-                        placeholder="End Date"
-                    />
-                    <small v-if="form.errors.end_date" class="text-red-500">{{
-                        form.errors.end_date
-                    }}</small>
-                </div>
-
-                <!-- Last Export -->
-                <div class="flex flex-col gap-2">
-                    <label for="last_export">Last Export</label>
-                    <InputText
-                        id="last_export"
-                        v-model="form.last_export"
-                        class="flex-auto"
-                        autocomplete="off"
-                        placeholder="Last Export"
-                    />
-                    <small v-if="form.errors.last_export" class="text-red-500">{{
-                        form.errors.last_export
-                    }}</small>
-                </div>
-
-                <!-- Company -->
-                <div class="flex flex-col gap-2">
-                    <label for="company_id">Company</label>
-                    <InputText
-                        id="company_id"
-                        v-model="form.company_id"
-                        class="flex-auto"
-                        autocomplete="off"
-                        placeholder="Company"
-                    />
-                    <small v-if="form.errors.company_id" class="text-red-500">{{
-                        form.errors.company_id
-                    }}</small>
-                </div>
-
-                <!-- User -->
-                <div class="flex flex-col gap-2">
-                    <label for="user_id">User</label>
-                    <InputText
-                        id="user_id"
-                        v-model="form.user_id"
-                        class="flex-auto"
-                        autocomplete="off"
-                        placeholder="Last Export"
-                    />
-                    <small v-if="form.errors.user_id" class="text-red-500">{{
-                        form.errors.user_id
-                    }}</small>
-                </div>
-
-                <!-- Active -->
-                <div class="flex flex-col gap-2">
-                    <label for="active">Active</label>
-                    <InputText
-                        id="active"
-                        v-model="form.active"
-                        class="flex-auto"
-                        autocomplete="off"
-                        placeholder="Active"
-                    />
-                    <small v-if="form.errors.active" class="text-red-500">{{
-                        form.errors.active
-                    }}</small>
-                </div>
-
-                <div class="flex justify-end gap-2">
-                    
-                    <Button
-                        type="button"
-                        label="Cancel"
-                        severity="secondary"
-                        @click="emit('close')"
-                    ></Button>
-
-                    <Button type="submit" label="Save"></Button>
-
-                </div>
+                </FloatLabel>
+                <Message
+                    size="small"
+                    severity="secondary"
+                    variant="simple"
+                >
+                    enter_company_name
+                </Message>
+                <small class="text-red-500" v-if="v$.name.$error">
+                    {{ v$.name.$errors[0].$message }}
+                </small>
             </div>
-        </form>
+        </div>
+
+        <div class="flex justify-end gap-2 mt-4">
+            <Button label="Cancel" severity="secondary" @click="closeModal" />
+            <Button label="Save" icon="pi pi-check" @click="save" />
+        </div>
+
     </Dialog>
+
 </template>

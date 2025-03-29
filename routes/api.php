@@ -32,6 +32,10 @@ Route::get(
     uri: '/entities/fetch',
     action: [App\Http\Controllers\EntityController::class, 'fetch']
 )->name(name: 'api.entities.fetch');
+Route::post(
+    uri: '/entities',
+    action: [App\Http\Controllers\EntityController::class, 'create']
+)->name(name: 'api.entities.create');
 
 
 /*

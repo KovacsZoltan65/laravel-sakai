@@ -18,6 +18,7 @@ prettier:
             ...
         },
 
+    npm i vuelidate
 
 @import probléma:
     npm install -g sass-migrator
