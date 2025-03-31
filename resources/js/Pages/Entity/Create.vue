@@ -2,7 +2,7 @@
 import { ref, computed } from "vue";
 
 import useVuelidate from "@vuelidate/core";
-import { helpers, maxLength, minLength, required } from "@vuelidate/validators";
+import { required, minLength, maxLength, email } from "@vuelidate/validators";
 
 const props = defineProps({
     show: Boolean,
@@ -21,7 +21,7 @@ const form = ref({
 // Validációs szabályok
 const rules = computed(() => ({
     name: { required, minLength: minLength(3), maxLength: maxLength(255) },
-    email: { required, email: helpers.isEmail },
+    email: { required, email }
 }));
 
 const v$ = useVuelidate(rules, form);
