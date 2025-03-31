@@ -4,6 +4,7 @@ import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 //import { router } from "@inertiajs/vue3";
 import CreateModal from "@/Pages/Entity/Create.vue";
+import EditModal from "@/Pages/Entity/Edit.vue";
 
 import { usePermissions } from '@/composables/usePermissions';
 const { has } = usePermissions();
@@ -85,6 +86,14 @@ watch(
                 :show="data.createOpen"
                 :title="props.title"
                 @close="data.createOpen = false"
+                @saved="fetchItems"
+            />
+
+            <EditModal 
+                :show="data.editOpen"
+                :entity="data.entity"
+                :title="props.title"
+                @close="data.editOpen = false"
                 @saved="fetchItems"
             />
 

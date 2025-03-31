@@ -57,6 +57,7 @@ const closeModal = () => {
         @hide="closeModal"
     >
         <div class="flex flex-col gap-6" style="margin-top: 17px;">
+            
             <!-- NAME -->
             <div class="flex flex-col grow basis-0 gap-2">
                 <FloatLabel variant="on">
@@ -80,6 +81,31 @@ const closeModal = () => {
                     {{ v$.name.$errors[0].$message }}
                 </small>
             </div>
+
+            <!-- EMAIL -->
+            <div class="flex flex-col grow basis-0 gap-2">
+                <FloatLabel variant="on">
+                    <label for="email" class="block font-bold mb-3">
+                        Email
+                    </label>
+                    <InputText
+                        id="email"
+                        v-model="form.email"
+                        fluid
+                    />
+                </FloatLabel>
+                <Message
+                    size="small"
+                    severity="secondary"
+                    variant="simple"
+                >
+                    enter_company_email
+                </Message>
+                <small class="text-red-500" v-if="v$.email.$error">
+                    {{ v$.email.$errors[0].$message }}
+                </small>
+            </div>
+
         </div>
 
         <div class="flex justify-end gap-2 mt-4">
