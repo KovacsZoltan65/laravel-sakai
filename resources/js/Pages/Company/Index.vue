@@ -4,6 +4,7 @@ import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import CreateModal from "@/Pages/Company/Create.vue";
 import EditModal from "@/Pages/Company/Edit.vue";
+import DeleteModal from "@/Pages/Company/Delete.vue";
 
 import { usePermissions } from '@/composables/usePermissions';
 const { has } = usePermissions();
@@ -14,9 +15,9 @@ const { _, debounce, pickBy } = pkg;
 const isLoading = ref(false);
 
 const props = defineProps({
-  title: String,
-  filters: Object,
-  companies: Array,
+    title: String,
+    filters: Object,
+    companies: Array,
 });
 
 const companies = ref(null);
@@ -67,11 +68,11 @@ onMounted(() => {
 });
 
 watch(
-  () => [data.params.search, data.params.field, data.params.order], // 🧠 kizárjuk a page-et
-  debounce(() => {
-    data.params.page = 1; // új keresés = első oldal
-    fetchItems();
-  }, 300)
+    () => [data.params.search, data.params.field, data.params.order], // 🧠 kizárjuk a page-et
+    debounce(() => {
+        data.params.page = 1; // új keresés = első oldal
+        fetchItems();
+    }, 300)
 );
 
 const clearFilter = () => {
@@ -87,6 +88,7 @@ const clearFilter = () => {
 
         <div class="card">
 
+            <!-- CREATE MODAL -->
             <CreateModal
                 :show="data.createOpen"
                 :title="props.title"
@@ -94,6 +96,7 @@ const clearFilter = () => {
                 @saved="fetchItems"
             />
 
+            <!-- EDIT MODAL -->
             <EditModal
                 :show="data.editOpen"
                 :company="data.company"
@@ -102,8 +105,17 @@ const clearFilter = () => {
                 @saved="fetchItems"
             />
 
+            <!-- TÖRLÉS MODAL -->
+            <DeleteModal
+                :show="data.deleteOpen"
+                :company="data.company"
+                :title="props.title"
+                @close="data.deleteOpen = false"
+                @deleted="fetchItems"
+            />
+
             <Button
-                v-show="has('create company')"
+                :show="has('create company')"
                 icon="pi pi-plus"
                 label="Create"
                 @click="data.createOpen = true"
@@ -115,30 +127,15 @@ const clearFilter = () => {
                 :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
             />
 
-            <DataTable
-                v-if="companies"
-                :dataKey="'id'"
-                lazy paginator
-                :value="companies.data"
-                :rows="companies.per_page"
-                :totalRecords="companies.total"
-                :first="(companies.current_page - 1) * companies.per_page"
-                :loading="isLoading"
-                @page="onPageChange"
-                tableStyle="min-width: 50rem"
-
-            >
+            <DataTable v-if="companies" :dataKey="'id'" lazy paginator :value="companies.data"
+                :rows="companies.per_page" :totalRecords="companies.total"
+                :first="(companies.current_page - 1) * companies.per_page" :loading="isLoading" @page="onPageChange"
+                tableStyle="min-width: 50rem">
                 <template #header>
                     <div class="flex justify-between">
 
                         <!-- SZŰRÉS TÖRLÉSE -->
-                        <Button
-                            type="button"
-                            icon="pi pi-filter-slash"
-                            label="Clear"
-                            outlined
-                            @click="clearFilter()"
-                        />
+                        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearFilter()" />
 
                         <!-- FELIRAT -->
                         <div class="font-semibold text-xl mb-1">
@@ -151,10 +148,7 @@ const clearFilter = () => {
                                 <InputIcon>
                                     <i class="pi pi-search" />
                                 </InputIcon>
-                                <InputText
-                                    v-model="data.params.search"
-                                    placeholder="Keyword Search"
-                                />
+                                <InputText v-model="data.params.search" placeholder="Keyword Search" />
                             </IconField>
                         </div>
                     </div>
@@ -171,25 +165,15 @@ const clearFilter = () => {
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
 
-                        <Button
-                            v-show="has('update company')"
-                            icon="pi pi-pencil"
-                            outlined
-                            rounded
-                            class="mr-2"
-                            @click="((data.editOpen = true),(data.company = slotProps.data))"
-                        />
-                        <Button
-                            v-show="has('delete company')"
-                            icon="pi pi-trash"
-                            outlined
-                            rounded
-                            severity="danger"
-                            @click="
-                                deleteDialog = true;
-                                data.company = slotProps.data;
-                            "
-                        />
+                        <Button v-show="has('update company')" icon="pi pi-pencil" outlined rounded class="mr-2" @click="(
+                            (data.editOpen = true),
+                            (data.company = slotProps.data)
+                        )" />
+                        <Button v-show="has('delete company')" icon="pi pi-trash" outlined rounded severity="danger"
+                            @click="(
+                                (data.deleteOpen = true),
+                                (data.company = slotProps.data)
+                            )" />
 
                     </template>
                 </Column>

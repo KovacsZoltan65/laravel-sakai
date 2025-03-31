@@ -65,10 +65,10 @@ const closeModal = () => {
 </script>
 
 <template>
-    <Dialog 
-        :visible="show" modal 
-        header="Edit Company" 
-        @hide="closeModal" 
+    <Dialog
+        :visible="show" modal
+        header="Edit Company"
+        @hide="closeModal"
         :style="{ width: '550px' }"
     >
         <div class="flex flex-col gap-6" style="margin-top: 17px;">
@@ -123,8 +123,17 @@ const closeModal = () => {
 
             <!-- Gombok -->
             <div class="flex justify-end gap-2 mt-4">
-                <Button label="Cancel" severity="secondary" @click="closeModal" />
-                <Button label="Update" icon="pi pi-check" @click="updateCompany" />
+                <Button
+                    label="Cancel"
+                    severity="secondary"
+                    @click="closeModal"
+                />
+                <Button
+                    label="Update"
+                    icon="pi pi-check"
+                    @click="updateCompany"
+                    severity="danger"
+                />
             </div>
         </div>
     </Dialog>
