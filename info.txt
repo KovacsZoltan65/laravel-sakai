@@ -28,7 +28,7 @@ prettier:
 
 
 npm cache verify
-npm cache clear --force
+npm cache clean --force
 
 // -------------------------------
 // ENTITIES
