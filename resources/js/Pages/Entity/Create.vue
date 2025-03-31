@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 
 import useVuelidate from "@vuelidate/core";
 import { helpers, maxLength, minLength, required } from "@vuelidate/validators";
+import EntityService from "@/service/EntityService";
 
 const props = defineProps({
     show: Boolean,
@@ -32,9 +33,11 @@ const save = async () => {
     if (!v$.value.$invalid) {
         try {
             // Itt mehet az axios.post...
-            axios.post('/api/entities', form.value)
+            //await axios.post('/api/entities', form.value);
+            await EntityService.create(form.value); // �� itt kell a service-ben a form.value-t adni
 
             emit('saved', form.value);
+
             closeModal();
         } catch (e) {
             console.error('Mentés sikertelen', e);

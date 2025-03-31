@@ -4,6 +4,7 @@ import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 //import { router } from "@inertiajs/vue3";
 import CreateModal from "@/Pages/Entity/Create.vue";
+import EntityService from "@/service/EntityService";
 
 import { usePermissions } from '@/composables/usePermissions';
 const { has } = usePermissions();
@@ -39,6 +40,18 @@ const onPageChange = (event) => {
     fetchItems();
 };
 
+/**
+ * Lekéri az entitásokat a szerverről,
+ * majd beállítja a `entities`-t a kapott adatokkal.
+ *
+ * @param {Object} [params={}] - a lekérdezés paraméterei
+ * @property {number} [params.page=1] - az oldal száma
+ * @property {string} [params.search] - a keresendő szöveg
+ * @property {string} [params.field] - a rendezendő mez
+ * @property {string} [params.order] - a rendezés iránya (asc/desc)
+ *
+ * @returns {Promise<void>}
+ */
 const fetchItems = async () => {
 
     isLoading.value = true;
@@ -51,7 +64,9 @@ const fetchItems = async () => {
     });
 
     try {
-        const response = await axios.get(route('api.entities.fetch'), { params });
+        //const response = await axios.get(route('api.entities.fetch'), { params });
+        const response = await EntityService.getEntities(params);
+
         entities.value = response.data;
     } catch (error) {
         console.error("Hiba az entitások lekérdezésekor", error);
