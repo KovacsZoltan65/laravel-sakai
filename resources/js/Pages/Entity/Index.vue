@@ -2,24 +2,32 @@
 import { onMounted, reactive, ref, watch, computed } from "vue";
 import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
-import { router } from "@inertiajs/vue3";
-import Create from "@/Pages/Entity/Create.vue";
+//import { router } from "@inertiajs/vue3";
+import CreateModal from "@/Pages/Entity/Create.vue";
+import EditModal from "@/Pages/Entity/Edit.vue";
+
+import { usePermissions } from '@/composables/usePermissions';
+const { has } = usePermissions();
 
 import pkg from "lodash";
 const { _, debounce, pickBy } = pkg;
 
+const isLoading = ref(false);
+
 const props = defineProps({
-    title: String,
-    filters: Object,
-    entities: Object,
-    perPage: Number,
+  title: String,
+  filters: Object,
+  companies: Array,
 });
+
+const entities = ref(null);
 
 const data = reactive({
     params: {
         search: props.filters.search,
         field: props.filters.field,
         order: props.filters.order,
+        page: 1, // 👉 hozzáadva
         createOpen: false,
         editOpen: false,
         deleteOpen: false,
@@ -28,42 +36,43 @@ const data = reactive({
 });
 
 const onPageChange = (event) => {
-    router.get(
-        route("entities.index"),
-        { page: event.page + 1 },
-        { preserveState: true },
-    );
+    data.params.page = event.page + 1;
+    fetchItems();
 };
 
-watch(
-    () => [data.params.search, data.params.field, data.params.order],
-    debounce(() => {
-        const params = pickBy({
-            search: data.params.search,
-            field: data.params.field,
-            order: data.params.order,
-        });
-    router.get(route("entities.index"), params, {
-        replace: true,
-        preserveState: true,
-        preserveScroll: true,
+const fetchItems = async () => {
+
+    isLoading.value = true;
+
+    const params = pickBy({
+        page: data.params.page ?? 1,
+        search: data.params.search,
+        field: data.params.field,
+        order: data.params.order,
     });
+
+    try {
+        const response = await axios.get(route('api.entities.fetch'), { params });
+        entities.value = response.data;
+    } catch (error) {
+        console.error("Hiba az entitások lekérdezésekor", error);
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+onMounted(() => {
+    fetchItems();
+});
+
+watch(
+  () => [data.params.search, data.params.field, data.params.order], // 🧠 kizárjuk a page-et
+  debounce(() => {
+    data.params.page = 1; // új keresés = első oldal
+    fetchItems();
   }, 300)
 );
-/*
-watch(
-    () => _.cloneDeep(data.params),
-    debounce(() => {
-        let params = pickBy(data.params);
 
-        router.get(route("entities.index"), params, {
-            replace: true,
-            preserveState: true,
-            preserveScroll: true,
-        });
-    }, 150),
-);
-*/
 </script>
 
 <template>
@@ -73,27 +82,46 @@ watch(
 
         <div class="card">
 
-            <Create
+            <CreateModal
                 :show="data.createOpen"
                 :title="props.title"
                 @close="data.createOpen = false"
+                @saved="fetchItems"
+            />
+
+            <EditModal 
+                :show="data.editOpen"
+                :entity="data.entity"
+                :title="props.title"
+                @close="data.editOpen = false"
+                @saved="fetchItems"
             />
 
             <Button
-                v-show="true"
+                v-show="has('create entity')"
                 icon="pi pi-plus"
                 label="Create"
                 @click="data.createOpen = true"
+                class="mr-2"
+            />
+
+            <Button
+                @click="fetchItems"
+                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
             />
 
             <DataTable
+                v-if="entities"
+                :dataKey="'id'"
                 lazy paginator
                 :value="entities.data"
                 :rows="entities.per_page"
                 :totalRecords="entities.total"
                 :first="(entities.current_page - 1) * entities.per_page"
+                :loading="isLoading"
                 @page="onPageChange"
                 tableStyle="min-width: 50rem"
+
             >
                 <template #header>
                     <div class="flex justify-end">
@@ -108,15 +136,11 @@ watch(
                         </IconField>
                     </div>
                 </template>
+
                 <template #empty> No data found. </template>
                 <template #loading> Loading data. Please wait. </template>
 
-                <Column header="No">
-                    <template #body="slotProps">
-                        {{ slotProps.index + 1 }}
-                    </template>
-                </Column>
-
+                <Column field="id" header="#"></Column>
                 <Column field="name" header="Name"></Column>
 
                 <Column field="created_at" header="Created"></Column>
@@ -125,18 +149,15 @@ watch(
                     <template #body="slotProps">
 
                         <Button
-                            v-show="true"
+                            v-show="has('update entity')"
                             icon="pi pi-pencil"
                             outlined
                             rounded
                             class="mr-2"
-                            @click="
-                                ((data.editOpen = true),
-                                (data.entity = slotProps.data))
-                            "
+                            @click="((data.editOpen = true),(data.entity = slotProps.data))"
                         />
                         <Button
-                            v-show="true"
+                            v-show="has('delete entity')"
                             icon="pi pi-trash"
                             outlined
                             rounded
