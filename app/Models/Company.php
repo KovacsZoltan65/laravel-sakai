@@ -42,4 +42,9 @@ class Company extends Model
     {
         return date('d-m-Y H:i', strtotime($this->attributes['updated_at']));
     }
+    
+    public function entities()
+    {
+        return $this->hasMany(Entity::class);
+    }
 }

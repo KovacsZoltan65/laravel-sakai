@@ -17,12 +17,12 @@ class EntityController extends Controller
         //
     }
 
-    public function index(Request $request): InertiaResponse
+    public function index(EntityIndexRequest $request): InertiaResponse
     {
         $companies = Company::active()->select('name', 'id')->get();
 
         return Inertia::render('Entity/Index', [
-            'title' => 'Entity',
+            'title' => 'Entities',
             'filters' => $request->all(['search', 'field', 'order']),
             'companies' => $companies,
         ]);

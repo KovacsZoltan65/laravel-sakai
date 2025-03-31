@@ -17,6 +17,14 @@ class CompanyController extends Controller
 
     public function index(CompanyIndexRequest $request): InertiaResponse
     {
+        return Inertia::render('Company/Index', [
+            'title' => 'Companies',
+            'filters' => $request->all(['search', 'field', 'order']),
+        ]);
+    }
+    
+    public function fetch(Request $request)
+    {
         $_companies = Company::query();
 
         if( $request->has(key: 'search') ) {
@@ -30,25 +38,9 @@ class CompanyController extends Controller
         if ($request->has('field') && $request->has('order')) {
             $_companies->orderBy($request->field, $request->order);
         }
-        //if( $request->hasMany( ['field', 'order'] ) ) {
-        //    $_companies->orderBy(column: $request->field, direction: $request->order);
-        //}
 
-        $page = $request->page ?? 1;
+        $companies = $_companies->with('entities')->paginate(10, ['*'], 'page', $request->page ?? 1);
 
-        $companies = $_companies->paginate(
-            perPage: 10,
-            columns: ['*'],
-            pageName: 'page',
-            page: $page
-        );
-
-        $params = [
-            'title' => 'Companies',
-            'filters' => $request->all(['search', 'field', 'order']),
-            'companies' => $companies,
-        ];
-
-        return Inertia::render('Companies/Index', $params);
+        return response()->json($companies);
     }
 }

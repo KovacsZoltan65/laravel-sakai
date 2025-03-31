@@ -25,6 +25,11 @@ class RoleSeeder extends Seeder
             'read user',
             'create user',
 
+            'delete company',
+            'update company',
+            'read company',
+            'create company',
+
             'delete role',
             'update role',
             'read role',

@@ -2,9 +2,8 @@
 import { onMounted, reactive, ref, watch, computed } from "vue";
 import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
-//import { router } from "@inertiajs/vue3";
-import CreateModal from "@/Pages/Entity/Create.vue";
-import EditModal from "@/Pages/Entity/Edit.vue";
+import CreateModal from "@/Pages/Company/Create.vue";
+import EditModal from "@/Pages/Company/Edit.vue";
 
 import { usePermissions } from '@/composables/usePermissions';
 const { has } = usePermissions();
@@ -20,7 +19,7 @@ const props = defineProps({
   companies: Array,
 });
 
-const entities = ref(null);
+const companies = ref(null);
 
 const data = reactive({
     params: {
@@ -32,7 +31,7 @@ const data = reactive({
         editOpen: false,
         deleteOpen: false,
     },
-    entity: null
+    company: null
 });
 
 const onPageChange = (event) => {
@@ -52,8 +51,10 @@ const fetchItems = async () => {
     });
 
     try {
-        const response = await axios.get(route('api.entities.fetch'), { params });
-        entities.value = response.data;
+        const response = await axios.get(route('api.companies.fetch'), { params });
+        //const response = await axios.get('/api/companies/fetch', { params });
+
+        companies.value = response.data;
     } catch (error) {
         console.error("Hiba az entitások lekérdezésekor", error);
     } finally {
@@ -93,16 +94,16 @@ const clearFilter = () => {
                 @saved="fetchItems"
             />
 
-            <EditModal 
+            <EditModal
                 :show="data.editOpen"
-                :entity="data.entity"
+                :company="data.company"
                 :title="props.title"
                 @close="data.editOpen = false"
                 @saved="fetchItems"
             />
 
             <Button
-                v-show="has('create entity')"
+                v-show="has('create company')"
                 icon="pi pi-plus"
                 label="Create"
                 @click="data.createOpen = true"
@@ -115,13 +116,13 @@ const clearFilter = () => {
             />
 
             <DataTable
-                v-if="entities"
+                v-if="companies"
                 :dataKey="'id'"
                 lazy paginator
-                :value="entities.data"
-                :rows="entities.per_page"
-                :totalRecords="entities.total"
-                :first="(entities.current_page - 1) * entities.per_page"
+                :value="companies.data"
+                :rows="companies.per_page"
+                :totalRecords="companies.total"
+                :first="(companies.current_page - 1) * companies.per_page"
                 :loading="isLoading"
                 @page="onPageChange"
                 tableStyle="min-width: 50rem"
@@ -141,7 +142,7 @@ const clearFilter = () => {
 
                         <!-- FELIRAT -->
                         <div class="font-semibold text-xl mb-1">
-                            entities_title
+                            companies_title
                         </div>
 
                         <!-- KERESÉS-->
@@ -162,31 +163,31 @@ const clearFilter = () => {
                 <template #empty> No data found. </template>
                 <template #loading> Loading data. Please wait. </template>
 
-                <Column field="id" header="#"></Column>
-                <Column field="name" header="Name"></Column>
+                <Column field="name" header="Name" />
+                <Column field="email" header="Email" />
+                <Column field="address" header="Address" />
+                <Column field="phone" header="Phone" />
 
-                <Column field="created_at" header="Created"></Column>
-                <Column field="updated_at" header="Updated"></Column>
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
 
                         <Button
-                            v-show="has('update entity')"
+                            v-show="has('update company')"
                             icon="pi pi-pencil"
                             outlined
                             rounded
                             class="mr-2"
-                            @click="((data.editOpen = true),(data.entity = slotProps.data))"
+                            @click="((data.editOpen = true),(data.company = slotProps.data))"
                         />
                         <Button
-                            v-show="has('delete entity')"
+                            v-show="has('delete company')"
                             icon="pi pi-trash"
                             outlined
                             rounded
                             severity="danger"
                             @click="
                                 deleteDialog = true;
-                                data.entity = slotProps.data;
+                                data.company = slotProps.data;
                             "
                         />
 
