@@ -18,6 +18,7 @@ prettier:
             ...
         },
 
+    npm i vuelidate
 
 @import probléma:
     npm install -g sass-migrator
@@ -27,7 +28,7 @@ prettier:
 
 
 npm cache verify
-npm cache clear --force
+npm cache clean --force
 
 // -------------------------------
 // ENTITIES
