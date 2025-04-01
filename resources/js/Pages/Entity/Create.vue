@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 
 import useVuelidate from "@vuelidate/core";
 import { required, minLength, maxLength, email } from "@vuelidate/validators";
+import EntityService from "@/service/EntityService";
 
 const props = defineProps({
     show: Boolean,
@@ -32,7 +33,6 @@ const save = async () => {
     if (!v$.value.$invalid) {
         try {
             // Itt mehet az axios.post...
-            axios.post('/api/entities', form.value)
 
             emit('saved', form.value);
             closeModal();
