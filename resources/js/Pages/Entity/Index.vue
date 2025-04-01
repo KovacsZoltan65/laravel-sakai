@@ -6,6 +6,7 @@ import { Head } from "@inertiajs/vue3";
 import EntityService from '@/service/EntityService.js';
 import CreateModal from "@/Pages/Entity/Create.vue";
 import EditModal from "@/Pages/Entity/Edit.vue";
+import DeleteModal from "@/Pages/Entity/Delete.vue";
 
 import { usePermissions } from '@/composables/usePermissions';
 const { has } = usePermissions();
@@ -16,9 +17,9 @@ const { _, debounce, pickBy } = pkg;
 const isLoading = ref(false);
 
 const props = defineProps({
-  title: String,
-  filters: Object,
-  companies: Array,
+    title: String,
+    filters: Object,
+    companies: Array,
 });
 
 const entities = ref(null);
@@ -81,12 +82,16 @@ onMounted(() => {
 });
 
 watch(
-  () => [data.params.search, data.params.field, data.params.order], // 🧠 kizárjuk a page-et
-  debounce(() => {
-    data.params.page = 1; // új keresés = első oldal
-    fetchItems();
-  }, 300)
+    () => [data.params.search, data.params.field, data.params.order], // 🧠 kizárjuk a page-et
+    debounce(() => {
+        data.params.page = 1; // új keresés = első oldal
+        fetchItems();
+    }, 300)
 );
+
+const clearFilter = () => {
+    console.log('Clear Filters');
+};
 
 </script>
 
@@ -97,58 +102,79 @@ watch(
 
         <div class="card">
 
-            <CreateModal
-                :show="data.createOpen"
-                :title="props.title"
+            <!-- CREATE MODAL -->
+            <CreateModal 
+                :show="data.createOpen" 
+                :title="props.title" 
                 @close="data.createOpen = false"
-                @saved="fetchItems"
-            />
+                @saved="fetchItems" />
 
+            <!-- EDIT MODAL -->
             <EditModal 
-                :show="data.editOpen"
-                :entity="data.entity"
-                :title="props.title"
+                :show="data.editOpen" 
+                :entity="data.entity" 
+                :title="props.title" 
                 @close="data.editOpen = false"
-                @saved="fetchItems"
-            />
+                @saved="fetchItems" />
 
-            <Button
-                v-show="has('create entity')"
-                icon="pi pi-plus"
-                label="Create"
+            <!-- TÖRLÉS MODAL -->
+            <DeleteModal 
+                :show="data.deleteOpen" 
+                :company="data.entity" 
+                :title="props.title"
+                @close="data.deleteOpen = false" 
+                @deleted="fetchItems" />
+
+            <!-- CREATE GOMB -->
+            <Button 
+                v-show="has('create entity')" 
+                icon="pi pi-plus" 
+                label="Create" 
                 @click="data.createOpen = true"
-                class="mr-2"
+                class="mr-2" />
+
+            <!-- REFRESH GOMB -->
+            <Button 
+                @click="fetchItems" 
+                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" 
             />
 
-            <Button
-                @click="fetchItems"
-                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
-            />
-
-            <DataTable
-                v-if="entities"
-                :dataKey="'id'"
-                lazy paginator
-                :value="entities.data"
+            <DataTable 
+                v-if="entities" 
+                :dataKey="'id'" lazy paginator 
+                :value="entities.data" 
                 :rows="entities.per_page"
-                :totalRecords="entities.total"
+                :totalRecords="entities.total" 
                 :first="(entities.current_page - 1) * entities.per_page"
-                :loading="isLoading"
-                @page="onPageChange"
-                tableStyle="min-width: 50rem"
+                :loading="isLoading" 
+                @page="onPageChange" 
+                tableStyle="min-width: 50rem">
 
-            >
                 <template #header>
-                    <div class="flex justify-end">
-                        <IconField>
-                            <InputIcon>
-                                <i class="pi pi-search" />
-                            </InputIcon>
-                            <InputText
-                                v-model="data.params.search"
-                                placeholder="Keyword Search"
-                            />
-                        </IconField>
+                    <div class="flex flex-wrap gap-2 items-center justify-between">
+                        <!-- SZŰRÉS TÖRLÉSE -->
+                        <Button
+                            type="button"
+                            icon="pi pi-filter-slash"
+                            label="clear"
+                            outlined
+                            @click="clearFilter()"
+                        />
+
+                        <!-- FELIRAT -->
+                        <div class="font-semibold text-xl mb-1">
+                            entities_title
+                        </div>
+
+                        <!-- KERESÉS -->
+                        <div class="flex justify-end">
+                            <IconField>
+                                <InputIcon>
+                                    <i class="pi pi-search" />
+                                </InputIcon>
+                                <InputText v-model="data.params.search" placeholder="Keyword Search" />
+                            </IconField>
+                        </div>
                     </div>
                 </template>
 
@@ -163,25 +189,25 @@ watch(
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
 
-                        <Button
-                            v-show="has('update entity')"
-                            icon="pi pi-pencil"
-                            outlined
-                            rounded
+                        <Button 
+                            v-show="has('update entity')" 
+                            icon="pi pi-pencil" 
+                            outlined rounded 
                             class="mr-2"
-                            @click="((data.editOpen = true),(data.entity = slotProps.data))"
-                        />
-                        <Button
-                            v-show="has('delete entity')"
-                            icon="pi pi-trash"
-                            outlined
-                            rounded
+                            @click="(
+                                (data.editOpen = true), 
+                                (data.entity = slotProps.data)
+                            )" />
+
+                        <Button 
+                            v-show="has('delete entity')" 
+                            icon="pi pi-trash" 
+                            outlined rounded 
                             severity="danger"
-                            @click="
-                                deleteDialog = true;
-                                data.entity = slotProps.data;
-                            "
-                        />
+                            @click="(
+                                (data.deleteOpen = true),
+                                (data.entity = slotProps.data)
+                            )" />
 
                     </template>
                 </Column>
