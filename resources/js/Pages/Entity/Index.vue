@@ -3,6 +3,7 @@ import { onMounted, reactive, ref, watch, computed } from "vue";
 import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 //import { router } from "@inertiajs/vue3";
+import EntityService from '@/service/EntityService.js';
 import CreateModal from "@/Pages/Entity/Create.vue";
 import EditModal from "@/Pages/Entity/Edit.vue";
 
