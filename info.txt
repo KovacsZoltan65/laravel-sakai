@@ -41,3 +41,45 @@ php artisan make:migration CreateEntitiesTable
 php artisan make:seed EntitySeed
 php artisan make:factory EntityFactory
 php artisan make:resource EntityResource
+
+// -------------------------------
+// COUNTRIES
+// -------------------------------
+php artisan make:model Country
+php artisan make:controller CountryController
+php artisan make:migration CreateCountryTable
+php artisan make:seeder CountrySeeder
+php artisan make:factory CountryFactory
+php artisan make:resource CountryResource
+php artisan make:request CountryIndexRequest
+php artisan make:request StoreCountryRequest
+php artisan make:request UpdateCountryRequest
+php artisan make:repository Country
+
+// -------------------------------
+// REGIONS
+// -------------------------------
+php artisan make:model Region
+php artisan make:controller RegionController
+php artisan make:migration CreateRegionTable
+php artisan make:seeder RegionSeeder
+php artisan make:factory RegionFactory
+php artisan make:resource RegionResource
+php artisan make:request RegionIndexRequest
+php artisan make:request StoreRegionRequest
+php artisan make:request UpdateRegionRequest
+php artisan make:repository Region
+
+// -------------------------------
+// CITIES
+// -------------------------------
+php artisan make:model City
+php artisan make:controller CityController
+php artisan make:migration CreateCityTable
+php artisan make:seeder CitySeeder
+php artisan make:factory CityFactory
+php artisan make:resource CityResource
+php artisan make:request CityIndexRequest
+php artisan make:request StoreCityRequest
+php artisan make:request UpdateCityRequest
+php artisan make:repository City
