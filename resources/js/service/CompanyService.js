@@ -7,14 +7,14 @@ class CompanyService extends BaseService
         this.url = "/companies";
     }
 
-    getCompanies()
+    getCompanies(params = {})
     {
-        return this.get(this.url);
+        return this.get(`${this.url}/fetch`, { params });
     }
 
-    getCompany(id)
+    getCompany(payload)
     {
-        return this.get(`${this.url}/${id}`);
+        return this.post(this.url, payload);
     }
 
     getCompanyByName(name)
@@ -27,20 +27,12 @@ class CompanyService extends BaseService
         return this.post(this.url, data);
     }
 
-    updateCompany(id, data)
-    {
-        return this.put(`${this.url}/${id}`, data);
+    updateCompany(id, payload) {
+        return this.put(`${this.url}/${id}`, payload);
     }
 
-    deleteCompanies(ids)
-    {
-        const query = ids.map(id => `ids[]=${id}`).join('&');
-        return this.delete(`${this.url}?${query}`);
-    }
-
-    deleteCompany(id)
-    {
-        return this.delete(this.url + `/${id}`);
+    deleteCompany(id) {
+        return this.delete(`${this.url}/${id}`);
     }
 }
 

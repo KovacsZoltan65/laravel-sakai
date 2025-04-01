@@ -18,16 +18,21 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// =================================================
 // COMPANIES
-//Route::get(uri: '/companies', action: [App\Http\Controllers\CompanyController::class, 'getCompanies'])->name('api.companies');
-
-// PERSONS
+// =================================================
 Route::get(
-    uri: '/persons',
-    action: [App\Http\Controllers\PersonController::class, 'getPersons']
-)->name(name: 'api.persons');
+    uri: '/companies/fetch', 
+    action: [App\Http\Controllers\CompanyController::class, 'fetch']
+)->name(name: 'api.companies.fetch');
+Route::post(
+    uri:'/companies', 
+    action: [App\Http\Controllers\CompanyController::class, 'create']
+)->name(name: 'api.companies.create');
 
-// web.php vagy api.php
+// =================================================
+// ENTITIES
+// =================================================
 Route::get(
     uri: '/entities/fetch',
     action: [App\Http\Controllers\EntityController::class, 'fetch']
@@ -36,6 +41,18 @@ Route::post(
     uri: '/entities',
     action: [App\Http\Controllers\EntityController::class, 'create']
 )->name(name: 'api.entities.create');
+
+// =================================================
+// PERSONS
+// =================================================
+Route::get(
+    uri: '/persons/fetch',
+    action: [App\Http\Controllers\PersonController::class, 'fetch']
+)->name(name: 'api.persons');
+Route::post(
+    uri: '/persons',
+    action: [App\Http\Controllers\PersonController::class, 'create']
+)->name(name: 'api.persons.create');
 
 
 /*

@@ -51,19 +51,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('/permission', PermissionController::class)->except('create', 'show', 'edit');
 
+    // =================================================
     // COMPANIES
+    // =================================================
     Route::get(
-        '/companies',
-        [App\Http\Controllers\CompanyController::class, 'index']
+        uri: '/companies',
+        action: [App\Http\Controllers\CompanyController::class, 'index']
     )->name('companies.index');
 
+    // =================================================
     // PERSONS
+    // =================================================
     Route::get(
         uri: '/persons', 
         action: [App\Http\Controllers\PersonController::class, 'index']
-    )->name('persons.index');
+    )->name(name: 'persons.index');
 
+    // =================================================
     // ENTITIES
+    // =================================================
     Route::get(
         uri: '/entities', 
         action: [App\Http\Controllers\EntityController::class, 'index']

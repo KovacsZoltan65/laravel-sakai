@@ -151,12 +151,13 @@ const clearFilter = () => {
                 tableStyle="min-width: 50rem">
 
                 <template #header>
-                    <div class="flex flex-wrap gap-2 items-center justify-between">
+                    <div class="flex justify-between">
+
                         <!-- SZŰRÉS TÖRLÉSE -->
                         <Button
                             type="button"
                             icon="pi pi-filter-slash"
-                            label="clear"
+                            label="Clear"
                             outlined
                             @click="clearFilter()"
                         />
@@ -166,13 +167,16 @@ const clearFilter = () => {
                             entities_title
                         </div>
 
-                        <!-- KERESÉS -->
+                        <!-- KERESÉS-->
                         <div class="flex justify-end">
                             <IconField>
                                 <InputIcon>
                                     <i class="pi pi-search" />
                                 </InputIcon>
-                                <InputText v-model="data.params.search" placeholder="Keyword Search" />
+                                <InputText
+                                    v-model="data.params.search"
+                                    placeholder="Keyword Search"
+                                />
                             </IconField>
                         </div>
                     </div>
