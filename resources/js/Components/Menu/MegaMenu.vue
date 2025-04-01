@@ -9,7 +9,7 @@ import { usePermissions } from '@/composables/usePermissions';
 const { has } = usePermissions();
 
 const currentUrl = page.url; // vagy page.props.url, attól függően, hogyan adod át az aktuális URL-t
-console.log(currentUrl);
+//console.log(currentUrl);
 //const route = useRoute();
 
 //const page = usePage();

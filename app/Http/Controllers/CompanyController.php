@@ -17,7 +17,7 @@ class CompanyController extends Controller
 
     public function index(CompanyIndexRequest $request): InertiaResponse
     {
-        return Inertia::render('Company/Index', [
+        return Inertia::render(component: 'Company/Index', props: [
             'title' => 'Companies',
             'filters' => $request->all(['search', 'field', 'order']),
         ]);
