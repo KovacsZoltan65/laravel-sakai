@@ -165,11 +165,19 @@ const clearFilter = () => {
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
 
-                        <Button v-show="has('update company')" icon="pi pi-pencil" outlined rounded class="mr-2" @click="(
-                            (data.editOpen = true),
-                            (data.company = slotProps.data)
-                        )" />
-                        <Button v-show="has('delete company')" icon="pi pi-trash" outlined rounded severity="danger"
+                        <Button 
+                            v-show="has('update company')" 
+                            icon="pi pi-pencil" 
+                            outlined rounded class="mr-2" 
+                            @click="(
+                                (data.editOpen = true),
+                                (data.company = slotProps.data)
+                            )" />
+                        <Button 
+                            v-show="has('delete company')" 
+                            icon="pi pi-trash" 
+                            outlined rounded 
+                            severity="danger"
                             @click="(
                                 (data.deleteOpen = true),
                                 (data.company = slotProps.data)

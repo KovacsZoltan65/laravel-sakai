@@ -120,7 +120,7 @@ const clearFilter = () => {
             <!-- TÖRLÉS MODAL -->
             <DeleteModal 
                 :show="data.deleteOpen" 
-                :company="data.entity" 
+                :entity="data.entity" 
                 :title="props.title"
                 @close="data.deleteOpen = false" 
                 @deleted="fetchItems" />
@@ -191,6 +191,7 @@ const clearFilter = () => {
                 <Column field="created_at" header="Created"></Column>
                 <Column field="updated_at" header="Updated"></Column>
                 <Column :exportable="false" style="min-width: 12rem">
+
                     <template #body="slotProps">
 
                         <Button 
