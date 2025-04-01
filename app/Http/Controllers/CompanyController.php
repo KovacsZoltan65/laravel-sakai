@@ -7,6 +7,7 @@ use App\Models\Company;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response AS InertiaResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CompanyController extends Controller
 {
@@ -22,8 +23,8 @@ class CompanyController extends Controller
             'filters' => $request->all(['search', 'field', 'order']),
         ]);
     }
-    
-    public function fetch(Request $request)
+
+    public function fetch(Request $request): JsonResponse
     {
         $_companies = Company::query();
 

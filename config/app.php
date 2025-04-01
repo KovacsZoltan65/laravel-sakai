@@ -83,7 +83,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => env('APP_LOCALE', 'en'),
 
     /*
     |--------------------------------------------------------------------------
@@ -96,7 +96,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     /*
     |--------------------------------------------------------------------------
@@ -109,7 +109,27 @@ return [
     |
     */
 
-    'faker_locale' => 'en_US',
+    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Available locales
+    |--------------------------------------------------------------------------
+    |
+    | List all locales that your application works with
+    |
+    */
+    //'available_locales' => [
+    //    'English' => 'en',
+    //    'Hungarian' => 'hu',
+    //],
+    'available_locales' => [
+        [ 'name' => "United States", 'code' => "US" ],
+        [ 'name' => "Magyarország", 'code' => "HU" ],
+        [ 'name' => "Great Britain", 'code' => "GB" ],
+    ],
+
+    'supported_locales' => ['en', 'hu'],
 
     /*
     |--------------------------------------------------------------------------

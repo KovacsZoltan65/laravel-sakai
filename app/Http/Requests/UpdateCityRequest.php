@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CountryIndexRequest extends FormRequest
+class UpdateCityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,9 +22,7 @@ class CountryIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'field' => ['in:name,email,address,phone,created_at,updated_at'],
-            'order' => ['in:asc,desc'],
-            'perPage' => ['numeric'],
+            //
         ];
     }
 }

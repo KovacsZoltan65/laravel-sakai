@@ -69,3 +69,17 @@ php artisan make:request RegionIndexRequest
 php artisan make:request StoreRegionRequest
 php artisan make:request UpdateRegionRequest
 php artisan make:repository Region
+
+// -------------------------------
+// CITIES
+// -------------------------------
+php artisan make:model City
+php artisan make:controller CityController
+php artisan make:migration CreateCityTable
+php artisan make:seeder CitySeeder
+php artisan make:factory CityFactory
+php artisan make:resource CityResource
+php artisan make:request CityIndexRequest
+php artisan make:request StoreCityRequest
+php artisan make:request UpdateCityRequest
+php artisan make:repository City
