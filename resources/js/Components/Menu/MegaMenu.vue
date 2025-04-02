@@ -70,16 +70,14 @@ const items = ref([
                             url: '/companies', 
                             icon: "pi pi-fw pi-briefcase",
                             class: 'p-menuitem'
-                        },
-                        {
+                        }, {
                             label: 'Persons', 
                             url: '/persons', 
-                            icon: "pi pi-fw pi-user",},
-                        {
+                            icon: "pi pi-fw pi-user",
+                        }, {
                             label: 'Entities', 
                             url: '/entities', 
                             icon: "pi pi-fw pi-user",
-                            class: 'p-menuitem'
                         }
                     ]
                 }
@@ -87,9 +85,23 @@ const items = ref([
                 {
                     label: 'Geo',
                     items: [
-                        { label: 'Countries', icon: 'pi pi-fw pi-map-marker' },
-                        { label: 'States', icon: 'pi pi-fw pi-map-marker'},
-                        { label: 'Cities', icon: 'pi pi-fw pi-map-marker'}
+                        {
+                            label: 'Countries', 
+                            url: '/countries',
+                            icon: 'pi pi-fw pi-map-marker',
+                            visible: has('read country'),
+                        }, {
+                            label: 'Regions', 
+                            url: '/regions',
+                            icon: 'pi pi-fw pi-map-marker',
+                            visible: has('read region'),
+                        },
+                        {
+                            label: 'Cities', 
+                            url: '/cities',
+                            icon: 'pi pi-fw pi-map-marker',
+                            visible: has('read city'),
+                        }
                     ]
                 }
             ]

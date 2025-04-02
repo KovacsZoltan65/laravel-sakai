@@ -4,6 +4,10 @@ import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import CountryService from "@/service/Geo/CountryService.js";
 
+import CreateModal from "@/Pages/Geo/Country/Create.vue";
+import EditModal from "@/Pages/Geo/Country/Edit.vue";
+import DeleteModal from "@/Pages/Geo/Country/Delete.vue";
+
 import { usePermissions } from '@/composables/usePermissions';
 const { has } = usePermissions();
 
@@ -52,7 +56,7 @@ const fetchItems = async () => {
 
     try {
         const response = await CountryService.getCountries(params);
-
+//console.log('response.data', response.data);
         countries.value = response.data;
     } catch(error) {
         console.error("Hiba az országok lekérdezésekor", error);
@@ -83,6 +87,130 @@ const clearFilter = () => {
     <AuthLayout>
         <Head :title="props.title" />
 
-        <div class="card"></div>
+        <div class="card">
+
+            <!-- CREATE MODAL -->
+            <CreateModal
+                :show="data.createOpen"
+                :country="data.country"
+                :title="props.title"
+                @close="data.createOpen = false"
+                @saved="fetchItems"
+            />
+
+            <!-- EDIT MODAL -->
+            <EditModal
+                :show="data.editOpen"
+                :country="data.country"
+                :title="props.title"
+                @close="data.editOpen = false"
+                @saved="fetchItems"
+            />
+
+            <!-- DELETE MODAL -->
+            <DeleteModal
+                :show="data.deleteOpen"
+                :country="data.country"
+                :title="props.title"
+                @close="data.deleteOpen = false"
+                @deleted="fetchItems"
+            />
+
+            <!-- CREATE GOMB -->
+            <Button 
+                v-show="has('create country')"
+                icon="pi pi-plus"
+                label="Create"
+                class="mr-2"
+                @click="data.createOpen = true"
+            />
+
+            <!-- REFRESH GOMB -->
+            <Button
+                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
+                @click="fetchItems"
+            />
+
+            <DataTable
+                v-if="countries"
+                :dataKey="'id'" lazy paginator 
+                :value="countries.data"
+                :rows="countries.per_page"
+                :totalRecords="countries.total"
+                :first="(countries.current_page - 1) * countries.per_page"
+                :loading="isLoading" 
+                @page="onPageChange"
+                tableStyle="min-width: 50rem"
+            >
+
+                <template #header>
+                    <div class="flex justify-between">
+
+                        <!-- SZŰRÉS TÖRLÉSE -->
+                        <Button
+                            type="button"
+                            icon="pi pi-filter-slash"
+                            label="Clear"
+                            outlined
+                            @click="clearFilter"
+                        />
+
+                        <!-- FELIRAT -->
+                        <div class="font-semibold text-xl mb-1">
+                            countries_title
+                        </div>
+
+                        <!-- KERESÉS-->
+                        <div class="flex justify-end">
+                            <IconField>
+                                <InputIcon>
+                                    <i class="pi pi-search" />
+                                </InputIcon>
+                                <InputText
+                                    v-model="data.params.search"
+                                    placeholder="Keyword Search"
+                                />
+                            </IconField>
+                        </div>
+                    </div>
+                </template>
+
+                <template #empty> No data found. </template>
+                <template #loading> Loading data. Please wait. </template>
+
+                <Column field="id" header="#"></Column>
+                <Column field="name" header="Name"></Column>
+                <Column field="" header="Regions"></Column>
+                <Column field="" header="Cities"></Column>
+                <Column :exportable="false" style="min-width: 12rem">
+
+                    <template #body="slotProps">
+
+                        <Button 
+                            v-show="has('update country')" 
+                            icon="pi pi-pencil" 
+                            outlined rounded 
+                            class="mr-2"
+                            @click="(
+                                (data.editOpen = true), 
+                                (data.country = slotProps.data)
+                            )" />
+
+                        <Button 
+                            v-show="has('delete country')" 
+                            icon="pi pi-trash" 
+                            outlined rounded 
+                            severity="danger"
+                            @click="(
+                                (data.deleteOpen = true),
+                                (data.country = slotProps.data)
+                            )" />
+
+                    </template>
+                </Column>
+
+            </DataTable>
+
+        </div>
     </AuthLayout>
 </template>

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('name', 255)->index()->unique('name')->comment('Név');
             $table->string('code', 10)->index()->comment('Kód');
 
-            //$table->enum('active', [0,1])->default(1)->index()->comment('Aktív');
             $table->boolean('active')->default(1)->index()->comment('Aktív');
 
         });

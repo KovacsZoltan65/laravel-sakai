@@ -4,7 +4,7 @@
  * Régiók, megyék
  */
 
-namespace App\Models;
+namespace App\Models\Geo;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -97,7 +97,7 @@ class Region extends Model
      */
     public function country(): BelongsTo
     {
-        return $this->belongsTo(Country::class, 'country_id');
+        return $this->belongsTo(Country::class, 'country_id', 'id');
     }
 
     /**
@@ -107,7 +107,7 @@ class Region extends Model
      */
     public function cities(): HasMany
     {
-        return $this->hasMany(City::class, 'region_id');
+        return $this->hasMany(City::class, 'region_id', 'id');
     }
 
     #[Override]

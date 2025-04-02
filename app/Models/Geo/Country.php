@@ -4,7 +4,7 @@
  * Oszágok
  */
 
-namespace App\Models;
+namespace App\Models\Geo;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -85,7 +85,7 @@ class Country extends Model
      */
     public function cities()
     {
-        return $this->hasMany(City::class, 'country_id');
+        return $this->hasMany(City::class); // keres: cities.country_id → countries.id
     }
 
     /**
@@ -95,7 +95,7 @@ class Country extends Model
      */
     public function regions()
     {
-        return $this->hasMany(Region::class, 'region_id');
+        return $this->hasMany(Region::class); // keres: regions.country_id → countries.id
     }
 
     #[Override]

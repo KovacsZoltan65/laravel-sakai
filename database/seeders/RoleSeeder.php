@@ -20,30 +20,45 @@ class RoleSeeder extends Seeder
 
         // Jogosultságok társítása a Szuper Admin szerepkörhöz
         $superadmin->givePermissionTo([
-            'delete user',
-            'update user',
             'read user',
             'create user',
+            'delete user',
+            'update user',
 
-            'delete company',
-            'update company',
             'read company',
             'create company',
+            'delete company',
+            'update company',
 
-            'delete role',
-            'update role',
             'read role',
             'create role',
+            'delete role',
+            'update role',
 
-            'delete permission',
-            'update permission',
             'read permission',
             'create permission',
+            'delete permission',
+            'update permission',
 
-            'delete entity',
-            'update entity',
             'read entity',
             'create entity',
+            'delete entity',
+            'update entity',
+
+            'read country',
+            'create country',
+            'delete country',
+            'update country',
+
+            'read region',
+            'create region',
+            'delete region',
+            'update region',
+
+            'read city',
+            'create city',
+            'delete city',
+            'update city',
         ]);
 
         // Admin szerepkör létrehozása

@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Geo;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegionIndexRequest;
-use App\Models\City;
-use App\Models\Country;
-use App\Models\Region;
+use App\Models\Geo\City;
+use App\Models\Geo\Country;
+use App\Models\Geo\Region;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response AS InertiaResponse;

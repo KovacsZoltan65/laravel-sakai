@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Geo;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CountryIndexRequest;
-use App\Models\City;
-use App\Models\Country;
-use App\Models\Region;
+use App\Models\Geo\City;
+use App\Models\Geo\Country;
+use App\Models\Geo\Region;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response AS InertiaResponse;
@@ -34,6 +34,7 @@ class CountryController extends Controller
 
     public function fetch(Request $request): JsonResponse
     {
+//\Log::info('fetch');
         $_countries = Country::query();
 
         if( $request->has(key: 'search') ) {
@@ -47,14 +48,14 @@ class CountryController extends Controller
             $_countries->orderBy(column: $request->field, direction: $request->order);
         }
 
-        $companies = $_countries->with(relations: ['regions', 'cities'])
+        $countries = $_countries->with(relations: ['regions', 'cities'])
             ->paginate(
                 perPage: 10, 
                 columns: ['*'], 
                 pageName:'page', 
                 page: $request->page ?? 1
             );
-
-        return response()->json($companies);
+//\Log::info('$countries: ' . print_r($countries, true));
+        return response()->json($countries);
     }
 }
