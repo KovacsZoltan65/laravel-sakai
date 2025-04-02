@@ -23,7 +23,7 @@ class CountryController extends Controller
     {
         $cities = City::all(columns: ['id', 'name']);
         $regions = Region::all(columns: ['id', 'name']);
-        
+
         return Inertia::render(component: 'Geo/Country/Index', props: [
             'title' => 'Country',
             'filters' => $request->all(['search', 'field', 'order']),
@@ -34,12 +34,11 @@ class CountryController extends Controller
 
     public function fetch(Request $request): JsonResponse
     {
-//\Log::info('fetch');
         $_countries = Country::query();
 
         if( $request->has(key: 'search') ) {
             $_countries->whereRaw(
-                sql: "CONCAT(name, ' ', email, ' ', address, ' ', phone) LIKE ?", 
+                sql: "CONCAT(name, ' ', email, ' ', address, ' ', phone) LIKE ?",
                 bindings: ["%{$request->search}%"]
             );
         }
@@ -49,13 +48,14 @@ class CountryController extends Controller
         }
 
         $countries = $_countries->with(relations: ['regions', 'cities'])
+            ->withCount(relations: ['regions', 'cities'])
             ->paginate(
-                perPage: 10, 
-                columns: ['*'], 
-                pageName:'page', 
+                perPage: 10,
+                columns: ['*'],
+                pageName:'page',
                 page: $request->page ?? 1
             );
-//\Log::info('$countries: ' . print_r($countries, true));
+
         return response()->json($countries);
     }
 }

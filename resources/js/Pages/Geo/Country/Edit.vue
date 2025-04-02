@@ -19,6 +19,8 @@ const form = ref({
     active: 1
 });
 
+const isUpdating = ref(false);
+
 // Validációs szabályok
 const rules = computed(() => ({
     name: { required, minLength: minLength(3), maxLength: maxLength(255) },
@@ -35,6 +37,7 @@ watch(
             form.value = {
                 name: newCountry.name || '',
                 code: newCountry.code || '',
+                active: newCountry.active || 1,
             };
             v$.value.$reset(); // Reseteljük a validációt, hogy ne legyenek előző hibák
         }
@@ -44,6 +47,9 @@ watch(
 
 // Frissítés (update) művelet
 const updateCountry = async () => {
+
+    isUpdating.value = true;
+
     v$.value.$touch();
     if (!v$.value.$invalid) {
         try {
@@ -53,6 +59,8 @@ const updateCountry = async () => {
             closeModal();
         } catch (e) {
             console.error('Frissítés sikertelen', e);
+        } finally {
+            isUpdating.value = false;
         }
     }
 };
@@ -61,6 +69,14 @@ const closeModal = () => {
     v$.value.$reset(); // 👈 hibák törlése
     emit('close');
 };
+
+const getBools = () => {
+    return [
+        { label: "NO", value: 0, },
+        { label: "YES", value: 1, },
+    ];
+};
+
 </script>
 
 <template>
@@ -72,17 +88,68 @@ const closeModal = () => {
     >
 
     <div class="flex flex-col gap-6" style="margin-top: 17px;">
+
         <!-- NAME -->
-         <!-- NAME -->
-         <div class="flex flex-col grow basis-0 gap-2">
-                <FloatLabel variant="on">
-                    <label for="name" class="block font-bold mb-3">
-                        Name
+        <div class="flex flex-col grow basis-0 gap-2">
+            <FloatLabel variant="on">
+                <label for="name" class="block font-bold mb-3">
+                    Name
+                </label>
+                <InputText
+                    id="name"
+                    v-model="form.name"
+                    fluid
+                />
+            </FloatLabel>
+            <Message
+                size="small"
+                severity="secondary"
+                variant="simple"
+            >
+                enter_country_name
+            </Message>
+            <small class="text-red-500" v-if="v$.name.$error">
+                {{ v$.name.$errors[0].$message }}
+            </small>
+        </div>
+
+        <!-- CODE -->
+        <div class="flex flex-col grow basis-0 gap-2">
+            <FloatLabel variant="on">
+                <label for="code" class="block font-bold mb-3">
+                    code
+                </label>
+                <InputText
+                    id="code"
+                    v-model="form.code"
+                    fluid
+                />
+            </FloatLabel>
+            <Message
+                size="small"
+                severity="secondary"
+                variant="simple"
+            >
+                enter_country_code
+            </Message>
+            <small class="text-red-500" v-if="v$.code.$error">
+                {{ v$.code.$errors[0].$message }}
+            </small>
+        </div>
+
+        <!-- ACTIVE -->
+        <div class="flex flex-col grow basis-0 gap-2">
+                <FloatLabel>
+                    <label for="active" class="block font-bold mb-3">
+                        active
                     </label>
-                    <InputText
-                        id="name"
-                        v-model="form.name"
-                        fluid
+                    <Select
+                        id="active"
+                        v-model="form.active"
+                        :options="getBools()"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Active" fluid
                     />
                 </FloatLabel>
                 <Message
@@ -90,21 +157,22 @@ const closeModal = () => {
                     severity="secondary"
                     variant="simple"
                 >
-                    enter_country_name
+                    enter_subdomain_active
                 </Message>
-                <small class="text-red-500" v-if="v$.name.$error">
-                    {{ v$.name.$errors[0].$message }}
-                </small>
             </div>
-
-        <!-- CODE -->
-
-        <!-- ACTIVE -->
 
         <!-- Gombok -->
         <div class="flex justify-end gap-2 mt-4">
-            <Button label="Cancel" severity="secondary" @click="closeModal" />
-            <Button label="Update" icon="pi pi-check" @click="updateCountry" />
+            <Button
+                label="Cancel"
+                severity="secondary"
+                @click="closeModal"
+            />
+            <Button
+                label="Update"
+                :icon="isUpdating ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+                @click="updateCountry"
+            />
         </div>
     </div>
 

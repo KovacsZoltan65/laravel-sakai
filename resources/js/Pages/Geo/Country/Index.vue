@@ -117,7 +117,7 @@ const clearFilter = () => {
             />
 
             <!-- CREATE GOMB -->
-            <Button 
+            <Button
                 v-show="has('create country')"
                 icon="pi pi-plus"
                 label="Create"
@@ -133,12 +133,12 @@ const clearFilter = () => {
 
             <DataTable
                 v-if="countries"
-                :dataKey="'id'" lazy paginator 
+                :dataKey="'id'" lazy paginator
                 :value="countries.data"
                 :rows="countries.per_page"
                 :totalRecords="countries.total"
                 :first="(countries.current_page - 1) * countries.per_page"
-                :loading="isLoading" 
+                :loading="isLoading"
                 @page="onPageChange"
                 tableStyle="min-width: 50rem"
             >
@@ -180,26 +180,28 @@ const clearFilter = () => {
 
                 <Column field="id" header="#"></Column>
                 <Column field="name" header="Name"></Column>
-                <Column field="" header="Regions"></Column>
-                <Column field="" header="Cities"></Column>
+
+                <Column field="regions_count" header="count_regions" />
+                <Column field="cities_count" header="count_cities" />
+
                 <Column :exportable="false" style="min-width: 12rem">
 
                     <template #body="slotProps">
 
-                        <Button 
-                            v-show="has('update country')" 
-                            icon="pi pi-pencil" 
-                            outlined rounded 
+                        <Button
+                            v-show="has('update country')"
+                            icon="pi pi-pencil"
+                            outlined rounded
                             class="mr-2"
                             @click="(
-                                (data.editOpen = true), 
+                                (data.editOpen = true),
                                 (data.country = slotProps.data)
                             )" />
 
-                        <Button 
-                            v-show="has('delete country')" 
-                            icon="pi pi-trash" 
-                            outlined rounded 
+                        <Button
+                            v-show="has('delete country')"
+                            icon="pi pi-trash"
+                            outlined rounded
                             severity="danger"
                             @click="(
                                 (data.deleteOpen = true),

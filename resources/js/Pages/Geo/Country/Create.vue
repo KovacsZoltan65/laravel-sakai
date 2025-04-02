@@ -12,6 +12,8 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "saved"]);
 
+const isSaving = ref(false);
+
 // Form adatok
 const form = ref({
     name: '',
@@ -29,6 +31,9 @@ const v$ = useVuelidate(rules, form);
 
 // Mentés
 const save = async () => {
+
+    isSaving.value = true;
+
     v$.value.$touch();
     if (!v$.value.$invalid) {
         try {
@@ -38,10 +43,18 @@ const save = async () => {
             closeModal();
         } catch (e) {
             console.error('Mentés sikertelen', e);
+        } finally {
+            isSaving.value = false;
         }
     }
 };
 
+const getBools = () => {
+    return [
+        { label: "NO", value: 0, },
+        { label: "YES", value: 1, },
+    ];
+};
 
 const closeModal = () => {
     v$.value.$reset(); // 👈 hibák törlése
@@ -105,11 +118,43 @@ const closeModal = () => {
                 </small>
             </div>
 
+            <!-- ACTIVE -->
+            <div class="flex flex-col grow basis-0 gap-2">
+                <FloatLabel>
+                    <label for="active" class="block font-bold mb-3">
+                        active
+                    </label>
+                    <Select
+                        id="active"
+                        v-model="form.active"
+                        :options="getBools()"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Active" fluid
+                    />
+                </FloatLabel>
+                <Message
+                    size="small"
+                    severity="secondary"
+                    variant="simple"
+                >
+                    enter_subdomain_active
+                </Message>
+            </div>
+
         </div>
 
         <div class="flex justify-end gap-2 mt-4">
-            <Button label="Cancel" severity="secondary" @click="closeModal" />
-            <Button label="Save" icon="pi pi-check" @click="save" />
+            <Button
+                label="Cancel"
+                severity="secondary"
+                @click="closeModal"
+            />
+            <Button
+                label="Save"
+                :icon="isSaving ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+                @click="save"
+            />
         </div>
 
     </Dialog>
