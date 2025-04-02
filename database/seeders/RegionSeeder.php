@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Region;
+use App\Models\Geo\Region;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
