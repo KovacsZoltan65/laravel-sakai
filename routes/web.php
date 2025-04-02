@@ -74,6 +74,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
         uri: '/entities', 
         action: [App\Http\Controllers\EntityController::class, 'index']
     )->name(name: 'entities.index');
+
+    // =================================================
+    // COUNTRIES
+    // =================================================
+    Route::get(
+        uri: '/countries', 
+        action: [App\Http\Controllers\Geo\CountryController::class, 'index']
+    )->name(name: 'countries.index');
+
+    // =================================================
+    // REGIONS
+    // =================================================
+    Route::get(
+        uri: '/regions', 
+        action: [App\Http\Controllers\Geo\RegionController::class, 'index']
+    )->name(name: 'countries.index');
+
+    // =================================================
+    // CITIES
+    // =================================================
+    Route::get(
+        uri: '/cities', 
+        action: [App\Http\Controllers\Geo\CityController::class, 'index']
+    )->name(name: 'countries.index');
+
 });
 
 Route::get('/form', function () {

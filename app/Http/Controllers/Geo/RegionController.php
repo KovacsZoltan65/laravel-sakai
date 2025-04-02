@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Geo;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\RegionIndexRequest;
+use App\Models\City;
+use App\Models\Country;
 use App\Models\Region;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,9 +21,14 @@ class RegionController extends Controller
 
     public function index(RegionIndexRequest $request): InertiaResponse
     {
-        return Inertia::render(component: 'Regions/Index', props: [
+        $countries = Country::all(columns: ['id', 'name']);
+        $cities = City::all(columns: ['id', 'name']);
+
+        return Inertia::render(component: 'Geo/Region/Index', props: [
             'title' => 'Regions',
             'filters' => $request->all(keys: ['search', 'field', 'order']),
+            'countries' => $countries,
+            'cities' => $cities
         ]);
     }
 
@@ -29,14 +37,22 @@ class RegionController extends Controller
         $_regions = Region::query();
 
         if( $request->has(key: 'search') ) {
-            $_regions->whereReaw("CONCAT(name, ' ', code) LIKE ?", ["%{$request->search}%"]);
+            $_regions->whereReaw(
+                sql: "CONCAT(name, ' ', code) LIKE ?", 
+                bindings: ["%{$request->search}%"]
+            );
         }
 
         if ($request->has(key: 'field') && $request->has(key: 'order')) {
             $_regions->orderBy(column: $request->field, direction: $request->order);
         }
 
-        $regions = $_regions->paginate(perPage: 10, columns: ['*'], pageName: 'page', page: $request->page?? 1);
+        $regions = $_regions->paginate(
+            perPage: 10, 
+            columns: ['*'], 
+            pageName: 'page', 
+            page: $request->page?? 1
+        );
 
         return response()->json(data: $regions);
     }

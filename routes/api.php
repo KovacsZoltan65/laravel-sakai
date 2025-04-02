@@ -54,6 +54,29 @@ Route::post(
     action: [App\Http\Controllers\PersonController::class, 'create']
 )->name(name: 'api.persons.create');
 
+// =================================================
+// COUNTRIES
+// =================================================
+Route::get(
+    uri: '/countries/fetch', 
+    action: [App\Http\Controllers\Geo\CountryController::class, 'fetch']
+)->name(name: 'api.countries.index');
+
+// =================================================
+// REGIONS
+// =================================================
+Route::get(
+    uri: '/regions/fetch', 
+    action: [App\Http\Controllers\Geo\RegionController::class, 'fetch']
+)->name(name:'api.regions.index');
+
+// =================================================
+// CITIES
+// =================================================
+Route::get(
+    uri: '/cities/fetch', 
+    action: [App\Http\Controllers\Geo\CityController::class, 'fetch']
+)->name(name: 'api.cities.index');
 
 /*
 Route::get('/companies', function(Request $reques){
