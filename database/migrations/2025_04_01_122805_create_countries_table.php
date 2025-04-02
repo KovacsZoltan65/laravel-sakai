@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('code', 10)->index()->comment('Kód');
 
             $table->boolean('active')->default(1)->index()->comment('Aktív');
+            
+            $table->timestamps();
+            $table->softDeletes()->comment('Lágy törlés dátuma');
 
         });
 	}
