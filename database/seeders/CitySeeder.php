@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\City;
+use App\Models\Geo\City;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Activitylog\Models\Activity;

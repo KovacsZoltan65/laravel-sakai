@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Facades\Schema;
 
 class PermissionSeeder extends Seeder
 {
@@ -13,44 +14,70 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        Permission::create(['name' => 'read user']);
-        Permission::create(['name' => 'create user']);
-        Permission::create(['name' => 'delete user']);
-        Permission::create(['name' => 'update user']);
+        Schema::disableForeignKeyConstraints();
+        Permission::truncate();
+        Schema::enableForeignKeyConstraints();
+        
+        // Logolás letiltása
+        activity()->disableLogging();
+        
+        $permissions = [
+            ['name' => 'read user'],
+            ['name' => 'create user'],
+            ['name' => 'delete user'],
+            ['name' => 'update user'],
+            
+            ['name' => 'read company'],
+            ['name' => 'create company'],
+            ['name' => 'delete company'],
+            ['name' => 'update company'],
+            
+            ['name' => 'read entity'],
+            ['name' => 'create entity'],
+            ['name' => 'delete entity'],
+            ['name' => 'update entity'],
 
-        Permission::create(['name' => 'read company']);
-        Permission::create(['name' => 'create company']);
-        Permission::create(['name' => 'delete company']);
-        Permission::create(['name' => 'update company']);
+            ['name' => 'read role'],
+            ['name' => 'create role'],
+            ['name' => 'delete role'],
+            ['name' => 'update role'],
 
-        Permission::create(['name' => 'read entity']);
-        Permission::create(['name' => 'create entity']);
-        Permission::create(['name' => 'delete entity']);
-        Permission::create(['name' => 'update entity']);
+            ['name' => 'read permission'],
+            ['name' => 'create permission'],
+            ['name' => 'delete permission'],
+            ['name' => 'update permission'],
 
-        Permission::create(['name' => 'read role']);
-        Permission::create(['name' => 'create role']);
-        Permission::create(['name' => 'delete role']);
-        Permission::create(['name' => 'update role']);
+            ['name' => 'read country'],
+            ['name' => 'create country'],
+            ['name' => 'delete country'],
+            ['name' => 'update country'],
 
-        Permission::create(['name' => 'read permission']);
-        Permission::create(['name' => 'create permission']);
-        Permission::create(['name' => 'delete permission']);
-        Permission::create(['name' => 'update permission']);
+            ['name' => 'read region'],
+            ['name' => 'create region'],
+            ['name' => 'delete region'],
+            ['name' => 'update region'],
 
-        Permission::create(['name' => 'read country']);
-        Permission::create(['name' => 'create country']);
-        Permission::create(['name' => 'delete country']);
-        Permission::create(['name' => 'update country']);
+            ['name' => 'read city'],
+            ['name' => 'create city'],
+            ['name' => 'delete city'],
+            ['name' => 'update city'],
+        ];
+        
+        $count = count($permissions);
+        
+        $this->command->warn(PHP_EOL . __('migration_creating_permissions'));
+        $this->command->getOutput()->progressStart($count);
+        
+        foreach($permissions as $permission) {
+            Permission::create($permission);
+            $this->command->getOutput()->progressAdvance();
+        }
+        
+        $this->command->getOutput()->progressFinish();
 
-        Permission::create(['name' => 'read region']);
-        Permission::create(['name' => 'create region']);
-        Permission::create(['name' => 'delete region']);
-        Permission::create(['name' => 'update region']);
-
-        Permission::create(['name' => 'read city']);
-        Permission::create(['name' => 'create city']);
-        Permission::create(['name' => 'delete city']);
-        Permission::create(['name' => 'update city']);
+        $this->command->info(PHP_EOL . __('migration_created_permissions'));
+        
+        activity()->enableLogging();
+        
     }
 }

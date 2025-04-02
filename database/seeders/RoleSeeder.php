@@ -15,7 +15,7 @@ class RoleSeeder extends Seeder
     {
         // Szuper Admin szerepkör létrehozása
         $superadmin = Role::create([
-            'name'          => 'superadmin'
+            'name' => 'superadmin'
         ]);
 
         // Jogosultságok társítása a Szuper Admin szerepkörhöz
@@ -63,7 +63,7 @@ class RoleSeeder extends Seeder
 
         // Admin szerepkör létrehozása
         $admin = Role::create([
-            'name'          => 'admin'
+            'name' => 'admin'
         ]);
 
         // Jogosultságok társítása az Admin szerepkörhöz
@@ -78,7 +78,7 @@ class RoleSeeder extends Seeder
 
         // Operátor szerepkör létrehozása
         $operator = Role::create([
-            'name'          => 'operator'
+            'name' => 'operator'
         ]);
 
         // Jogosultságok társítása az Operátor szerepkörhöz
