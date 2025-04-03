@@ -7,6 +7,7 @@ import CountryService from "@/service/Geo/CountryService.js";
 import CreateModal from "@/Pages/Geo/Country/Create.vue";
 import EditModal from "@/Pages/Geo/Country/Edit.vue";
 import DeleteModal from "@/Pages/Geo/Country/Delete.vue";
+import AssignRegionsModal from "./AssignRegionsModal.vue";
 
 import { usePermissions } from '@/composables/usePermissions';
 const { has } = usePermissions();
@@ -19,8 +20,8 @@ const isLoading = ref(false);
 const props = defineProps({
     title: String,
     filters: Object,
-    regions: Array,
-    cities: Array,
+    regions: Array,     // Összes régió
+    cities: Array,      // Összes város
 });
 
 const countries = ref(null);
@@ -34,9 +35,13 @@ const data = reactive({
         createOpen: false,
         editOpen: false,
         deleteOpen: false,
+        regionsOpen: false
     },
     country: null
 });
+
+const selectedCountry = ref(null);
+const allRegions = ref(props.regions); // props.regions tartalmazza az összes régiót
 
 const onPageChange = (event) => {
     data.params.page = event.page + 1;
@@ -56,9 +61,9 @@ const fetchItems = async () => {
 
     try {
         const response = await CountryService.getCountries(params);
-//console.log('response.data', response.data);
+        //console.log('response.data', response.data);
         countries.value = response.data;
-    } catch(error) {
+    } catch (error) {
         console.error("Hiba az országok lekérdezésekor", error);
     } finally {
         isLoading.value = false;
@@ -81,10 +86,16 @@ const clearFilter = () => {
     console.log('Clear Filters');
 };
 
+const openRegionModal = (country) => {
+    selectedCountry.value = country;
+    data.regionsOpen = false
+};
+
 </script>
 
 <template>
     <AuthLayout>
+
         <Head :title="props.title" />
 
         <div class="card">
@@ -92,68 +103,44 @@ const clearFilter = () => {
             <!-- CREATE MODAL -->
             <CreateModal
                 :show="data.createOpen"
-                :country="data.country"
                 :title="props.title"
                 @close="data.createOpen = false"
-                @saved="fetchItems"
-            />
+                @saved="fetchItems" />
 
             <!-- EDIT MODAL -->
-            <EditModal
-                :show="data.editOpen"
-                :country="data.country"
-                :title="props.title"
-                @close="data.editOpen = false"
-                @saved="fetchItems"
-            />
+            <EditModal :show="data.editOpen" :country="data.country" :title="props.title" @close="data.editOpen = false"
+                @saved="fetchItems" />
 
             <!-- DELETE MODAL -->
-            <DeleteModal
-                :show="data.deleteOpen"
-                :country="data.country"
-                :title="props.title"
-                @close="data.deleteOpen = false"
-                @deleted="fetchItems"
-            />
+            <DeleteModal :show="data.deleteOpen" :country="data.country" :title="props.title"
+                @close="data.deleteOpen = false" @deleted="fetchItems" />
+
+            <!-- REGIONS -->
+            <AssignRegionsModal
+                :show="data.regionsOpen"
+                title="Régiók hozzárendelése"
+                :country="selectedCountry"
+                :allRegions="allRegions"
+                @close="data.regionsOpen = false"
+                @saved="fetchItems" />
 
             <!-- CREATE GOMB -->
-            <Button
-                v-show="has('create country')"
-                icon="pi pi-plus"
-                label="Create"
-                class="mr-2"
-                @click="data.createOpen = true"
-            />
+            <Button :show="has('create country')" icon="pi pi-plus" label="Create" class="mr-2"
+                @click="data.createOpen = true" />
 
             <!-- REFRESH GOMB -->
-            <Button
-                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
-                @click="fetchItems"
-            />
+            <Button :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" @click="fetchItems" />
 
-            <DataTable
-                v-if="countries"
-                :dataKey="'id'" lazy paginator
-                :value="countries.data"
-                :rows="countries.per_page"
-                :totalRecords="countries.total"
-                :first="(countries.current_page - 1) * countries.per_page"
-                :loading="isLoading"
-                @page="onPageChange"
-                tableStyle="min-width: 50rem"
-            >
+            <DataTable v-if="countries" :dataKey="'id'" lazy paginator :value="countries.data"
+                :rows="countries.per_page" :totalRecords="countries.total"
+                :first="(countries.current_page - 1) * countries.per_page" :loading="isLoading" @page="onPageChange"
+                tableStyle="min-width: 50rem">
 
                 <template #header>
                     <div class="flex justify-between">
 
                         <!-- SZŰRÉS TÖRLÉSE -->
-                        <Button
-                            type="button"
-                            icon="pi pi-filter-slash"
-                            label="Clear"
-                            outlined
-                            @click="clearFilter"
-                        />
+                        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearFilter" />
 
                         <!-- FELIRAT -->
                         <div class="font-semibold text-xl mb-1">
@@ -166,10 +153,7 @@ const clearFilter = () => {
                                 <InputIcon>
                                     <i class="pi pi-search" />
                                 </InputIcon>
-                                <InputText
-                                    v-model="data.params.search"
-                                    placeholder="Keyword Search"
-                                />
+                                <InputText v-model="data.params.search" placeholder="Keyword Search" />
                             </IconField>
                         </div>
                     </div>
@@ -188,25 +172,29 @@ const clearFilter = () => {
 
                     <template #body="slotProps">
 
-                        <Button
-                            v-show="has('update country')"
-                            icon="pi pi-pencil"
-                            outlined rounded
-                            class="mr-2"
-                            @click="(
-                                (data.editOpen = true),
-                                (data.country = slotProps.data)
-                            )" />
+                        <Button v-show="has('update country')" icon="pi pi-pencil" outlined rounded class="mr-2" @click="(
+                            (data.editOpen = true),
+                            (data.country = slotProps.data)
+                        )" />
 
                         <Button
                             v-show="has('delete country')"
                             icon="pi pi-trash"
                             outlined rounded
                             severity="danger"
+                            class="mr-2"
                             @click="(
                                 (data.deleteOpen = true),
                                 (data.country = slotProps.data)
                             )" />
+
+                            <Button
+                                v-show="has('update country')"
+                                icon="pi pi-globe"
+                                outlined rounded
+                                severity="success"
+                                @click="openRegionModal(slotProps.data)"
+                            />
 
                     </template>
                 </Column>
