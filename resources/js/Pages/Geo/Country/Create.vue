@@ -37,7 +37,7 @@ const save = async () => {
     v$.value.$touch();
     if (!v$.value.$invalid) {
         try {
-            // Itt mehet az axios.post...
+            await CountryService.updateCountry(props.country.id, form.value);
 
             emit('saved', form.value);
             closeModal();

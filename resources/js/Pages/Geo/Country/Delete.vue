@@ -31,7 +31,7 @@ const closeModal = () => {
 <template>
     <Dialog
         :visible="show" modal
-        header="Cég törlése"
+        header="country_delete"
         @hide="closeModal"
         :style="{ width: '30vw' }"
     >
@@ -41,14 +41,14 @@ const closeModal = () => {
 
         <template #footer>
             <Button
-                label="Mégse"
+                label="CANCEL"
                 icon="pi pi-times"
                 @click="closeModal"
                 severity="secondary"
                 class="p-button-text"
             />
             <Button
-                label="Törlés"
+                label="DELETE"
                 icon="pi pi-trash"
                 @click="deleteCountry"
                 severity="danger"

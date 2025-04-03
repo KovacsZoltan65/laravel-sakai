@@ -12,6 +12,8 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "saved"]);
 
+const isSaving = ref(false);
+
 // Form adatok
 const form = ref({
     name: '',
@@ -29,15 +31,20 @@ const v$ = useVuelidate(rules, form);
 
 // Mentés
 const save = async () => {
+
+    isSaving.value = true;
+
     v$.value.$touch();
     if (!v$.value.$invalid) {
         try {
-            // Itt mehet az axios.post...
+            await EntityService.createEntity(form.value);
 
             emit('saved', form.value);
             closeModal();
         } catch (e) {
             console.error('Mentés sikertelen', e);
+        } finally {
+            isSaving.value = false;
         }
     }
 };
