@@ -22,7 +22,7 @@ class CountryIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'field' => ['in:name,email,address,phone,created_at,updated_at'],
+            'field' => ['in:name,code,active,created_at,updated_at'],
             'order' => ['in:asc,desc'],
             'perPage' => ['numeric'],
         ];

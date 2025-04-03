@@ -32,4 +32,18 @@ class StoreEntityRequest extends FormRequest
             'active' => ['boolean'],
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => 'Név',
+            'email' => 'Email',
+            'start_date' => 'Belépési Dátum',
+            'end_date' => 'Kilépési Dátum',
+            'last_export' => 'Utolsó Export',
+            'user_id' => 'Felhasznó',
+            'company_id' => 'Cég',
+            'active' => 'Aktív',
+        ];
+    }
 }

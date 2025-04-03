@@ -22,7 +22,9 @@ class CityIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'field' => ['in:region_id,country_id,latitude,longitude,name,created_at,updated_at'],
+            'order' => ['in:asc,desc'],
+            'perPage' => ['numeric'],
         ];
     }
 }

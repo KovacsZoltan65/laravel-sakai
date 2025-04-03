@@ -22,7 +22,7 @@ class EntityIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'field' => ['in:name,guard_name,created_at,updated_at'],
+            'field' => ['in:name,email,start_date,end_date,last_export,user_id,company_id,active'],
             'order' => ['in:asc,desc'],
             'perPage' => ['numeric'],
         ];
