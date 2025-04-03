@@ -35,7 +35,11 @@ npm cache clean --force
 // -------------------------------
 php artisan make:model Entity
 php artisan make:controller EntityController
+
+php artisan make:request GetEntityRequest
 php artisan make:Request EntityIndexRequest
+php artisan make:request StoreEntityRequest
+php artisan make:request UpdateEntityRequest
 
 php artisan make:migration CreateEntitiesTable
 php artisan make:seed EntitySeed
@@ -51,6 +55,7 @@ php artisan make:migration CreateCountryTable
 php artisan make:seeder CountrySeeder
 php artisan make:factory CountryFactory
 php artisan make:resource CountryResource
+php artisan make:request GetCountryRequest
 php artisan make:request CountryIndexRequest
 php artisan make:request StoreCountryRequest
 php artisan make:request UpdateCountryRequest
