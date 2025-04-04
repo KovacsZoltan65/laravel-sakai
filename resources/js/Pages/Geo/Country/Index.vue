@@ -71,6 +71,7 @@ const fetchItems = async () => {
 };
 
 onMounted(() => {
+    //console.log('onMounted props.regions', props.regions);
     fetchItems();
 });
 
@@ -87,8 +88,10 @@ const clearFilter = () => {
 };
 
 const openRegionModal = (country) => {
-    selectedCountry.value = country;
-    data.regionsOpen = false
+    //console.log('openRegionModal', country);
+    //selectedCountry.value = country;
+    data.country = country;
+    data.regionsOpen = true;
 };
 
 </script>
@@ -108,19 +111,27 @@ const openRegionModal = (country) => {
                 @saved="fetchItems" />
 
             <!-- EDIT MODAL -->
-            <EditModal :show="data.editOpen" :country="data.country" :title="props.title" @close="data.editOpen = false"
+            <EditModal 
+                :show="data.editOpen" 
+                :country="data.country" 
+                :title="props.title" 
+                @close="data.editOpen = false"
                 @saved="fetchItems" />
 
             <!-- DELETE MODAL -->
-            <DeleteModal :show="data.deleteOpen" :country="data.country" :title="props.title"
-                @close="data.deleteOpen = false" @deleted="fetchItems" />
+            <DeleteModal 
+                :show="data.deleteOpen" 
+                :country="data.country" 
+                :title="props.title"
+                @close="data.deleteOpen = false" 
+                @deleted="fetchItems" />
 
-            <!-- REGIONS -->
+            <!-- REGIONS MODAL -->
             <AssignRegionsModal
                 :show="data.regionsOpen"
                 title="Régiók hozzárendelése"
-                :country="selectedCountry"
-                :allRegions="allRegions"
+                :country="data.country"
+                :regions="props.regions"
                 @close="data.regionsOpen = false"
                 @saved="fetchItems" />
 
@@ -172,11 +183,18 @@ const openRegionModal = (country) => {
 
                     <template #body="slotProps">
 
-                        <Button v-show="has('update country')" icon="pi pi-pencil" outlined rounded class="mr-2" @click="(
-                            (data.editOpen = true),
-                            (data.country = slotProps.data)
-                        )" />
+                        <!-- EDIT MODAL -->
+                        <Button 
+                            v-show="has('update country')" 
+                            icon="pi pi-pencil" 
+                            outlined rounded 
+                            class="mr-2" 
+                            @click="(
+                                (data.editOpen = true),
+                                (data.country = slotProps.data)
+                            )" />
 
+                        <!-- DELETE MODAL -->
                         <Button
                             v-show="has('delete country')"
                             icon="pi pi-trash"
@@ -188,13 +206,13 @@ const openRegionModal = (country) => {
                                 (data.country = slotProps.data)
                             )" />
 
-                            <Button
-                                v-show="has('update country')"
-                                icon="pi pi-globe"
-                                outlined rounded
-                                severity="success"
-                                @click="openRegionModal(slotProps.data)"
-                            />
+                        <!-- REGIONS MODAL -->
+                        <Button
+                            v-show="has('update country')"
+                            icon="pi pi-globe"
+                            outlined rounded
+                            severity="success"
+                            @click="openRegionModal(slotProps.data)" />
 
                     </template>
                 </Column>

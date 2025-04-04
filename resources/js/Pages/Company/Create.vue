@@ -32,7 +32,7 @@ const save = async () => {
     if (!v$.value.$invalid) {
         try {
             // Itt mehet az axios.post...
-            axios.post('/api/companies', form.value)
+            await axios.post('/api/companies', form.value)
 
             emit('saved', form.value);
             closeModal();
