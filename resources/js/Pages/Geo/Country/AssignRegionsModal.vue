@@ -1,5 +1,7 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue';
+
+import { ProductService } from '@/sakai/service/ProductService';
 
 const props = defineProps({
     show: Boolean,
@@ -13,62 +15,53 @@ const emit = defineEmits(["close", "saved"]);
 //const source = ref(null); // nem hozzárendelt régiók
 //const target = ref(null); // hozzárendelt régiók
 
-const sourceItems = ref([]);
-const targetItems = ref([]);
+const sourceItems = ref(null);
+const targetItems = ref(null);
+const picklistProducts = ref(null);
 
-/*
-const pickListModel = ref({
-  source: [],
-  target: []
+//const picklistProducts = ref({
+//    source: [],
+//    target: []
+//});
+
+onMounted(() => {
+
+    //ProductService.getProductsSmall().then((data) => {
+    //    picklistProducts.value = [data, []];
+    //});
+
 });
-*/
 
 watch(
     [() => props.show, () => props.country],
     ([visible, country]) => {
-        if (visible && country?.regions && props.regions) {
-            sourceItems.value = props.regions.filter(r =>
-                !country.regions.some(cr => cr.id === r.id)
-            );
-            targetItems.value = country.regions;
 
-            sourceItems.value = [
-                {
-                    id: '1000',
-                    code: 'f230fh0g3',
-                    name: 'Bamboo Watch',
-                    description: 'Product Description',
-                    image: 'bamboo-watch.jpg',
-                    price: 65,
-                    category: 'Accessories',
-                    quantity: 24,
-                    inventoryStatus: 'INSTOCK',
-                    rating: 5
-                }
-            ];
-            targetItems.value = [
-                {
-                    id: 1001,
-                    code: 'nvklal433',
-                    name: 'Black Watch',
-                    description: 'Product Description',
-                    image: 'black-watch.jpg',
-                    price: 72,
-                    category: 'Accessories',
-                    quantity: 61,
-                    inventoryStatus: 'INSTOCK',
-                    rating: 4
-                }
+        if( visible && country?.regions) {
+
+            const assigned = country.regions;
+            const assignedIds = assigned.map(r => r.id);
+
+            picklistProducts.value = [
+                props.regions.filter(region => !assignedIds.includes(region.id)),
+                assigned
             ];
 
-            console.log('sourceItems.value', sourceItems.value);
-            console.log('targetItems.value', targetItems.value);
+            /*
+            EZ IS MŰKÖDIK!!!!
+            picklistProducts.value = [
+                props.regions.filter((region) => !props.country.regions.some((r) => r.id === region.id)),
+                props.country.regions
+            ];
+            */
         }
     },
     { immediate: true }
 );
 
 const save = () => {
+
+    console.log('picklistProducts', picklistProducts.value[1][0]);
+
     emit('saved', {
         countryId: props.country.id,
         regions: targetItems.value
@@ -82,50 +75,38 @@ const closeModal = () => {
 </script>
 
 <template>
-    <Dialog 
-        :visible="show" modal 
-        :style="{ width: '750px' }" 
-        :header="title" 
+    <Dialog
+        :visible="show" modal
+        :style="{ width: '750px' }"
+        :header="title"
         @hide="closeModal"
     >
 
-        <PickList
-            v-model:source="sourceItems"
-            v-model:target="targetItems"
+    <PickList
+        v-model="picklistProducts"
+        dataKey="id"
+    >
+        <template #sourceheader> Elérhető </template>
+        <template #targetheader> Kiválasztott </template>
+        <template #option="{ option }">
+            {{ option.name }}
+        </template>
+    </PickList>
+        <!--<PickList
+            v-model="sourceItems"
+            v-model:selection="targetItems"
             dataKey="id"
             breakpoint="1400px"
-            responsiveLayout="scroll"
-            filterBy="name"
-            filterMatchMode="contains"
-            filterPlaceholder="Keres..."
-            :sourceStyle="{ height: '300px' }"
-            :targetStyle="{ height: '300px' }"
-            sourceHeader="Nem hozzárendelt régiók"
-            targetHeader="Hozzárendelt régiók"
-            :reorderable="false"
-            :showSourceControls="false"
-            :showTargetControls="false"
-            :showItemNavigator="false"
-            :showHeader="false"
-            :dragdrop="false"
-            :clone="false"
-            :metaKeySelection="false"
-            :responsive="false"
-            :loading="true"
-            :loadingIcon="true"
-            :filterInPlaceholder="true"
-            :filterOutPlaceholder="true"
-            :filterMatchModeOptions="[
-                { value: 'contains', label: 'Keres' },
-                { value: 'startsWith', label: 'Keres' },
-                { value: 'endsWith', label: 'Keres' },
-            ]"
-
+            listStyle="height:342px"
         >
             <template #option="{ option }">
                 {{ option.name }}
             </template>
-        </PickList>
+
+            <template #sourceheader> Available </template>
+            <template #targetheader> Selected </template>
+
+        </PickList>-->
 
         <div class="flex justify-end gap-2 mt-4">
             <Button label="Mégse" severity="secondary" @click="closeModal"/>

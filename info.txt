@@ -30,6 +30,35 @@ prettier:
 npm cache verify
 npm cache clean --force
 
+// PickList
+
+responsiveLayout="scroll"
+            filterBy="name"
+            filterMatchMode="contains"
+            filterPlaceholder="Keres..."
+            :sourceStyle="{ height: '300px' }"
+            :targetStyle="{ height: '300px' }"
+            sourceHeader="Nem hozzárendelt régiók"
+            targetHeader="Hozzárendelt régiók"
+            :reorderable="false"
+            :showSourceControls="false"
+            :showTargetControls="false"
+            :showItemNavigator="false"
+            :showHeader="false"
+            :dragdrop="false"
+            :clone="false"
+            :metaKeySelection="false"
+            :responsive="false"
+            :loading="true"
+            :loadingIcon="true"
+            :filterInPlaceholder="true"
+            :filterOutPlaceholder="true"
+            :filterMatchModeOptions="[
+                { value: 'contains', label: 'Keres' },
+                { value: 'startsWith', label: 'Keres' },
+                { value: 'endsWith', label: 'Keres' },
+            ]"
+
 // -------------------------------
 // ENTITIES
 // -------------------------------
