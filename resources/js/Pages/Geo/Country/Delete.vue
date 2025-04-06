@@ -34,6 +34,7 @@ const closeModal = () => {
         header="country_delete"
         @hide="closeModal"
         :style="{ width: '30vw' }"
+        :closable="false"
     >
         <div class="text-center my-5 text-lg">
             Biztosan törölni szeretnéd a(z) <strong>{{ country.name }}</strong> országot?

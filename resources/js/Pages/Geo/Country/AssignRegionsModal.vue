@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 
-import { ProductService } from '@/sakai/service/ProductService';
+import CountryService from "@/service/Geo/CountryService.js";
 
 const props = defineProps({
     show: Boolean,
@@ -58,7 +58,21 @@ watch(
     { immediate: true }
 );
 
-const save = () => {
+const save = async () => {
+
+    isUpdating = true;
+
+    try {
+        await CountryService.updateAssignRegions(props.country.id, targetItems.value);
+    } catch(e) {
+        console.error('Frissítés sikertelen', e);
+    } finally {
+        isUpdating = false;
+    }
+
+
+
+
 
     console.log('picklistProducts', picklistProducts.value[1][0]);
 
@@ -79,6 +93,7 @@ const closeModal = () => {
         :visible="show" modal
         :style="{ width: '750px' }"
         :header="title"
+        :closable="false"
         @hide="closeModal"
     >
 

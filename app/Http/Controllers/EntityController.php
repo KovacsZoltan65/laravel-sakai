@@ -65,11 +65,11 @@ class EntityController extends Controller
 
             return response()->json($entity, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
-            \Log::info('getEntity ModelNotFoundException: ' . print_r($ex, true));
+            \Log::info(message: 'getEntity ModelNotFoundException: ' . print_r(value: $ex, return: true));
         } catch( QueryException $ex ) {
-            \Log::info('getEntity QueryException: ' . print_r($ex, true));
+            \Log::info(message: 'getEntity QueryException: ' . print_r(value: $ex, return: true));
         } catch( Exception $ex ) {
-            \Log::info('getEntity Exception: ' . print_r($ex, true));
+            \Log::info(message: 'getEntity Exception: ' . print_r(value: $ex, return: true));
         }
     }
 
@@ -150,11 +150,17 @@ class EntityController extends Controller
             $deletedCount = 0;
 
             DB::transaction(function () use ($ids, &$deletedCount) {
-                $entities = Entity::whereIn('id', $ids)->lockForUpdate()->get();
+                // 1. Törlés - válaszd az egyik verziót:
+                // a) Observer nélküli, gyors SQL törlés:
+                $deletedCount = Entity::whereIn('id', $ids)->delete();
 
-                $deletedCount = $entities->each(function ($entity) {
-                    $entity->delete();
-                })->count();
+                // b) Observer-kompatibilis, egyenkénti törlés:
+                //$entities = Entity::whereIn('id', $ids)->lockForUpdate()->get();
+                //$entities->each(function (Entity $entity) use (&$deletedCount) {
+                //    if ($entity->delete()) {
+                //        $deletedCount++;
+                //    }
+                //});
 
                 // Cache törlése, ha szükséges
             });

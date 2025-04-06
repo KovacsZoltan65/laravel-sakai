@@ -83,6 +83,7 @@ const getBools = () => {
     <Dialog
         :visible="show" modal
         :style="{ width: '550px' }"
+        :closable="false"
         header="Edit Country"
         @hide="closeModal"
     >

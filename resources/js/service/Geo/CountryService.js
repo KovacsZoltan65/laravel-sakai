@@ -21,6 +21,10 @@ class CountryService extends BaseService
         return this.put(`${this.url}/${id}`, payload);
     }
 
+    updateAssignedRegions(id, payload) {
+        //
+    }
+
     // Entitás törlése
     deleteCountry(id) {
         return this.delete(`${this.url}/${id}`);

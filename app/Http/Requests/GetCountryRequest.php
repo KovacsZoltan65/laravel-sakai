@@ -22,7 +22,7 @@ class GetCountryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'integer', 'exists:entities,id']
+            'id' => ['required', 'integer', 'exists:countries,id']
         ];
     }
 }

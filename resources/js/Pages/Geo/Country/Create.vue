@@ -66,6 +66,7 @@ const closeModal = () => {
     <Dialog
         :visible="show"
         :style="{ width: '550px' }" modal
+        :closable="false"
         header="Create Country"
         @hide="closeModal"
     >
