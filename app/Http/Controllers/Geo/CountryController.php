@@ -32,10 +32,10 @@ class CountryController extends Controller
 
     public function index(CountryIndexRequest $request): InertiaResponse
     {
-        $cities = City::active()->select(columns: ['name', 'id'])->get();
-        $regions = Region::active()->select(columns: ['id', 'name'])->get();
+        $cities = City::active()->select(['name', 'id'])->get();
+        $regions = Region::active()->select(['id', 'name'])->get();
 
-        return Inertia::render(component: 'Geo/Country/Index', props: [
+        return Inertia::render('Geo/Country/Index', [
             'title' => 'Country',
             'filters' => $request->all(keys: ['search', 'field', 'order']),
             'regions' => $regions,
@@ -47,25 +47,20 @@ class CountryController extends Controller
     {
         $_countries = Country::query();
 
-        if( $request->has(key: 'search') ) {
+        if( $request->has('search') ) {
             $_countries->whereRaw(
-                sql: "CONCAT(name, ' ', email, ' ', address, ' ', phone) LIKE ?",
-                bindings: ["%{$request->search}%"]
+                "CONCAT(name, ' ', email, ' ', address, ' ', phone) LIKE ?",
+                ["%{$request->search}%"]
             );
         }
 
-        if ($request->has(key: 'field') && $request->has(key: 'order')) {
-            $_countries->orderBy(column: $request->field, direction: $request->order);
+        if ($request->has('field') && $request->has('order')) {
+            $_countries->orderBy($request->field, $request->order);
         }
 
-        $countries = $_countries->with(relations: ['regions', 'cities'])
-            ->withCount(relations: ['regions', 'cities'])
-            ->paginate(
-                perPage: 10,
-                columns: ['*'],
-                pageName:'page',
-                page: $request->page ?? 1
-            );
+        $countries = $_countries->with(['regions', 'cities'])
+            ->withCount(['regions', 'cities'])
+            ->paginate( 10, ['*'], 'page', $request->page ?? 1 );
 
         return response()->json($countries);
     }
@@ -73,99 +68,99 @@ class CountryController extends Controller
     public function getCountry(GetCountryRequest $request): JsonResponse
     {
         try {
-            $country = Country::with(relations: ['cities', 'regions'])
-                ->withCount(relations: ['cities', 'regions'])
-                ->findOrFail(id: $request->id);
+            $country = Country::with(['cities', 'regions'])
+                ->withCount(['cities', 'regions'])
+                ->findOrFail($request->id);
 
-            return response()->json(data: $country, status: Response::HTTP_OK);
+            return response()->json($country,  Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
-            \Log::error(message: 'getCountry ModelNotFoundException: ' . print_r(value: $ex, return: true));
-            return response()->json(data: ['error' => 'getCountry Country not found'], status: Response::HTTP_NOT_FOUND);
+            \Log::error('getCountry ModelNotFoundException: ' . print_r($ex, true));
+            return response()->json(['error' => 'getCountry Country not found'],  Response::HTTP_NOT_FOUND);
         } catch( QueryException $ex ) {
-            \Log::error(message: 'getCountry QueryException: ' . print_r(value: $ex, return: true));
-            return response()->json(data: ['error' => 'getCountry Database error'], status: Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::error('getCountry QueryException: ' . print_r($ex, true));
+            return response()->json(['error' => 'getCountry Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::error(message: 'getCountry Exception: ' . print_r(value: $ex, return: true));
-            return response()->json(data: ['error' => 'getCountry Internal server error'], status: Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::error('getCountry Exception: ' . print_r($ex, true));
+            return response()->json(['error' => 'getCountry Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     public function getCountryByName(string $name): JsonResponse
     {
         try {
-            $countries = Country::where(column: 'name', operator: '=', value: $name)->firstOrFail();
+            $countries = Country::where('name', '=', $name)->firstOrFail();
 
-            return response()->json(data: $countries, status: Response::HTTP_OK);
+            return response()->json($countries,  Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
-            \Log::error(message: 'getCountryByName ModelNotFoundException: ' . print_r(value: $ex, return: true));
-            return response()->json(data: ['error' => 'getCountryByName Country not found'], status: Response::HTTP_NOT_FOUND);
+            \Log::error('getCountryByName ModelNotFoundException: ' . print_r($ex, true));
+            return response()->json(['error' => 'getCountryByName Country not found'],  Response::HTTP_NOT_FOUND);
         } catch( QueryException $ex ) {
-            \Log::error(message: 'getCountryByName QueryException: ' . print_r(value: $ex, return: true));
-            return response()->json(data: ['error' => 'getCountryByName Database error'], status: Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::error('getCountryByName QueryException: ' . print_r($ex, true));
+            return response()->json(['error' => 'getCountryByName Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::error(message: 'getCountryByName Exception: ' . print_r(value: $ex, return: true));
-            return response()->json(data: ['error' => 'getCountryByName Internal server error'], status: Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::error('getCountryByName Exception: ' . print_r($ex, true));
+            return response()->json(['error' => 'getCountryByName Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     public function storeCountry(StoreCountryRequest $request): JsonResponse
     {
         try {
-            $country = null;
 
-            DB::transaction(callback: function() use($request, &$country) {
+            $country = DB::transaction(function() use($request): Country {
                 // 1. Ország létrehozása
-                $country = Country::create(attributes: $request->all());
+                $_country = Country::create($request->all());
 
                 // 2. Kapcsolódó rekordok létrehozása (pl. alapértelmezett beállítások)
-                $this->createDefaultSettings(country: $country);
+                $this->createDefaultSettings($_country);
 
                 // 3. Cache törlése, ha releváns
 
+                return $_country;
             });
 
-            return response()->json(data: $country, status: Response::HTTP_OK);
-        } catch( ModelNotFoundException $ex ) {
-            \Log::error(message: 'storeCountry ModelNotFoundException: ' . print_r(value: $ex, return: true));
-            return response()->json(data: ['error' => 'storeCountry Country not found'], status: Response::HTTP_NOT_FOUND);
+            return response()->json($country,  Response::HTTP_OK);
         } catch( QueryException $ex ) {
-            \Log::error(message: 'storeCountry QueryException: ' . print_r($ex, return: true));
-            return response()->json(data: ['error' => 'storeCountry Database error'], status: Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::error('storeCountry QueryException: ' . print_r($ex, true));
+            return response()->json(['error' => 'storeCountry Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::error(message: 'storeCountry Exception: ' . print_r($ex, return: true));
-            return response()->json(data: ['error' => 'storeCountry Internal server error'], status: Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::error('storeCountry Exception: ' . print_r($ex, true));
+            return response()->json(['error' => 'storeCountry Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    public function updateCountry(UpdateCountryRequest $request, Country $country): JsonResponse
+    public function updateCountry(UpdateCountryRequest $request, int $id): JsonResponse
     {
         try {
 
-            DB::transaction(callback: function() use($request, &$country) {
-
+            $country = DB::transaction(function() use($request, $id): Country {
+                // 1. Az ország lekerdezése
+                $_country = Country::lockForUpdate()->findOrFail($id);
                 // 1. Ország frissítése
-                $country->update(attributes: $request->all());
+                $_country->update($request->all());
 
                 // 2. Frissített adatok visszatöltése
-                $country->refresh();
+                $_country->refresh();
 
                 // 3. Kapcsolódó rekordok frissítése (pl. alapértelmezett beállítások)
-                $this->updateDefaultSettings(country: $country);
+                $this->updateDefaultSettings($_country);
 
                 // 4. Cache törlése, ha releváns
 
+
+                return $_country;
             });
 
             return response()->json($country, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
-            \Log::error('updateCountry ModelNotFoundException: ' . print_r(value: $ex, return: true));
-            return response()->json(['error' => 'updateCountry Country not found'], status: Response::HTTP_NOT_FOUND);
+            \Log::error('updateCountry ModelNotFoundException: ' . print_r($ex, true));
+            return response()->json(['error' => 'updateCountry Country not found'],  Response::HTTP_NOT_FOUND);
         } catch( QueryException $ex ) {
-            \Log::error(message: 'updateCountry QueryException: ' . print_r(value: $ex, return: true));
-            return response()->json(data: ['error' => 'updateCountry Database error'], status: Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::error('updateCountry QueryException: ' . print_r($ex, true));
+            return response()->json(['error' => 'updateCountry Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::error(message: 'updateCountry Exception: ' . print_r($ex, return: true));
-            return response()->json(data: ['error' => 'updateCountry Internal server error'], status: Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::error('updateCountry Exception: ' . print_r($ex, true));
+            return response()->json(['error' => 'updateCountry Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -178,22 +173,24 @@ class CountryController extends Controller
             ]);
 
             $ids = $validated['ids'];
-            $deletedCount = 0;
 
-            DB::transaction(function () use ($ids, &$deletedCount) {
+            $deletedCount = DB::transaction(function () use ($ids) {
                 // 1. Törlés - válaszd az egyik verziót:
                 // a) Observer nélküli, gyors SQL törlés:
-                $deletedCount = Country::whereIn('id', $ids)->delete();
+                $count = Country::whereIn('id', $ids)->delete();
 
                 // b) Observer-kompatibilis, egyenkénti törlés:
                 //$counties = Country::whereIn('id', $ids)->lockForUpdate()->get();
-                //$counties->each(function (Country $country) use (&$deletedCount) {
+                //$counties->each(function (Country $country, &$count) {
                 //    if ($country->delete()) {
-                //        $deletedCount++;
+                //        $count++;
                 //    }
+                //  
                 //});
 
                 // Cache törlése, ha szükséges
+
+                return $count;
             });
 
             return response()->json($deletedCount,Response::HTTP_OK);
@@ -201,7 +198,7 @@ class CountryController extends Controller
             \Log::error('deleteCounties QueryException: ' . print_r($ex, true));
             return response()->json(['error' => 'deleteCounties Database error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::error('deleteCounties Exception: ' . print_r(value: $ex, return: true));
+            \Log::error('deleteCounties Exception: ' . print_r($ex, true));
             return response()->json(['error' => 'deleteCounties Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -209,13 +206,14 @@ class CountryController extends Controller
     public function deleteCountry(GetCountryRequest $request): JsonResponse
     {
         try {
-            $country = null;
 
-            DB::transaction(function()use($request, &$country) {
+            $country = DB::transaction(function()use($request) {
                 // 1. Ország keresése
-                $country = Country::lockForUpdate()->findOrFail($request->id);
+                $_country = Country::lockForUpdate()->findOrFail($request->id);
                 // 2. Ország törlése
-                $country->delete();
+                $_country->delete();
+
+                return $_country;
             });
 
             return response()->json(['id' => $country->id, 'deleted' => true], Response::HTTP_OK);
@@ -223,10 +221,10 @@ class CountryController extends Controller
             \Log::error('deleteCountry ModelNotFoundException: ' . print_r($ex, true));
             return response()->json(['error' => 'deleteCountry Country not found'], Response::HTTP_NOT_FOUND);
         } catch( QueryException $ex ) {
-            \Log::error('deleteCountry QueryException: ' . print_r(value: $ex, return: true));
+            \Log::error('deleteCountry QueryException: ' . print_r($ex, true));
             return response()->json(['error' => 'deleteCountry Database error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::error('deleteCountry Exception: ' . print_r(value: $ex, return: true));
+            \Log::error('deleteCountry Exception: ' . print_r($ex, true));
             return response()->json(['error' => 'deleteCountry Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -234,17 +232,18 @@ class CountryController extends Controller
     public function restoreCountry(GetCountryRequest $request): JsonResponse
     {
         try {
-            $country = null;
 
-            DB::transaction(function () use ($request, &$country) {
+            $country = DB::transaction(function () use ($request) {
                 // Soft-deleted ország lekérése
-                $country = Country::withTrashed()->findOrFail($request->id);
+                $_country = Country::withTrashed()->findOrFail($request->id);
 
                 // Visszaállítás
-                $country->restore();
+                $_country->restore();
 
                 // Friss adat betöltése
-                $country->refresh();
+                $_country->refresh();
+
+                return $_country;
             });
 
             return response()->json($country, Response::HTTP_OK);
@@ -252,11 +251,9 @@ class CountryController extends Controller
         } catch (ModelNotFoundException $ex) {
             \Log::error('restoreCountry ModelNotFoundException: ' . print_r($ex, true));
             return response()->json(['error' => 'restoreCountry Country not found'], Response::HTTP_NOT_FOUND);
-
         } catch (QueryException $ex) {
             \Log::error('restoreCountry QueryException: ' . print_r($ex, true));
             return response()->json(['error' => 'restoreCountry Database error'], Response::HTTP_INTERNAL_SERVER_ERROR);
-
         } catch (Exception $ex) {
             \Log::error('restoreCountry Exception: ' . print_r($ex, true));
             return response()->json(['error' => 'restoreCountry Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -267,25 +264,26 @@ class CountryController extends Controller
     public function realDeleteCountry(GetCountryRequest $request): JsonResponse
     {
         try {
-            $country = null;
 
-            DB::transaction(function()use($request, &$country) {
+            $country = DB::transaction(function()use($request): Country {
                 // 1. Ország keresése
-                $country = Country::withTrashed()->lockForUpdate()->findOrFail($request->id);
+                $_country = Country::withTrashed()->lockForUpdate()->findOrFail($request->id);
                 // 2. Ország véglegesen törlése
-                $country->forceDelete();
+                $_country->forceDelete();
+
+                return $_country;
             });
 
-            return response()->json(data: $country, status: Response::HTTP_OK);
+            return response()->json($country,  Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
-            \Log::error(message: 'realDeleteCountry ModelNotFoundException: ' . print_r(value: $ex, return: true));
-            return response()->json(data: ['error' => 'realDeleteCountry Country not found'], status: Response::HTTP_NOT_FOUND);
+            \Log::error('realDeleteCountry ModelNotFoundException: ' . print_r($ex, true));
+            return response()->json(['error' => 'realDeleteCountry Country not found'],  Response::HTTP_NOT_FOUND);
         } catch( QueryException $ex ) {
-            \Log::error(message: 'realDeleteCountry QueryException: ' . print_r(value: $ex, return: true));
-            return response()->json(data: ['error' => 'realDeleteCountry Database error'], status: Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::error('realDeleteCountry QueryException: ' . print_r($ex, true));
+            return response()->json(['error' => 'realDeleteCountry Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::error(message: 'realDeleteCountry Exception: ' . print_r(value: $ex, return: true));
-            return response()->json(data: ['error' => 'realDeleteCountry Internal server error'], status: Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::error('realDeleteCountry Exception: ' . print_r($ex, true));
+            return response()->json(['error' => 'realDeleteCountry Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
