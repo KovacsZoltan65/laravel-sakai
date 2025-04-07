@@ -7,7 +7,7 @@ import RegionService from "@/service/Geo/RegionService.js";
 import CreateModal from "@/Pages/Geo/Region/Create.vue";
 import EditModal from "@/Pages/Geo/Region/Edit.vue";
 import DeleteModal from "@/Pages/Geo/Region/Delete.vue";
-import AssignCitiesModal from "./AssignCitiesModal.vue";
+import AssignCitiesModal from "@/Pages/Geo/Region/AssignCitiesModal.vue";
 
 import { usePermissions } from '@/composables/usePermissions';
 const { has } = usePermissions();
@@ -99,7 +99,7 @@ const openRegionModal = (region) => {
 
         <div class="card">
         <!-- CREATE MODAL -->
-        <CreateModal 
+        <CreateModal
             :show="data.createOpen"
             :title="props.title"
             @close="data.createOpen = false"
@@ -107,40 +107,40 @@ const openRegionModal = (region) => {
         />
 
         <!-- EDIT MODAL -->
-        <EditModal 
-            :show="data.editOpen" 
-            :title="props.title" 
-            @close="data.editOpen = false" 
+        <EditModal
+            :show="data.editOpen"
+            :title="props.title"
+            @close="data.editOpen = false"
             @saved="fetchItems"
         />
 
         <!-- DELETE MODAL -->
-        <DeleteModal 
-            :show="data.deleteOpen" 
-            :title="props.title" 
-            @close="data.deleteOpen = false" 
+        <DeleteModal
+            :show="data.deleteOpen"
+            :title="props.title"
+            @close="data.deleteOpen = false"
             @saved="fetchItems"
         />
 
         <!-- CITIES MODAL -->
         <AssignCitiesModal
-            :show="data.citiesOpen" 
-            :title="props.title" 
-            @close="data.citiesOpen = false" 
+            :show="data.citiesOpen"
+            :title="props.title"
+            @close="data.citiesOpen = false"
             @saved="fetchItems"
         />
 
         <!-- CREATE GOMB -->
-        <Button 
-            :show="has('create region')" 
-            icon="pi pi-plus" 
-            label="Create" 
+        <Button
+            :show="has('create region')"
+            icon="pi pi-plus"
+            label="Create"
             class="mr-2"
             @click="data.createOpen = true" />
 
         <!-- REFRESH GOMB -->
-        <Button 
-            :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" 
+        <Button
+            :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
             @click="fetchItems"
         />
 

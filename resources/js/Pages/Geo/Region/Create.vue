@@ -28,6 +28,7 @@ const rules = computed(() => ({
 const v$ = useVuelidate(rules, form);
 
 const save = async () => {
+    
     isSaving.value = true;
 
     v$.value.$touch();
