@@ -63,9 +63,10 @@ class CityController extends Controller
     public function getCity(GetCityRequest $request): City
     {
         try {
-            $entity = City::findOrFail($request->id);
+            $city = City::with(['country', 'region'])
+            ->findOrFail($request->id);
 
-            return response()->json($entity, Response::HTTP_OK);
+            return response()->json($city, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'getCity ModelNotFoundException: ' . print_r(value: $ex, return: true));
             return response()->json(['error' => 'getCity City not found'],  Response::HTTP_NOT_FOUND);
@@ -122,7 +123,7 @@ class CityController extends Controller
         }
     }
 
-    public function updateCity(UpdateCityRequest $request, int $id): ?City
+    public function updateCity(UpdateCityRequest $request, int $id): JsonResponse
     {
         try {
 
@@ -158,7 +159,7 @@ class CityController extends Controller
         try {
             $validated = $request->validate([
                 'ids' => 'required|array|min:1', // Kötelező, legalább 1 id kell
-                'ids.*' => 'integer|exists:companies,id', // Az id-k egész számok és létező cégek legyenek
+                'ids.*' => 'integer|exists:cities,id', // Az id-k egész számok és létező cégek legyenek
             ]);
 
             $ids = $validated['ids'];

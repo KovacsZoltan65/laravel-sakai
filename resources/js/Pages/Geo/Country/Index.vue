@@ -71,7 +71,6 @@ const fetchItems = async () => {
 };
 
 onMounted(() => {
-    //console.log('onMounted props.regions', props.regions);
     fetchItems();
 });
 
@@ -88,8 +87,6 @@ const clearFilter = () => {
 };
 
 const openRegionModal = (country) => {
-    //console.log('openRegionModal', country);
-    //selectedCountry.value = country;
     data.country = country;
     data.regionsOpen = true;
 };
