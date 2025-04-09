@@ -25,8 +25,8 @@ const items = ref([
                     label: 'Dashboards',
                     items: [
                         {
-                            label: "Dashboard", 
-                            icon: "pi pi-fw pi-home", 
+                            label: "Dashboard",
+                            icon: "pi pi-fw pi-home",
                             url: '/dashboard',
                         },
                     ],
@@ -66,18 +66,26 @@ const items = ref([
                     label: 'Services',
                     items: [
                         {
-                            label: 'Companies', 
-                            url: '/companies', 
+                            label: 'Companies',
+                            url: '/companies',
                             icon: "pi pi-fw pi-briefcase",
                             class: 'p-menuitem'
                         }, {
-                            label: 'Persons', 
-                            url: '/persons', 
+                            label: 'Persons',
+                            url: '/persons',
                             icon: "pi pi-fw pi-user",
                         }, {
-                            label: 'Entities', 
-                            url: '/entities', 
+                            label: 'Entities',
+                            url: '/entities',
                             icon: "pi pi-fw pi-user",
+                        }, {
+                            label: 'Subdomain States',
+                            url: '/subdomain_states',
+                            icon: "pi pi-fw pi-globe",
+                        }, {
+                            label: 'Subdomains',
+                            url: '/subdomains',
+                            icon: "pi pi-fw pi-globe",
                         }
                     ]
                 }
@@ -86,18 +94,18 @@ const items = ref([
                     label: 'Geo',
                     items: [
                         {
-                            label: 'Countries', 
+                            label: 'Countries',
                             url: '/countries',
                             icon: 'pi pi-fw pi-map-marker',
                             visible: has('read country'),
                         }, {
-                            label: 'Regions', 
+                            label: 'Regions',
                             url: '/regions',
                             icon: 'pi pi-fw pi-map-marker',
                             visible: has('read region'),
                         },
                         {
-                            label: 'Cities', 
+                            label: 'Cities',
                             url: '/cities',
                             icon: 'pi pi-fw pi-map-marker',
                             visible: has('read city'),

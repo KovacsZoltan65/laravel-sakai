@@ -2,18 +2,20 @@
 
 namespace App\Repositories;
 
+use App\Models\SubdomainState;
+use App\Repositories\Interfaces\SubdomainStateRepositoryInterface;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
-use App\Interfaces\CountryRepositoryInterface;
-use App\Models\Country;
-use App\Validators\CountryValidator;
+use App\Repositories\GetSubdomainStateRepository;
+use App\Entities\GetSubdomainState;
+use App\Validators\GetSubdomainStateValidator;
 
 /**
- * Class CountryRepositoryEloquent.
+ * Class GetSubdomainStateRepositoryEloquent.
  *
  * @package namespace App\Repositories;
  */
-class CountryRepositoryEloquent extends BaseRepository implements CountryRepositoryInterface
+class SubdomainStateRepository extends BaseRepository implements SubdomainStateRepositoryInterface
 {
     /**
      * Specify Model class name
@@ -22,10 +24,10 @@ class CountryRepositoryEloquent extends BaseRepository implements CountryReposit
      */
     public function model()
     {
-        return Country::class;
+        return SubdomainState::class;
     }
 
-    
+
 
     /**
      * Boot up the repository, pushing criteria
@@ -34,5 +36,5 @@ class CountryRepositoryEloquent extends BaseRepository implements CountryReposit
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
-    
+
 }
