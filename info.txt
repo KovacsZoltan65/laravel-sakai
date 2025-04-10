@@ -123,3 +123,33 @@ php artisan make:request UpdateCityRequest
 php artisan make:request GetCityRequest
 
 php artisan make:repository City
+
+// -------------------------------
+// SUBDOMAINS
+// -------------------------------
+php artisan make:model Subdomain
+php artisan make:controller SubdomainController
+php artisan make:migration CreateSubdomainTable
+php artisan make:seeder SubdomainSeeder
+php artisan make:factory SubdomainFactory
+php artisan make:resource SubdomainResource
+php artisan make:request SubdomainIndexRequest
+php artisan make:request StoreSubdomainRequest
+php artisan make:request UpdateSubdomainRequest
+php artisan make:request GetSubdomainRequest
+php artisan make:repository Subdomain
+
+// -------------------------------
+// SUBDOMAIN STATES
+// -------------------------------
+php artisan make:model SubdomainState
+php artisan make:controller SubdomainStateController
+php artisan make:migration CreateSubdomainStateTable
+php artisan make:seeder SubdomainStateSeeder
+php artisan make:factory SubdomainStateFactory
+php artisan make:resource SubdomainStateResource
+php artisan make:request SubdomainStateIndexRequest
+php artisan make:request StoreSubdomainStateRequest
+php artisan make:request UpdateSubdomainStateRequest
+php artisan make:request GetSubdomainStateRequest
+php artisan make:repository SubdomainState

@@ -78,6 +78,16 @@ Route::get(
     action: [App\Http\Controllers\Geo\CityController::class, 'fetch']
 )->name(name: 'api.cities.index');
 
+// =================================================
+// SUBDOMAIN STATES
+// =================================================
+Route::get('/subdomain_states/fetch', [App\Http\Controllers\SubdomainStateController::class, 'fetch'])->name('api.subdomain_states.fetch');
+
+// =================================================
+// SUBDOMAINS
+// =================================================
+Route::get('/subdomains/fetch', [App\Http\Controllers\SubdomainController::class, 'fetch'])->name('api.subdomains.fetch');
+
 /*
 Route::get('/companies', function(Request $reques){
     dd('route');

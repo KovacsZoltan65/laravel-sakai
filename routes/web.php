@@ -99,6 +99,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         action: [App\Http\Controllers\Geo\CityController::class, 'index']
     )->name(name: 'countries.index');
 
+    // =================================================
+    // SUBDOMAIN STATES
+    // =================================================
+    Route::get('/subdomain_states', [\App\Http\Controllers\SubdomainStateController::class, 'index'])->name('subdomain_states.index');
+    
+    // =================================================
+    // SUBDOMAINS
+    // =================================================
+    Route::get('/subdomains', [\App\Http\Controllers\SubdomainController::class, 'index'])->name('subdomains.index');
 });
 
 Route::get('/form', function () {
