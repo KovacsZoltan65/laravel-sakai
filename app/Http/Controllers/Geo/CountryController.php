@@ -32,8 +32,10 @@ class CountryController extends Controller
 
     public function index(CountryIndexRequest $request): InertiaResponse
     {
-        $cities = City::active()->select(['name', 'id'])->get();
-        $regions = Region::active()->select(['id', 'name'])->get();
+        $regions = Region::active()->select(['id', 'name'])->orderBy('name', 'asc')->get()->toArray();
+        $cities = City::active()->select(['name', 'id'])->orderBy('name', 'asc')->get()->toArray();
+
+//dd('$regions: ', $regions, '$cities', $cities);
 
         return Inertia::render('Geo/Country/Index', [
             'title' => 'Country',

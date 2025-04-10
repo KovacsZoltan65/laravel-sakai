@@ -5,6 +5,10 @@ superadmin@superadmin.com | superadmin
 admin@admin.com | admin
 operator@operator.com | operator
 
+// ===============================
+// GEO ADATOK
+// ===============================
+https://simplemaps.com/data/world-cities
 
 // ===============================
 // CSOMAGOK
