@@ -30,6 +30,10 @@ prettier:
 npm cache verify
 npm cache clean --force
 
+php artisan DB:seed --class=CountriesTableSeeder
+php artisan DB:seed --class=RegionsTableSeeder
+php artisan DB:seed --class=CitiesTableSeeder
+
 // PickList
 
 responsiveLayout="scroll"
