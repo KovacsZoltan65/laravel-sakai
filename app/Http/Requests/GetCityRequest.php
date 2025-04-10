@@ -22,7 +22,7 @@ class GetCityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'id' => ['required', 'integer', 'exists:cities,id']
         ];
     }
 }

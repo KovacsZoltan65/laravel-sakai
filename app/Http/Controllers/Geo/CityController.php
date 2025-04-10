@@ -60,7 +60,7 @@ class CityController extends Controller
         return response()->json($cities);
     }
 
-    public function getCity(GetCityRequest $request): City
+    public function getCity(GetCityRequest $request): JsonResponse
     {
         try {
             $city = City::with(['country', 'region'])
@@ -97,7 +97,7 @@ class CityController extends Controller
         }
     }
 
-    public function storeCity(StoreCityRequest $request): City
+    public function storeCity(StoreCityRequest $request): JsonResponse
     {
         try {
 
@@ -154,7 +154,7 @@ class CityController extends Controller
         }
     }
 
-    public function deleteCities(Request $request): int
+    public function deleteCities(Request $request): JsonResponse
     {
         try {
             $validated = $request->validate([
@@ -164,7 +164,7 @@ class CityController extends Controller
 
             $ids = $validated['ids'];
 
-            $deletedCount = DB::transaction(function () use ($ids) {
+            $deletedCount = DB::transaction(function () use ($ids): int {
                 // 1. Törlés - válaszd az egyik verziót:
                 // a) Observer nélküli, gyors SQL törlés:
                 $count = City::whereIn('id', $ids)->delete();
@@ -172,7 +172,7 @@ class CityController extends Controller
                 // b) Observer-kompatibilis, egyenkénti törlés:
                 //$_cities = City::whereIn('id', $ids)->lockForUpdate()->get();
                 //$_cities->each(function (City $city) use (&$deletedCount) {
-                //    if ($entity->delete()) {
+                //    if ($city->delete()) {
                 //        $deletedCount++;
                 //    }
                 //});
