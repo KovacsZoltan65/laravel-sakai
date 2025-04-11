@@ -22,7 +22,7 @@ class GetSubdomainStateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'id' => ['required', 'integer', 'exists:subdomain_states,id']
         ];
     }
 }

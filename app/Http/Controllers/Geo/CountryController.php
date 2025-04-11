@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Geo;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CountryIndexRequest;
+use App\Http\Requests\IndexCountryRequest;
 use App\Http\Requests\GetCountryRequest;
 use App\Http\Requests\StoreCountryRequest;
 use App\Http\Requests\UpdateCountryRequest;
@@ -30,7 +30,7 @@ class CountryController extends Controller
         //
     }
 
-    public function index(CountryIndexRequest $request): InertiaResponse
+    public function index(IndexCountryRequest $request): InertiaResponse
     {
         $regions = Region::toSelect();
         

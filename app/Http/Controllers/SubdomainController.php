@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GetSubdomainRequest;
-use App\Http\Requests\SubdomainIndexRequest;
+use App\Http\Requests\IndexSubdomainRequest;
 use App\Http\Requests\StoreSubdomainRequest;
 use App\Http\Requests\UpdateSubdomainRequest;
 use App\Models\Subdomain;
@@ -24,7 +24,7 @@ class SubdomainController extends Controller
         //
     }
     
-    public function index(SubdomainIndexRequest $request)
+    public function index(IndexSubdomainRequest $request)
     {
         $states = State::ToSelect();
         
@@ -207,14 +207,14 @@ class SubdomainController extends Controller
 
             return response()->json($subdomain, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
-            \Log::info('deleteCity ModelNotFoundException: ' . print_r($ex, true));
-            return response()->json(['error' => 'deleteCity City not found'], Response::HTTP_NOT_FOUND);
+            \Log::info('deleteSubdomain ModelNotFoundException: ' . print_r($ex, true));
+            return response()->json(['error' => 'deleteSubdomain City not found'], Response::HTTP_NOT_FOUND);
         } catch( QueryException $ex ) {
-            \Log::info('deleteCity QueryException: ' . print_r($ex, true));
-            return response()->json(['error' => 'deleteCity Database error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::info('deleteSubdomain QueryException: ' . print_r($ex, true));
+            return response()->json(['error' => 'deleteSubdomain Database error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::info('deleteCity Exception: ' . print_r($ex, true));
-            return response()->json(['error' => 'deleteCity Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::info('deleteSubdomain Exception: ' . print_r($ex, true));
+            return response()->json(['error' => 'deleteSubdomain Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
     

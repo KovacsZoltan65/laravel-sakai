@@ -8,9 +8,9 @@ use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
-use App\Http\Requests\PermissionIndexRequest;
-use App\Http\Requests\PermissionStoreRequest;
-use App\Http\Requests\PermissionUpdateRequest;
+use App\Http\Requests\IndexPermissionRequest;
+use App\Http\Requests\StorePermissionRequest;
+use App\Http\Requests\UpdatePermissionRequest;
 
 class PermissionController extends Controller
 {
@@ -27,7 +27,7 @@ class PermissionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(PermissionIndexRequest $request): InertiaResponse
+    public function index(IndexPermissionRequest $request): InertiaResponse
     {
         $permissions = Permission::query();
         if ($request->has('search')) {
@@ -50,7 +50,7 @@ class PermissionController extends Controller
         return Inertia::render('Permission/Index', $params);
     }
 
-    public function store(PermissionStoreRequest $request)
+    public function store(StorePermissionRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -67,7 +67,7 @@ class PermissionController extends Controller
         }
     }
 
-    public function update(PermissionUpdateRequest $request, Permission $permission)
+    public function update(UpdatePermissionRequest $request, Permission $permission)
     {
         DB::beginTransaction();
         try {

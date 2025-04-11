@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\UserIndexRequest;
-use App\Http\Requests\UserStoreRequest;
-use App\Http\Requests\UserUpdateRequest;
+use App\Http\Requests\IndexUserRequest;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends Controller
 {
@@ -27,7 +27,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(UserIndexRequest $request)
+    public function index(IndexUserRequest $request)
     {
         $users = User::query();
         if ($request->has('search')) {
@@ -54,7 +54,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function store(UserStoreRequest $request)
+    public function store(StoreUserRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -72,7 +72,7 @@ class UserController extends Controller
         }
     }
 
-    public function update(UserUpdateRequest $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
         DB::beginTransaction();
         try {

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\EntityIndexRequest;
+use App\Http\Requests\IndexEntityRequest;
 use App\Http\Requests\GetEntityRequest;
 use App\Http\Requests\StoreEntityRequest;
 use App\Http\Requests\UpdateEntityRequest;
@@ -28,7 +28,7 @@ class EntityController extends Controller
         //
     }
 
-    public function index(EntityIndexRequest $request): InertiaResponse
+    public function index(IndexEntityRequest $request): InertiaResponse
     {
         $companies = Company::active()->select('name', 'id')->get();
 

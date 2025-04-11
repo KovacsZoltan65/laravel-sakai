@@ -8,8 +8,8 @@ use Inertia\Response AS InertiaResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\RoleIndexRequest;
-use App\Http\Requests\RoleStoreRequest;
-use App\Http\Requests\RoleUpdateRequest;
+use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdateRoleRequest;
 use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
@@ -48,7 +48,7 @@ class RoleController extends Controller
         ]);
     }
 
-    public function store(RoleStoreRequest $request)
+    public function store(StoreRoleRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -64,7 +64,7 @@ class RoleController extends Controller
         }
     }
 
-    public function update(RoleUpdateRequest $request, Role $role)
+    public function update(UpdateRoleRequest $request, Role $role)
     {
         DB::beginTransaction();
         try {
