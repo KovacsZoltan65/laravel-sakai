@@ -66,6 +66,14 @@ class SubdomainState extends Model
         return $query->where('active', '=', 1);
     }
 
+    public function scopeToSelect(): array
+    {
+        return $this->active()
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get()->toArray();
+    }
+
     public function subdomains(): HasMany
     {
         return $this->hasMany(Subdomain::class, 'state_id');

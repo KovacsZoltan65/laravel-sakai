@@ -90,6 +90,22 @@ class Region extends Model
         return $query->where('active', '=', 1);
     }
 
+    public function scopeToSelect(): array
+    {
+        return $this->active()
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get()->toArray();
+    }
+
+    public function scopeByCountryToSelect(int $countryId): array
+    {
+        return $this->active()->where('country_id', '=', $countryId)
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get()->toArray();
+    }
+
     /**
      * A régióhoz tartozó ország
      *

@@ -33,6 +33,14 @@ class Person extends Model
         return $query->where( 'active', '=', 1);
     }
 
+    public function scopeToSelect(): array
+    {
+        return $this->active()
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get()->toArray();
+    }
+
     public function getCreatedAtAttribute()
     {
         return date('d-m-Y H:i', strtotime($this->attributes['created_at']));

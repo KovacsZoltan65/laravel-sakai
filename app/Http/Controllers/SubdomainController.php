@@ -3,18 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GetSubdomainRequest;
-use App\Http\Requests\StoreSubdomainRequest;
 use App\Http\Requests\SubdomainIndexRequest;
+use App\Http\Requests\StoreSubdomainRequest;
+use App\Http\Requests\UpdateSubdomainRequest;
 use App\Models\Subdomain;
-use App\Models\SubdomainState;
-use Exception;
+use App\Models\SubdomainState as State;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use NunoMaduro\Collision\Adapters\Phpunit\State;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Exception;
+use DB;
 
 class SubdomainController extends Controller
 {
@@ -25,7 +26,7 @@ class SubdomainController extends Controller
     
     public function index(SubdomainIndexRequest $request)
     {
-        $states = SubdomainState::all();
+        $states = State::ToSelect();
         
         return Inertia::render('Subdomain/Index', [
             'title' => 'Subdomains',
@@ -36,7 +37,7 @@ class SubdomainController extends Controller
     
     public function fetch(Request $request): JsonResponse
     {
-        $_subdomains = State::query();
+        $_subdomains = Subdomain::query();
         
         if( $search = $request->search ) {
             $_subdomains->where(function ($query) use ($search) {
@@ -77,7 +78,7 @@ class SubdomainController extends Controller
     public function getSubdomainByName(string $name): JsonResponse
     {
         try {
-            $subdomain = City::where('name', '=', $name)->firstOrFail();
+            $subdomain = State::where('name', '=', $name)->firstOrFail();
             
             return response()->json($subdomain, Response::HTTP_OK);
             
@@ -119,7 +120,7 @@ class SubdomainController extends Controller
         }
     }
     
-    public function updateSubdomain(UpdateSudbomainRequest $request, int $id): JsonResponse
+    public function updateSubdomain(UpdateSubdomainRequest $request, int $id): JsonResponse
     {
         try {
 
@@ -218,12 +219,12 @@ class SubdomainController extends Controller
     }
     
     
-    private function createDefaultSettings(City $city): void
+    private function createDefaultSettings(Subdomain $subdomain): void
     {
         //
     }
 
-    private function updateDefaultSettings(City $city): void
+    private function updateDefaultSettings(Subdomain $subdomain): void
     {
         //
     }

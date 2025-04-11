@@ -66,6 +66,32 @@ class Entity extends Model
         $this->attributes['last_export'] = $value ? Carbon::parse($value)->format('Y-m-d') : null;
     }
 
+    public function scopeToSelect(): array
+    {
+        return $this->active()
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get()->toArray();
+    }
+
+    public function scopeByUserIdToSelect(int $userId): array
+    {
+        return $this->active()
+            ->where('user_id', '=', $userId)
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get()->toArray();
+    }
+
+    public function scopeByCompanyIdToSelect(int $companyId): array
+    {
+        return $this->active()
+            ->where('company_id', '=', $companyId)
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get()->toArray();
+    }
+
     //public function entityCalendars(): HasMany
     //{
     //    return $this->hasMany(EntityCalendar::class);

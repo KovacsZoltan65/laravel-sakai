@@ -95,6 +95,24 @@ class City extends Model
         return $query->where('active', '=', 1);
     }
 
+    public function scopeByRegionToSelect(int $regionId): array
+    {
+        return $this->active()
+            ->where('region_id', '=', $regionId)
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->toArray();
+    }
+
+    public function scopeByCountryToSelect(int $countryId): array
+    {
+        return $this->active()
+            ->where('country_id', '=', $countryId)
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->toArray();
+    }
+
     /**
      * Szerezd meg a várost birtokló régiót
      *

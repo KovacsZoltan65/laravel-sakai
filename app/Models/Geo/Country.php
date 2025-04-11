@@ -76,6 +76,14 @@ class Country extends Model
         return $query->where('active', 1);
     }
 
+    public function scopeToSelect(): array
+    {
+        return $this->active()
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get()->toArray();
+    }
+
     /**
      * A kapcsolódó városok listája.
      *
