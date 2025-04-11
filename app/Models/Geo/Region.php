@@ -87,15 +87,18 @@ class Region extends Model
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('active', '=', 1);
+        $regions = $query->where('active', '=', 1);
+        return $regions;
     }
 
     public function scopeToSelect(): array
     {
-        return $this->active()
+        $regions = $this->active()
             ->select(['id', 'name'])
             ->orderBy('name', 'asc')
             ->get()->toArray();
+        
+        return $regions;
     }
 
     public function scopeByCountryToSelect(int $countryId): array

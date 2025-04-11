@@ -15,7 +15,7 @@ const emit = defineEmits(["close", "saved"]);
 //const source = ref(null); // nem hozzárendelt régiók
 //const target = ref(null); // hozzárendelt régiók
 
-const sourceItems = ref(null);
+//const sourceItems = ref(null);
 const targetItems = ref(null);
 const picklistProducts = ref(null);
 
@@ -25,7 +25,7 @@ const picklistProducts = ref(null);
 //});
 
 onMounted(() => {
-
+console.log('country', props.country);
     //ProductService.getProductsSmall().then((data) => {
     //    picklistProducts.value = [data, []];
     //});
@@ -70,7 +70,7 @@ const save = async () => {
         isUpdating = false;
     }
 
-
+    // MENTÉS MODUL
 
 
 

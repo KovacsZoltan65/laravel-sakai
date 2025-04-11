@@ -72,6 +72,10 @@ const fetchItems = async () => {
 
 onMounted(() => {
     fetchItems();
+
+    //console.log('props.regions', props.regions);
+    //console.log('props.cities', props.cities);
+
 });
 
 watch(
