@@ -25,7 +25,7 @@ class EntityController extends Controller
         //
     }
 
-    public function index(EntityRequest $request): InertiaResponse
+    public function index(Request $request): InertiaResponse
     {
         $companies = Company::active()->select('name', 'id')->get();
 
@@ -215,7 +215,7 @@ class EntityController extends Controller
         }
     }
 
-    public function restoreEntity(GetEntityRequest $request): JsonResponse
+    public function restoreEntity(Request $request): JsonResponse
     {
         try {
 
@@ -246,7 +246,7 @@ class EntityController extends Controller
         }
     }
 
-    public function realDeleteEntity(GetEntityRequest $request): JsonResponse
+    public function realDeleteEntity(Request $request): JsonResponse
     {
         try {
 
