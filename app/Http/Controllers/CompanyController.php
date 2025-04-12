@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CompanyIndexRequest;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,7 +15,7 @@ class CompanyController extends Controller
         //
     }
 
-    public function index(CompanyIndexRequest $request): InertiaResponse
+    public function index(Request $request): InertiaResponse
     {
         return Inertia::render(component: 'Company/Index', props: [
             'title' => 'Companies',

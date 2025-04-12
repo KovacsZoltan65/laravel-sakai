@@ -63,7 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // PERSONS
     // =================================================
     Route::get(
-        uri: '/persons', 
+        uri: '/persons',
         action: [App\Http\Controllers\PersonController::class, 'index']
     )->name(name: 'persons.index');
 
@@ -71,7 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ENTITIES
     // =================================================
     Route::get(
-        uri: '/entities', 
+        uri: '/entities',
         action: [App\Http\Controllers\EntityController::class, 'index']
     )->name(name: 'entities.index');
 
@@ -79,7 +79,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // COUNTRIES
     // =================================================
     Route::get(
-        uri: '/countries', 
+        uri: '/countries',
         action: [App\Http\Controllers\Geo\CountryController::class, 'index']
     )->name(name: 'countries.index');
 
@@ -87,7 +87,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // REGIONS
     // =================================================
     Route::get(
-        uri: '/regions', 
+        uri: '/regions',
         action: [App\Http\Controllers\Geo\RegionController::class, 'index']
     )->name(name: 'countries.index');
 
@@ -95,19 +95,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // CITIES
     // =================================================
     Route::get(
-        uri: '/cities', 
+        uri: '/cities',
         action: [App\Http\Controllers\Geo\CityController::class, 'index']
     )->name(name: 'countries.index');
 
     // =================================================
     // SUBDOMAIN STATES
     // =================================================
-    Route::get('/subdomain_states', [\App\Http\Controllers\SubdomainStateController::class, 'index'])->name('subdomain_states.index');
-    
+    Route::get('/subdomain_states', [App\Http\Controllers\Subdomains\SubdomainStateController::class, 'index'])->name('subdomain_states.index');
+
     // =================================================
     // SUBDOMAINS
     // =================================================
-    Route::get('/subdomains', [\App\Http\Controllers\SubdomainController::class, 'index'])->name('subdomains.index');
+    Route::get('/subdomains', [\App\Http\Controllers\Subdomains\SubdomainController::class, 'index'])->name('subdomains.index');
 });
 
 Route::get('/form', function () {

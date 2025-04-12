@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Subdomains;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\DeleteSubdomainRequest;
 use App\Http\Requests\IndexSubdomainRequest;
 use App\Http\Requests\StoreSubdomainRequest;
@@ -23,46 +24,48 @@ class SubdomainController extends Controller
     {
         //
     }
-    
+
     public function index(IndexSubdomainRequest $request)
     {
         $states = State::ToSelect();
-        
-        return Inertia::render('Subdomain/Index', [
+
+        return Inertia::render('Subdomains/Subdomain/Index', [
             'title' => 'Subdomains',
             'filters' => $request->all(['search', 'field', 'order']),
             'states' => $states,
         ]);
     }
-    
+
     public function fetch(Request $request): JsonResponse
     {
         $_subdomains = Subdomain::query();
-        
+
         if( $search = $request->search ) {
             $_subdomains->where(function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%");
             });
         }
-        
+
         if( $request->has(['field', 'order']) ) {
             $_subdomains->orderBy($request->field, $request->order);
         }
-        
+
         $subdomains = $_subdomains->with('subdomainState')
                 ->paginate(10, ['*'], 'page', $request->page ?? 1);
-        
-        return response()->json($subdomains);
+
+        //dd($subdomains);
+
+        return response()->json($subdomains, Response::HTTP_OK);
     }
-    
+
     public function getSubdomain(Request $request): JsonResponse
     {
         try {
             $subdomain = Subdomain::with(['subdomainState'])
             ->findOrFail($request->id);
-            
+
             return response()->json($subdomain, Response::HTTP_OK);
-            
+
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'getSubdomain ModelNotFoundException: ' . print_r(value: $ex, return: true));
             return response()->json(['error' => 'getSubdomain Entity not found'],  Response::HTTP_NOT_FOUND);
@@ -74,14 +77,14 @@ class SubdomainController extends Controller
             return response()->json(['error' => 'getSubdomain Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function getSubdomainByName(string $name): JsonResponse
     {
         try {
             $subdomain = State::where('name', '=', $name)->firstOrFail();
-            
+
             return response()->json($subdomain, Response::HTTP_OK);
-            
+
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'getSubdomainByName ModelNotFoundException: ' . print_r(value: $ex, return: true));
             return response()->json(['error' => 'getSubdomainByName Entity not found'],  Response::HTTP_NOT_FOUND);
@@ -93,24 +96,24 @@ class SubdomainController extends Controller
             return response()->json(['error' => 'getSubdomainByName Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function storeSubdomain(StoreSubdomainRequest $request): JsonResponse
     {
         try {
             $subdomain = DB::transaction(function() use($request): Subdomain {
                 // 1. Entitás létrehozása
                 $_subdomain = Subdomain::create($request->all());
-                
+
                 // 2. Kapcsolódó rekordok létrehozása (pl. alapértelmezett beállítások)
                 $this->createDefaultSettings($_subdomain);
 
                 // 3. Cache törlése, ha releváns
-                
+
                 return $_subdomain;
             });
-            
+
             return response()->json($subdomain, Response::HTTP_OK);
-            
+
         } catch( QueryException $ex ) {
             \Log::info('storeSubdomain QueryException: ' . print_r($ex, true));
             return response()->json(['error' => 'storeSubdomain Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -119,7 +122,7 @@ class SubdomainController extends Controller
             return response()->json(['error' => 'storeSubdomain Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function updateSubdomain(UpdateSubdomainRequest $request, int $id): JsonResponse
     {
         try {
@@ -150,7 +153,7 @@ class SubdomainController extends Controller
             return response()->json(['error' => 'updateSubdomain Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function deleteSubdomains(Request $request): JsonResponse
     {
         try {
@@ -191,7 +194,7 @@ class SubdomainController extends Controller
             return response()->json(['error' => 'deleteSubdomains Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function deleteSubdomain(DeleteSubdomainRequest $request): JsonResponse
     {
         try {
@@ -217,8 +220,8 @@ class SubdomainController extends Controller
             return response()->json(['error' => 'deleteSubdomain Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
-    
+
+
     private function createDefaultSettings(Subdomain $subdomain): void
     {
         //

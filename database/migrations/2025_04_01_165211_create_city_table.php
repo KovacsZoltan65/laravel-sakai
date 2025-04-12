@@ -20,10 +20,10 @@ return new class extends Migration
             $table->decimal('longitude', 10, 2)->nullable()->comment('Hosszúság.');
             $table->string('name', 255)->index()->comment('Név.');
 
-            $table->unsignedBigInteger('country_id')->comment('Ország azonosító.');
+            $table->unsignedBigInteger('country_id')->index()->comment('Ország azonosító.');
             $table->foreign('country_id')->references('id')->on('countries')->cascadeOnDelete();
 
-            $table->unsignedBigInteger('region_id')->comment('Régió azonosító.');
+            $table->unsignedBigInteger('region_id')->index()->comment('Régió azonosító.');
             $table->foreign('region_id')->references('id')->on('regions')->cascadeOnDelete();
             //$table->unsignedBigInteger('city_id')->comment('Város azonosító. A kapcsolódó megye / régió azonosítója.');
 

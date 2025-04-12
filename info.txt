@@ -92,8 +92,7 @@ php artisan make:migration CreateCountryTable
 php artisan make:seeder CountrySeeder
 php artisan make:factory CountryFactory
 php artisan make:resource CountryResource
-php artisan make:request GetCountryRequest
-php artisan make:request CountryIndexRequest
+php artisan make:request DeleteCountryRequest
 php artisan make:request StoreCountryRequest
 php artisan make:request UpdateCountryRequest
 php artisan make:repository Country
@@ -107,7 +106,7 @@ php artisan make:migration CreateRegionTable
 php artisan make:seeder RegionSeeder
 php artisan make:factory RegionFactory
 php artisan make:resource RegionResource
-php artisan make:request RegionIndexRequest
+php artisan make:request DeleteRegionRequest
 php artisan make:request StoreRegionRequest
 php artisan make:request UpdateRegionRequest
 php artisan make:repository Region
@@ -121,10 +120,10 @@ php artisan make:migration CreateCityTable
 php artisan make:seeder CitySeeder
 php artisan make:factory CityFactory
 php artisan make:resource CityResource
-php artisan make:request CityIndexRequest
+php artisan make:request DeleteCityRequest
 php artisan make:request StoreCityRequest
 php artisan make:request UpdateCityRequest
-php artisan make:request GetCityRequest
+php artisan make:request DeleteCityRequest
 
 php artisan make:repository City
 
@@ -140,7 +139,7 @@ php artisan make:resource SubdomainResource
 php artisan make:request SubdomainIndexRequest
 php artisan make:request StoreSubdomainRequest
 php artisan make:request UpdateSubdomainRequest
-php artisan make:request GetSubdomainRequest
+php artisan make:request DeleteSubdomainRequest
 php artisan make:repository Subdomain
 
 // -------------------------------
@@ -155,5 +154,21 @@ php artisan make:resource SubdomainStateResource
 php artisan make:request SubdomainStateIndexRequest
 php artisan make:request StoreSubdomainStateRequest
 php artisan make:request UpdateSubdomainStateRequest
-php artisan make:request GetSubdomainStateRequest
+php artisan make:request DeleteSubdomainStateRequest
 php artisan make:repository SubdomainState
+
+
+// -------------------------------
+// CALENDAR
+// -------------------------------
+php artisan make:model Calendar
+php artisan make:controller CalendarController
+php artisan make:repository Calendar
+php artisan make:migration CreateCalendarTable
+php artisan make:seeder CalendarSeeder
+php artisan make:factory CalendarFactory
+php artisan make:resource CalendarResource
+php artisan make:request DeleteCalendarRequest
+php artisan make:request StoreCalendarRequest
+php artisan make:request UpdateCalendarRequest
+php artisan make:repository Calendar

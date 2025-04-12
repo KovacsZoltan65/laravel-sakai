@@ -59,6 +59,16 @@ class RoleSeeder extends Seeder
             'create city',
             'delete city',
             'update city',
+            
+            'read subdomain',
+            'create subdomain',
+            'delete subdomain',
+            'update subdomain',
+            
+            'read subdomain_state',
+            'create subdomain_state',
+            'delete subdomain_state',
+            'update subdomain_state',
         ]);
 
         // Admin szerepkör létrehozása

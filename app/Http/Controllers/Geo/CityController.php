@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Geo;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CityIndexRequest;
 use App\Http\Requests\GetCityRequest;
 use App\Http\Requests\StoreCityRequest;
 use App\Http\Requests\UpdateCityRequest;
@@ -27,7 +26,7 @@ class CityController extends Controller
         //
     }
 
-    public function index(CityIndexRequest $request): InertiaResponse
+    public function index(Request $request): InertiaResponse
     {
         $regions = Region::active()->select('name', 'id')->get();
         $countries = Country::active()->select('name', 'id')->get();

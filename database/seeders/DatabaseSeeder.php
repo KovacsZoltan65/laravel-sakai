@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
 
+            CalendarSeeder::class,
+
             CountriesTableSeeder::class,
             RegionsTableSeeder::class,
             CitiesTableSeeder::class,

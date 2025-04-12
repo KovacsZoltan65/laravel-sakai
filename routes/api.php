@@ -22,11 +22,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // COMPANIES
 // =================================================
 Route::get(
-    uri: '/companies/fetch', 
+    uri: '/companies/fetch',
     action: [App\Http\Controllers\CompanyController::class, 'fetch']
 )->name(name: 'api.companies.fetch');
 Route::post(
-    uri:'/companies', 
+    uri:'/companies',
     action: [App\Http\Controllers\CompanyController::class, 'create']
 )->name(name: 'api.companies.create');
 
@@ -58,7 +58,7 @@ Route::post(
 // COUNTRIES
 // =================================================
 Route::get(
-    uri: '/countries/fetch', 
+    uri: '/countries/fetch',
     action: [App\Http\Controllers\Geo\CountryController::class, 'fetch']
 )->name(name: 'api.countries.index');
 
@@ -66,7 +66,7 @@ Route::get(
 // REGIONS
 // =================================================
 Route::get(
-    uri: '/regions/fetch', 
+    uri: '/regions/fetch',
     action: [App\Http\Controllers\Geo\RegionController::class, 'fetch']
 )->name(name:'api.regions.index');
 
@@ -74,19 +74,19 @@ Route::get(
 // CITIES
 // =================================================
 Route::get(
-    uri: '/cities/fetch', 
+    uri: '/cities/fetch',
     action: [App\Http\Controllers\Geo\CityController::class, 'fetch']
 )->name(name: 'api.cities.index');
 
 // =================================================
 // SUBDOMAIN STATES
 // =================================================
-Route::get('/subdomain_states/fetch', [App\Http\Controllers\SubdomainStateController::class, 'fetch'])->name('api.subdomain_states.fetch');
+Route::get('/subdomain_states/fetch', [App\Http\Controllers\Subdomains\SubdomainStateController::class, 'fetch'])->name('api.subdomain_states.fetch');
 
 // =================================================
 // SUBDOMAINS
 // =================================================
-Route::get('/subdomains/fetch', [App\Http\Controllers\SubdomainController::class, 'fetch'])->name('api.subdomains.fetch');
+Route::get('/subdomains/fetch', [App\Http\Controllers\Subdomains\SubdomainController::class, 'fetch'])->name('api.subdomains.fetch');
 
 /*
 Route::get('/companies', function(Request $reques){

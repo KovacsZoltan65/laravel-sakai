@@ -2,11 +2,8 @@
 import { onMounted, reactive, ref, watch, computed } from "vue";
 import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
-//import { router } from "@inertiajs/vue3";
-import EntityService from '@/service/EntityService.js';
-import CreateModal from "@/Pages/Entity/Create.vue";
-import EditModal from "@/Pages/Entity/Edit.vue";
-import DeleteModal from "@/Pages/Entity/Delete.vue";
+
+import SubdomainService from '@/service/Subdomains/SubdomainService.js';
 
 import { usePermissions } from '@/composables/usePermissions';
 const { has } = usePermissions();
@@ -19,10 +16,10 @@ const isLoading = ref(false);
 const props = defineProps({
     title: String,
     filters: Object,
-    companies: Array,
+    states: Array
 });
 
-const entities = ref(null);
+const subdomains = ref(null);
 
 const data = reactive({
     params: {
@@ -34,7 +31,7 @@ const data = reactive({
         editOpen: false,
         deleteOpen: false,
     },
-    entity: null
+    subdomain: null
 });
 
 const onPageChange = (event) => {
@@ -42,18 +39,6 @@ const onPageChange = (event) => {
     fetchItems();
 };
 
-/**
- * Lekéri az entitásokat a szerverről,
- * majd beállítja a `entities`-t a kapott adatokkal.
- *
- * @param {Object} [params={}] - a lekérdezés paraméterei
- * @property {number} [params.page=1] - az oldal száma
- * @property {string} [params.search] - a keresendő szöveg
- * @property {string} [params.field] - a rendezendő mez
- * @property {string} [params.order] - a rendezés iránya (asc/desc)
- *
- * @returns {Promise<void>}
- */
 const fetchItems = async () => {
 
     isLoading.value = true;
@@ -66,20 +51,18 @@ const fetchItems = async () => {
     });
 
     try {
-        //const response = await axios.get(route('api.entities.fetch'), { params });
-        const response = await EntityService.getEntities(params);
+        const response = await SubdomainService.getSubdomains(params);
 
-        entities.value = response.data;
-    } catch (error) {
-        console.error("Hiba az entitások lekérdezésekor", error);
+        subdomains.value = response.data;
+
+        //console.log('subdomains.value', subdomains.value);
+    } catch(error) {
+        console.error("Hiba az subdomainek lekérdezésekor", error);
     } finally {
         isLoading.value = false;
     }
-};
 
-onMounted(() => {
-    fetchItems();
-});
+};
 
 watch(
     () => [data.params.search, data.params.field, data.params.order], // 🧠 kizárjuk a page-et
@@ -89,49 +72,31 @@ watch(
     }, 300)
 );
 
+onMounted(() => {
+    fetchItems();
+});
+
 const clearFilter = () => {
     console.log('Clear Filters');
 };
+
+const buttonFrozen = ref(false);
 
 </script>
 
 <template>
     <AuthLayout>
-
         <Head :title="props.title" />
 
         <div class="card">
 
             <!-- CREATE MODAL -->
-            <CreateModal
-                :show="data.createOpen"
-                :title="props.title"
-                @close="data.createOpen = false"
-                @saved="fetchItems" />
 
             <!-- EDIT MODAL -->
-            <EditModal
-                :show="data.editOpen"
-                :entity="data.entity"
-                :title="props.title"
-                @close="data.editOpen = false"
-                @saved="fetchItems" />
 
             <!-- DELETE MODAL -->
-            <DeleteModal
-                :show="data.deleteOpen"
-                :entity="data.entity"
-                :title="props.title"
-                @close="data.deleteOpen = false"
-                @deleted="fetchItems" />
 
             <!-- CREATE BUTTON -->
-            <Button
-                v-show="has('create entity')"
-                icon="pi pi-plus"
-                label="Create"
-                @click="data.createOpen = true"
-                class="mr-2" />
 
             <!-- REFRESH GOMB -->
             <Button
@@ -140,12 +105,12 @@ const clearFilter = () => {
             />
 
             <DataTable
-                v-if="entities"
-                :dataKey="'id'" lazy paginator
-                :value="entities.data"
-                :rows="entities.per_page"
-                :totalRecords="entities.total"
-                :first="(entities.current_page - 1) * entities.per_page"
+                v-if="subdomains"
+                :dataKey="'id'" lazy paginator stripedRows scrollable
+                :value="subdomains.data"
+                :rows="subdomains.per_page"
+                :totalRecords="subdomains.total"
+                :first="(subdomains.current_page - 1) * subdomains.per_page"
                 :loading="isLoading"
                 @page="onPageChange"
                 tableStyle="min-width: 50rem">
@@ -164,7 +129,7 @@ const clearFilter = () => {
 
                         <!-- FELIRAT -->
                         <div class="font-semibold text-xl mb-1">
-                            entities_title
+                            subdomains_title
                         </div>
 
                         <!-- KERESÉS-->
@@ -185,39 +150,63 @@ const clearFilter = () => {
                 <template #empty> No data found. </template>
                 <template #loading> Loading data. Please wait. </template>
 
-                <Column field="id" header="#"></Column>
-                <Column field="name" header="Name"></Column>
-
-                <Column field="created_at" header="Created"></Column>
-                <Column field="updated_at" header="Updated"></Column>
-                <Column :exportable="false" style="min-width: 12rem">
+                <Column
+                    :exportable="false"
+                    style="min-width: 8rem"
+                    header="Actions"
+                    frozen
+                >
 
                     <template #body="slotProps">
 
                         <Button
-                            v-show="has('update entity')"
+                            v-show="has('update subdomain')"
                             icon="pi pi-pencil"
                             outlined rounded
                             class="mr-2"
                             @click="(
                                 (data.editOpen = true),
-                                (data.entity = slotProps.data)
+                                (data.state = slotProps.data)
                             )" />
 
                         <Button
-                            v-show="has('delete entity')"
+                            v-show="has('delete subdomain')"
                             icon="pi pi-trash"
                             outlined rounded
                             severity="danger"
                             @click="(
                                 (data.deleteOpen = true),
-                                (data.entity = slotProps.data)
+                                (data.state = slotProps.data)
                             )" />
 
                     </template>
                 </Column>
+
+                <Column field="id" header="ID" class="font-bold" />
+
+                <Column field="name" header="Name"/>
+                <Column field="url" header="URL" />
+
+                <Column field="db_host" header="DB host" />
+                <Column field="db_name" header="DB name" />
+                <Column field="db_port" header="Port" />
+                <Column field="db_user" header="User" />
+                <Column field="db_password" header="Password" />
+
+                <Column field="state_id" header="State" />
+                <Column field="subdomain_state.name" header="State" />
+
+                <Column field="notification" header="notification" />
+                <Column field="sso" header="sso" />
+                <Column field="is_mirror" header="is_mirror" />
+
+                <Column field="created_at" header="Created At" />
+                <Column field="updated_at" header="Updated At" />
+                <Column field="deleted_at" header="Deleted At" />
+
             </DataTable>
         </div>
 
     </AuthLayout>
+
 </template>
