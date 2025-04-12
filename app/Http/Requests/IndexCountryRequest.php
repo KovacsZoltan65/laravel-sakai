@@ -22,9 +22,9 @@ class IndexCountryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'field' => ['in:name,code,active,created_at,updated_at'],
-            'order' => ['in:asc,desc'],
-            'perPage' => ['numeric'],
+            'field' => ['nullable', 'in:name,code,active,created_at,updated_at'],
+            'order' => ['nullable', 'in:asc,desc'],
+            'perPage' => ['nullable', 'integer', 'min:1'],
         ];
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\GetSubdomainRequest;
+use App\Http\Requests\DeleteSubdomainRequest;
 use App\Http\Requests\IndexSubdomainRequest;
 use App\Http\Requests\StoreSubdomainRequest;
 use App\Http\Requests\UpdateSubdomainRequest;
@@ -55,7 +55,7 @@ class SubdomainController extends Controller
         return response()->json($subdomains);
     }
     
-    public function getSubdomain(GetSubdomainRequest $request): JsonResponse
+    public function getSubdomain(Request $request): JsonResponse
     {
         try {
             $subdomain = Subdomain::with(['subdomainState'])
@@ -192,7 +192,7 @@ class SubdomainController extends Controller
         }
     }
     
-    public function deleteSubdomain(GetSubdomainRequest $request): JsonResponse
+    public function deleteSubdomain(DeleteSubdomainRequest $request): JsonResponse
     {
         try {
 

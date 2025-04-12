@@ -22,7 +22,10 @@ class UpdateRegionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-        ];
+        'name' => ['required','string','max:255',],
+        'code' => ['required','string','max:10',],
+        'country_id' => ['required','integer','exists:countries,id',],
+        'active' => ['nullable','boolean',],
+    ];
     }
 }

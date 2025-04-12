@@ -12,17 +12,17 @@ return new class extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('countries', function (Blueprint $table) {
-            $table->id()->comment('Rekord azonosító');
-            $table->string('name', 255)->index()->unique('name')->comment('Név');
-            $table->string('code', 10)->index()->comment('Kód');
+            Schema::create('countries', function (Blueprint $table) {
+                $table->id()->comment('Rekord azonosító');
+                $table->string('name', 255)->index()->unique('name')->comment('Név');
+                $table->string('code', 10)->index()->comment('Kód');
 
-            $table->boolean('active')->default(1)->index()->comment('Aktív');
-            
-            $table->timestamps();
-            $table->softDeletes()->comment('Lágy törlés dátuma');
+                $table->boolean('active')->default(1)->index()->comment('Aktív');
 
-        });
+                $table->timestamps();
+                $table->softDeletes()->comment('Lágy törlés dátuma');
+
+            });
 	}
 
 	/**

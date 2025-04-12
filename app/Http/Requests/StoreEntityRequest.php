@@ -29,7 +29,7 @@ class StoreEntityRequest extends FormRequest
             'last_export' => ['nullable', 'date'],
             'user_id' => ['required', 'exists:users,id'],
             'company_id' => ['required', 'exists:companies,id'],
-            'active' => ['boolean'],
+            'active' => ['nullable', 'boolean'],
         ];
     }
 

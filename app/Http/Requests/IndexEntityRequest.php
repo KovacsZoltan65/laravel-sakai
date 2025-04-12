@@ -22,9 +22,16 @@ class IndexEntityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'field' => ['in:name,email,start_date,end_date,last_export,user_id,company_id,active'],
-            'order' => ['in:asc,desc'],
-            'perPage' => ['numeric'],
+            'field' => [
+                'nullable',
+                'in:name,email,start_date,end_date,last_export,user_id,company_id,active,created_at,updated_at',
+            ],
+            'order' => ['nullable','in:asc,desc',],
+            'perPage' => ['nullable','integer','min:1',],
+            // előkészítés kereső/filter mezőkhöz
+            'company_id' => ['nullable','integer','exists:companies,id',],
+            'user_id' => ['nullable','integer','exists:users,id',],
+            'active' => ['nullable','boolean',],
         ];
     }
 }

@@ -22,9 +22,9 @@ class IndexRegionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'field' => ['in:name,email,address,phone,created_at,updated_at'],
-            'order' => ['in:asc,desc'],
-            'perPage' => ['numeric'],
+            'field' => ['nullable','in:name,code,active,country_id,created_at,updated_at',],
+            'order' => ['nullable','in:asc,desc',],
+            'perPage' => ['nullable','integer','min:1',],
         ];
     }
 }

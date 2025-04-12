@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\GetSubdomainStateRequest;
+use App\Http\Requests\DeleteSubdomainStateRequest;
 use App\Http\Requests\StoreSubdomainStateRequest;
 use App\Http\Requests\IndexSubdomainStateRequest;
 use App\Http\Requests\UpdateSubdomainStateRequest;
@@ -54,7 +54,7 @@ class SubdomainStateController extends Controller
         return response()->json($states);
     }
     
-    public function getSubdomainState(GetSubdomainStateRequest $request): JsonResponse
+    public function getSubdomainState(DeleteSubdomainStateRequest $request): JsonResponse
     {
         try {
             $state = State::with(['subdomains'])->findOrFail($request->id);
@@ -190,7 +190,7 @@ class SubdomainStateController extends Controller
         }
     }
     
-    public function deleteSubdomainState(GetSubdomainStateRequest $request): JsonResponse
+    public function deleteSubdomainState(DeleteSubdomainStateRequest $request): JsonResponse
     {
         try {
 

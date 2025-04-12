@@ -2,24 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\IndexEntityRequest;
-use App\Http\Requests\GetEntityRequest;
+use App\Http\Requests\DeleteEntityRequest;
 use App\Http\Requests\StoreEntityRequest;
 use App\Http\Requests\UpdateEntityRequest;
 use App\Models\Company;
 use App\Models\Entity;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response AS InertiaResponse;
-
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
-
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Exception;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use function response;
 
 class EntityController extends Controller
 {
@@ -28,7 +25,7 @@ class EntityController extends Controller
         //
     }
 
-    public function index(IndexEntityRequest $request): InertiaResponse
+    public function index(EntityRequest $request): InertiaResponse
     {
         $companies = Company::active()->select('name', 'id')->get();
 
@@ -59,7 +56,7 @@ class EntityController extends Controller
         return response()->json($entities);
     }
 
-    public function getEntity(GetEntityRequest $request): JsonResponse
+    public function getEntity(Request $request): JsonResponse
     {
         try {
             $entity = Entity::with(['users', 'companies'])
@@ -192,7 +189,7 @@ class EntityController extends Controller
         }
     }
 
-    public function deleteEntity(GetEntityRequest $request): JsonResponse
+    public function deleteEntity(DeleteEntityRequest $request): JsonResponse
     {
         try {
 

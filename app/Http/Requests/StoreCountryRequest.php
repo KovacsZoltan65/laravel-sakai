@@ -22,7 +22,12 @@ class StoreCountryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-        ];
+            'name' => ['required','string','max:255','unique:countries,name',],
+            'code' => ['required','string','max:10',],
+            'active' => [
+                'boolean',
+                'nullable', // opcionális, mivel van default értéke
+            ],
+    ];
     }
 }
