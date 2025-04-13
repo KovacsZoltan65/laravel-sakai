@@ -2,17 +2,16 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Permission;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePermissionRequest extends FormRequest
+class StoreCompanyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -23,10 +22,12 @@ class StorePermissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:'.Permission::class,
-            'name' => ['required', 'string', 'max:255', 
-                Rule::unique('permissions', 'name')
-            ]
+            'name' => ['request','string', 'max:255'],
+            'email' => ['request','string', 'max:255', 
+                Rule::unique('companies', 'name')
+            ],
+            'address' => ['request','string', 'max:255'],
+            'phone' => ['request','string', 'max:255'],
         ];
     }
 }

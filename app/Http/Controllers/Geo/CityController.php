@@ -59,7 +59,7 @@ class CityController extends Controller
         return response()->json($cities);
     }
 
-    public function getCity(GetCityRequest $request): JsonResponse
+    public function getCity(Request $request): JsonResponse
     {
         try {
             $city = City::with(['country', 'region'])

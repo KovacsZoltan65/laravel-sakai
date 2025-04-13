@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Permission;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePermissionRequest extends FormRequest
+class DeleteCompanyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +22,7 @@ class StorePermissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:'.Permission::class,
-            'name' => ['required', 'string', 'max:255', 
-                Rule::unique('permissions', 'name')
-            ]
+            'id' => ['required', 'integer', 'exists:companies,id'],
         ];
     }
 }
