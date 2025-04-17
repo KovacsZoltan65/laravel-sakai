@@ -21,6 +21,11 @@ class PersonController extends Controller
     public function __construct(PersonRepository $personRepository)
     {
         $this->personRepository = $personRepository;
+        
+        $this->middleware('permission:read person', ['only' => ['index', 'show', 'fetch', 'getPerson', 'getPersonByName']]);
+        $this->middleware('permission:create person', ['only' => ['storePerson']]);
+        $this->middleware('permission:update person', ['only' => ['updatePerson', 'restorePerson']]);
+        $this->middleware('permission:delete person', ['only' => ['deletePersons', 'deletePerson', 'realDeletePerson']]);
     }
     
     public function index(Request $request): InertiaResponse

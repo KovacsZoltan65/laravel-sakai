@@ -24,7 +24,10 @@ class RegionController extends Controller
 {
     public function __construct()
     {
-        //
+        $this->middleware('permission:read region', ['only' => ['index', 'show', 'fetch', 'getRegion', 'getRegionByName']]);
+        $this->middleware('permission:create region', ['only' => ['storeRegion']]);
+        $this->middleware('permission:update region', ['only' => ['updateRegion', 'restoreRegion']]);
+        $this->middleware('permission:delete region', ['only' => ['deleteRegions', 'deleteRegion', 'realDeleteRegion']]);
     }
 
     public function index(RegionIndexRequest $request): InertiaResponse

@@ -6,6 +6,37 @@ admin@admin.com | admin
 operator@operator.com | operator
 
 // ===============================
+// NPM
+// ===============================
+🟦 Futtatási környezet: 
+    Git Bash vagy bármilyen Bash-kompatibilis shell Windows alatt 
+    (pl. WSL, Cmder, stb.)
+
+Fissítések ellenőrzése: node check-updates.js
+Amit csinál:
+    Kilistázza az elavult csomagokat
+    Megmutatja, ha a latest verzió új major (BREAKING)
+    Kézzel javasolt frissítés:
+        npm install <csomag>@latest
+
+Csomagok biztonsági mentése: ./backup.sh
+Amit csinál:
+    Lementi:
+        package.json
+        package-lock.json
+        node_modules
+    Hely: .backup_npm/
+
+Csomagok visszaállítása: ./restore.sh
+    Amit csinál:
+        Visszamásolja az eredeti fájlokat és könyvtárat .backup_npm mappából
+
+Vagy:
+    npm run check
+    npm run backup
+    npm run restore
+
+// ===============================
 // GEO ADATOK
 // ===============================
 https://simplemaps.com/data/world-cities

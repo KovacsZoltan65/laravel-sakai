@@ -23,7 +23,10 @@ class CityController extends Controller
 {
     public function __construct()
     {
-        //
+        $this->middleware('permission:read city', ['only' => ['index', 'show', 'fetch', 'getCity', 'getCityByName']]);
+        $this->middleware('permission:create city', ['only' => ['storeCity']]);
+        $this->middleware('permission:update city', ['only' => ['updateCity', 'restoreCity']]);
+        $this->middleware('permission:delete city', ['only' => ['deleteCities', 'deleteCity', 'realDeleteCity']]);
     }
 
     public function index(Request $request): InertiaResponse
