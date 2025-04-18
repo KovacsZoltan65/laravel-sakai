@@ -23,7 +23,10 @@ class EntityController extends Controller
 {
     public function __construct()
     {
-        //
+        $this->middleware('permission:read entity', ['only' => ['index', 'show', 'fetch', 'getEntity', 'getEntityByName']]);
+        $this->middleware('permission:create entity', ['only' => ['storeEntity']]);
+        $this->middleware('permission:update entity', ['only' => ['updateEntity', 'restoreEntity']]);
+        $this->middleware('permission:delete entity', ['only' => ['deleteEntities', 'deleteEntity', 'realDeleteEntity']]);
     }
 
     public function index(IndexEntityRequest $request): InertiaResponse

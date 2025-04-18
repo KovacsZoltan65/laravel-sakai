@@ -27,7 +27,10 @@ class CountryController extends Controller
 {
     public function __construct()
     {
-        //
+        $this->middleware('permission:read country', ['only' => ['index', 'show', 'fetch', 'getCountry', 'getCountryByName']]);
+        $this->middleware('permission:create country', ['only' => ['storeCountry']]);
+        $this->middleware('permission:update country', ['only' => ['updateCountry', 'restoreCountry']]);
+        $this->middleware('permission:delete country', ['only' => ['deleteCounties', 'deleteCountry', 'realDeleteCountry']]);
     }
 
     public function index(IndexCountryRequest $request): InertiaResponse

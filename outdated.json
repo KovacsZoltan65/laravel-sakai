@@ -1,0 +1,37 @@
+{
+  "@inertiajs/vue3": {
+    "current": "1.3.0",
+    "wanted": "1.3.0",
+    "latest": "2.0.8",
+    "dependent": "laravel-sakai",
+    "location": "f:\\wamp64\\www\\softc\\laravel-sakai\\node_modules\\@inertiajs\\vue3"
+  },
+  "@vue/eslint-config-prettier": {
+    "current": "9.0.0",
+    "wanted": "9.0.0",
+    "latest": "10.2.0",
+    "dependent": "laravel-sakai",
+    "location": "f:\\wamp64\\www\\softc\\laravel-sakai\\node_modules\\@vue\\eslint-config-prettier"
+  },
+  "chart.js": {
+    "current": "3.3.2",
+    "wanted": "3.3.2",
+    "latest": "4.4.9",
+    "dependent": "laravel-sakai",
+    "location": "f:\\wamp64\\www\\softc\\laravel-sakai\\node_modules\\chart.js"
+  },
+  "tailwindcss": {
+    "current": "3.4.17",
+    "wanted": "3.4.17",
+    "latest": "4.1.4",
+    "dependent": "laravel-sakai",
+    "location": "f:\\wamp64\\www\\softc\\laravel-sakai\\node_modules\\tailwindcss"
+  },
+  "unplugin-vue-components": {
+    "current": "0.27.5",
+    "wanted": "0.27.5",
+    "latest": "28.5.0",
+    "dependent": "laravel-sakai",
+    "location": "f:\\wamp64\\www\\softc\\laravel-sakai\\node_modules\\unplugin-vue-components"
+  }
+}
