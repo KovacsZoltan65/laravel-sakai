@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DeleteEntityRequest;
+use App\Http\Requests\IndexEntityRequest;
 use App\Http\Requests\StoreEntityRequest;
 use App\Http\Requests\UpdateEntityRequest;
 use App\Models\Company;
@@ -25,9 +26,9 @@ class EntityController extends Controller
         //
     }
 
-    public function index(Request $request): InertiaResponse
+    public function index(IndexEntityRequest $request): InertiaResponse
     {
-        $companies = Company::active()->select('name', 'id')->get();
+        $companies = Company::scopeToSelect();
 
         return Inertia::render('Entity/Index', [
             'title' => 'Entities',

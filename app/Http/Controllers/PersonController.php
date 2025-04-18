@@ -20,6 +20,12 @@ class PersonController extends Controller
 
     public function __construct(PersonRepository $personRepository)
     {
+        /*
+         | read permission, 
+         | create permission, 
+         | update permission
+         | delete permission
+         */
         $this->personRepository = $personRepository;
     }
     

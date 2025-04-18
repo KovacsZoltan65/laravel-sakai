@@ -27,7 +27,7 @@ class SubdomainStateController extends Controller
 
     public function index(IndexSubdomainStateRequest $request)
     {
-        $subdomains = Subdomain::all();
+        $subdomains = Subdomain::ToSelect();
 
         return Inertia::render('Subdomains/States/Index', [
             'title' => 'Subdomain States',
