@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted, reactive, ref, watch, computed } from "vue";
-import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { onMounted, reactive } from "vue";
 import { Head } from "@inertiajs/vue3";
+import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import CountryService from "@/service/Geo/CountryService.js";
 
 import CreateModal from "@/Pages/Geo/Country/Create.vue";
@@ -10,216 +10,101 @@ import DeleteModal from "@/Pages/Geo/Country/Delete.vue";
 import AssignRegionsModal from "./AssignRegionsModal.vue";
 
 import { usePermissions } from '@/composables/usePermissions';
+import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
+
 const { has } = usePermissions();
-
-import pkg from "lodash";
-const { _, debounce, pickBy } = pkg;
-
-const isLoading = ref(false);
 
 const props = defineProps({
     title: String,
     filters: Object,
-    regions: Array,     // Összes régió
-    cities: Array,      // Összes város
+    regions: Array,
+    cities: Array,
 });
 
-const countries = ref(null);
+const fetchCountries = async (params) => {
+    const response = await CountryService.getCountries(params);
+    return response.data;
+};
+
+const {
+    data: countries,
+    params,
+    isLoading,
+    fetchData,
+    onPageChange,
+    clearSearch
+} = useDataTableFetcher(props.filters, fetchCountries);
 
 const data = reactive({
-    params: {
-        search: props.filters.search,
-        field: props.filters.field,
-        order: props.filters.order,
-        page: 1, // 👉 hozzáadva
-        createOpen: false,
-        editOpen: false,
-        deleteOpen: false,
-        regionsOpen: false
-    },
+    createOpen: false,
+    editOpen: false,
+    deleteOpen: false,
+    regionsOpen: false,
     country: null
 });
-
-const selectedCountry = ref(null);
-const allRegions = ref(props.regions); // props.regions tartalmazza az összes régiót
-
-const onPageChange = (event) => {
-    data.params.page = event.page + 1;
-    fetchItems();
-};
-
-const fetchItems = async () => {
-
-    isLoading.value = true;
-
-    const params = pickBy({
-        page: data.params.page ?? 1,
-        search: data.params.search,
-        field: data.params.field,
-        order: data.params.order,
-    });
-
-    try {
-        const response = await CountryService.getCountries(params);
-        //console.log('response.data', response.data);
-        countries.value = response.data;
-    } catch (error) {
-        console.error("Hiba az országok lekérdezésekor", error);
-    } finally {
-        isLoading.value = false;
-    }
-};
-
-onMounted(() => {
-    fetchItems();
-
-    //console.log('props.regions', props.regions);
-    //console.log('props.cities', props.cities);
-
-});
-
-watch(
-    () => [data.params.search, data.params.field, data.params.order], // 🧠 kizárjuk a page-et
-    debounce(() => {
-        data.params.page = 1; // új keresés = első oldal
-        fetchItems();
-    }, 300)
-);
-
-const clearFilter = () => {
-    console.log('Clear Filters');
-};
 
 const openRegionModal = (country) => {
     data.country = country;
     data.regionsOpen = true;
 };
 
+onMounted(fetchData);
 </script>
 
 <template>
     <AuthLayout>
-
         <Head :title="props.title" />
-
         <div class="card">
+            <CreateModal :show="data.createOpen" :title="props.title" @close="data.createOpen = false" @saved="fetchData" />
+            <EditModal :show="data.editOpen" :country="data.country" :title="props.title" @close="data.editOpen = false" @saved="fetchData" />
+            <DeleteModal :show="data.deleteOpen" :country="data.country" :title="props.title" @close="data.deleteOpen = false" @deleted="fetchData" />
+            <AssignRegionsModal :show="data.regionsOpen" title="Régiók hozzárendelése" :country="data.country" :regions="props.regions" @close="data.regionsOpen = false" @saved="fetchData" />
 
-            <!-- CREATE MODAL -->
-            <CreateModal
-                :show="data.createOpen"
-                :title="props.title"
-                @close="data.createOpen = false"
-                @saved="fetchItems" />
+            <Button v-if="has('create country')" icon="pi pi-plus" label="Create" class="mr-2" @click="data.createOpen = true" />
+            <Button :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" @click="fetchData" />
 
-            <!-- EDIT MODAL -->
-            <EditModal 
-                :show="data.editOpen" 
-                :country="data.country" 
-                :title="props.title" 
-                @close="data.editOpen = false"
-                @saved="fetchItems" />
-
-            <!-- DELETE MODAL -->
-            <DeleteModal 
-                :show="data.deleteOpen" 
-                :country="data.country" 
-                :title="props.title"
-                @close="data.deleteOpen = false" 
-                @deleted="fetchItems" />
-
-            <!-- REGIONS MODAL -->
-            <AssignRegionsModal
-                :show="data.regionsOpen"
-                title="Régiók hozzárendelése"
-                :country="data.country"
-                :regions="props.regions"
-                @close="data.regionsOpen = false"
-                @saved="fetchItems" />
-
-            <!-- CREATE GOMB -->
-            <Button :show="has('create country')" icon="pi pi-plus" label="Create" class="mr-2"
-                @click="data.createOpen = true" />
-
-            <!-- REFRESH GOMB -->
-            <Button :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" @click="fetchItems" />
-
-            <DataTable v-if="countries" :dataKey="'id'" lazy paginator :value="countries.data"
-                :rows="countries.per_page" :totalRecords="countries.total"
-                :first="(countries.current_page - 1) * countries.per_page" :loading="isLoading" @page="onPageChange"
-                tableStyle="min-width: 50rem">
-
+            <DataTable
+                v-if="countries"
+                :value="countries.data"
+                :rows="countries.per_page"
+                :totalRecords="countries.total"
+                :first="(countries.current_page - 1) * countries.per_page"
+                :loading="isLoading"
+                lazy paginator dataKey="id"
+                @page="onPageChange"
+                tableStyle="min-width: 50rem"
+            >
                 <template #header>
                     <div class="flex justify-between">
-
-                        <!-- SZŰRÉS TÖRLÉSE -->
-                        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearFilter" />
-
-                        <!-- FELIRAT -->
-                        <div class="font-semibold text-xl mb-1">
-                            countries_title
-                        </div>
-
-                        <!-- KERESÉS-->
+                        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearSearch" />
+                        <div class="font-semibold text-xl mb-1">countries_title</div>
                         <div class="flex justify-end">
                             <IconField>
-                                <InputIcon>
-                                    <i class="pi pi-search" />
-                                </InputIcon>
-                                <InputText v-model="data.params.search" placeholder="Keyword Search" />
+                                <InputIcon><i class="pi pi-search" /></InputIcon>
+                                <InputText v-model="params.search" placeholder="Keyword Search" />
                             </IconField>
                         </div>
                     </div>
                 </template>
 
-                <template #empty> No data found. </template>
-                <template #loading> Loading data. Please wait. </template>
+                <template #empty>No data found.</template>
+                <template #loading>Loading data. Please wait.</template>
 
-                <Column field="id" header="#"></Column>
-                <Column field="name" header="Name"></Column>
-
+                <Column field="id" header="#" />
+                <Column field="name" header="Name" />
                 <Column field="regions_count" header="count_regions" />
                 <Column field="cities_count" header="count_cities" />
-
                 <Column :exportable="false" style="min-width: 12rem">
-
                     <template #body="slotProps">
-
-                        <!-- EDIT MODAL -->
-                        <Button 
-                            v-show="has('update country')" 
-                            icon="pi pi-pencil" 
-                            outlined rounded 
-                            class="mr-2" 
-                            @click="(
-                                (data.editOpen = true),
-                                (data.country = slotProps.data)
-                            )" />
-
-                        <!-- DELETE MODAL -->
-                        <Button
-                            v-show="has('delete country')"
-                            icon="pi pi-trash"
-                            outlined rounded
-                            severity="danger"
-                            class="mr-2"
-                            @click="(
-                                (data.deleteOpen = true),
-                                (data.country = slotProps.data)
-                            )" />
-
-                        <!-- REGIONS MODAL -->
-                        <Button
-                            v-show="has('update country')"
-                            icon="pi pi-globe"
-                            outlined rounded
-                            severity="success"
-                            @click="openRegionModal(slotProps.data)" />
-
+                        <Button v-if="has('update country')" icon="pi pi-pencil" outlined rounded class="mr-2"
+                            @click="() => { data.editOpen = true; data.country = slotProps.data; }" />
+                        <Button v-if="has('delete country')" icon="pi pi-trash" outlined rounded severity="danger" class="mr-2"
+                            @click="() => { data.deleteOpen = true; data.country = slotProps.data; }" />
+                        <Button v-if="has('update country')" icon="pi pi-globe" outlined rounded severity="success"
+                            @click="() => openRegionModal(slotProps.data)" />
                     </template>
                 </Column>
-
             </DataTable>
-
         </div>
     </AuthLayout>
 </template>

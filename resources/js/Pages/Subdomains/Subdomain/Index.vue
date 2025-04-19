@@ -1,17 +1,14 @@
 <script setup>
-import { onMounted, reactive, ref, watch, computed } from "vue";
-import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { onMounted, reactive, ref } from "vue";
 import { Head } from "@inertiajs/vue3";
+import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 import SubdomainService from '@/service/Subdomains/SubdomainService.js';
 
 import { usePermissions } from '@/composables/usePermissions';
+import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
+
 const { has } = usePermissions();
-
-import pkg from "lodash";
-const { _, debounce, pickBy } = pkg;
-
-const isLoading = ref(false);
 
 const props = defineProps({
     title: String,
@@ -19,69 +16,30 @@ const props = defineProps({
     states: Array
 });
 
-const subdomains = ref(null);
+const fetchSubdomains = async (params) => {
+    const response = await SubdomainService.getSubdomains(params);
+    return response.data;
+};
+
+const {
+    data: subdomains,
+    params,
+    isLoading,
+    fetchData,
+    onPageChange,
+    clearSearch
+} = useDataTableFetcher(props.filters, fetchSubdomains);
 
 const data = reactive({
-    params: {
-        search: props.filters.search,
-        field: props.filters.field,
-        order: props.filters.order,
-        page: 1, // 👉 hozzáadva
-        createOpen: false,
-        editOpen: false,
-        deleteOpen: false,
-    },
+    createOpen: false,
+    editOpen: false,
+    deleteOpen: false,
     subdomain: null
 });
 
-const onPageChange = (event) => {
-    data.params.page = event.page + 1;
-    fetchItems();
-};
-
-const fetchItems = async () => {
-
-    isLoading.value = true;
-
-    const params = pickBy({
-        page: data.params.page ?? 1,
-        search: data.params.search,
-        field: data.params.field,
-        order: data.params.order,
-    });
-
-    try {
-        const response = await SubdomainService.getSubdomains(params);
-
-        subdomains.value = response.data;
-
-        //console.log('subdomains.value', subdomains.value);
-    } catch(error) {
-        console.error("Hiba az subdomainek lekérdezésekor", error);
-    } finally {
-        isLoading.value = false;
-    }
-
-};
-
-watch(
-    () => [data.params.search, data.params.field, data.params.order], // 🧠 kizárjuk a page-et
-    debounce(() => {
-        data.params.page = 1; // új keresés = első oldal
-        fetchItems();
-    }, 300)
-);
-
-onMounted(() => {
-    fetchItems();
-});
-
-const clearFilter = () => {
-    console.log('Clear Filters');
-};
-
 const buttonFrozen = ref(false);
 
+onMounted(fetchData);
 </script>
 
 <template>
@@ -89,66 +47,45 @@ const buttonFrozen = ref(false);
         <Head :title="props.title" />
 
         <div class="card">
-
-            <!-- CREATE MODAL -->
-
-            <!-- EDIT MODAL -->
-
-            <!-- DELETE MODAL -->
-
-            <!-- CREATE BUTTON -->
-
-            <!-- REFRESH GOMB -->
             <Button
-                @click="fetchItems"
+                @click="fetchData"
                 :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
             />
 
             <DataTable
                 v-if="subdomains"
-                :dataKey="'id'" lazy paginator stripedRows scrollable
                 :value="subdomains.data"
                 :rows="subdomains.per_page"
                 :totalRecords="subdomains.total"
                 :first="(subdomains.current_page - 1) * subdomains.per_page"
                 :loading="isLoading"
+                lazy paginator dataKey="id" stripedRows scrollable
                 @page="onPageChange"
-                tableStyle="min-width: 50rem">
-
+                tableStyle="min-width: 50rem"
+            >
                 <template #header>
                     <div class="flex justify-between">
-
-                        <!-- SZŰRÉS TÖRLÉSE -->
                         <Button
                             type="button"
                             icon="pi pi-filter-slash"
                             label="Clear"
                             outlined
-                            @click="clearFilter()"
+                            @click="clearSearch"
                         />
-
-                        <!-- FELIRAT -->
                         <div class="font-semibold text-xl mb-1">
                             subdomains_title
                         </div>
-
-                        <!-- KERESÉS-->
                         <div class="flex justify-end">
                             <IconField>
-                                <InputIcon>
-                                    <i class="pi pi-search" />
-                                </InputIcon>
-                                <InputText
-                                    v-model="data.params.search"
-                                    placeholder="Keyword Search"
-                                />
+                                <InputIcon><i class="pi pi-search" /></InputIcon>
+                                <InputText v-model="params.search" placeholder="Keyword Search" />
                             </IconField>
                         </div>
                     </div>
                 </template>
 
-                <template #empty> No data found. </template>
-                <template #loading> Loading data. Please wait. </template>
+                <template #empty>No data found.</template>
+                <template #loading>Loading data. Please wait.</template>
 
                 <Column
                     :exportable="false"
@@ -156,57 +93,47 @@ const buttonFrozen = ref(false);
                     header="Actions"
                     frozen
                 >
-
                     <template #body="slotProps">
-
                         <Button
-                            v-show="has('update subdomain')"
+                            v-if="has('update subdomain')"
                             icon="pi pi-pencil"
                             outlined rounded
                             class="mr-2"
-                            @click="(
-                                (data.editOpen = true),
-                                (data.state = slotProps.data)
-                            )" />
-
+                            @click="() => {
+                                data.editOpen = true;
+                                data.subdomain = slotProps.data;
+                            }"
+                        />
                         <Button
-                            v-show="has('delete subdomain')"
+                            v-if="has('delete subdomain')"
                             icon="pi pi-trash"
                             outlined rounded
                             severity="danger"
-                            @click="(
-                                (data.deleteOpen = true),
-                                (data.state = slotProps.data)
-                            )" />
-
+                            @click="() => {
+                                data.deleteOpen = true;
+                                data.subdomain = slotProps.data;
+                            }"
+                        />
                     </template>
                 </Column>
 
                 <Column field="id" header="ID" class="font-bold" />
-
                 <Column field="name" header="Name"/>
                 <Column field="url" header="URL" />
-
                 <Column field="db_host" header="DB host" />
                 <Column field="db_name" header="DB name" />
                 <Column field="db_port" header="Port" />
                 <Column field="db_user" header="User" />
                 <Column field="db_password" header="Password" />
-
                 <Column field="state_id" header="State" />
                 <Column field="subdomain_state.name" header="State" />
-
                 <Column field="notification" header="notification" />
                 <Column field="sso" header="sso" />
                 <Column field="is_mirror" header="is_mirror" />
-
                 <Column field="created_at" header="Created At" />
                 <Column field="updated_at" header="Updated At" />
                 <Column field="deleted_at" header="Deleted At" />
-
             </DataTable>
         </div>
-
     </AuthLayout>
-
 </template>

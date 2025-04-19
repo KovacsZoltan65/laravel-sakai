@@ -55,12 +55,25 @@ onMounted(fetchData);
         <Head :title="props.title" />
 
         <div class="card">
-            <CreateModal :show="data.createOpen" :title="props.title" @close="data.createOpen = false"
-                @saved="fetchData" />
-            <EditModal :show="data.editOpen" :company="data.company" :title="props.title" @close="data.editOpen = false"
-                @saved="fetchData" />
-            <DeleteModal :show="data.deleteOpen" :company="data.company" :title="props.title"
-                @close="data.deleteOpen = false" @deleted="fetchData" />
+            <CreateModal
+                :show="data.createOpen"
+                :title="props.title"
+                @close="data.createOpen = false"
+                @saved="fetchData"
+            />
+            <EditModal
+                :show="data.editOpen"
+                :company="data.company"
+                :title="props.title"
+                @close="data.editOpen = false"
+                @saved="fetchData"
+            />
+            <DeleteModal
+                :show="data.deleteOpen"
+                :company="data.company"
+                :title="props.title"
+                @close="data.deleteOpen = false"
+                @deleted="fetchData" />
 
             <Button v-if="has('create company')" icon="pi pi-plus" label="Create" @click="data.createOpen = true"
                 class="mr-2" />
@@ -72,7 +85,12 @@ onMounted(fetchData);
                 :loading="isLoading" lazy paginator dataKey="id" @page="onPageChange" tableStyle="min-width: 50rem">
                 <template #header>
                     <div class="flex justify-between">
-                        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearSearch" />
+                        <Button
+                            type="button"
+                            icon="pi pi-filter-slash"
+                            label="Clear" outlined
+                            @click="clearSearch"
+                        />
 
                         <div class="font-semibold text-xl mb-1">
                             companies_title

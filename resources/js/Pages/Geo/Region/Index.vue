@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted, reactive, ref, watch, computed } from "vue";
-import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { onMounted, reactive } from "vue";
 import { Head } from "@inertiajs/vue3";
+import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import RegionService from "@/service/Geo/RegionService.js";
 
 import CreateModal from "@/Pages/Geo/Region/Create.vue";
@@ -10,12 +10,9 @@ import DeleteModal from "@/Pages/Geo/Region/Delete.vue";
 import AssignCitiesModal from "@/Pages/Geo/Region/AssignCitiesModal.vue";
 
 import { usePermissions } from '@/composables/usePermissions';
+import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
+
 const { has } = usePermissions();
-
-import pkg from "lodash";
-const { _, debounce, pickBy } = pkg;
-
-const isLoading = ref(false);
 
 const props = defineProps({
     title: String,
@@ -24,128 +21,90 @@ const props = defineProps({
     countries: Array,
 });
 
-const regions = ref(null);
+const fetchRegions = async (params) => {
+    const response = await RegionService.getRegions(params);
+    return response.data;
+};
+
+const {
+    data: regions,
+    params,
+    isLoading,
+    fetchData,
+    onPageChange,
+    clearSearch
+} = useDataTableFetcher(props.filters, fetchRegions);
 
 const data = reactive({
-    params: {
-        search: props.filters.search,
-        field: props.filters.field,
-        order: props.filters.order,
-        page: 1, // 👉 hozzáadva
-        createOpen: false,
-        editOpen: false,
-        deleteOpen: false,
-        citiesOpen: false,
-    },
+    createOpen: false,
+    editOpen: false,
+    deleteOpen: false,
+    citiesOpen: false,
     region: null
 });
-
-const selectedRegion = ref(null);
-const allCountries = ref(props.countries);
-
-const onPageChange = (event) => {
-    data.params.page = event.page + 1;
-    fetchItems();
-};
-
-const fetchItems = async () => {
-
-    isLoading.value = true;
-
-    const params = pickBy({
-        page: data.params.page ?? 1,
-        search: data.params.search,
-        field: data.params.field,
-        order: data.params.order,
-    });
-
-    try {
-        const response = await RegionService.getRegions(params);
-
-        regions.value = response.data;
-    } catch(error) {
-        console.error("Hiba az területek lekérdezésekor", error);
-    } finally {
-        isLoading.value = false;
-    }
-};
-
-onMounted(() => {
-    fetchItems();
-});
-
-watch(
-    () => [data.params.search, data.params.field, data.params.order], // 🧠 kizárjuk a page-et
-    debounce(() => {
-        data.params.page = 1; // új keresés = első oldal
-        fetchItems();
-    }, 300)
-);
-
-const clearFilter = () => {
-    console.log('Clear Filters');
-};
 
 const openRegionModal = (region) => {
     data.region = region;
     data.editOpen = true;
-}
+};
 
+onMounted(fetchData);
 </script>
 
 <template>
     <AuthLayout>
         <Head :title="props.title" />
-
         <div class="card">
-        <!-- CREATE MODAL -->
-        <CreateModal
-            :show="data.createOpen"
-            :title="props.title"
-            @close="data.createOpen = false"
-            @saved="fetchItems"
-        />
+            <CreateModal :show="data.createOpen" :title="props.title" @close="data.createOpen = false" @saved="fetchData" />
+            <EditModal :show="data.editOpen" :title="props.title" @close="data.editOpen = false" @saved="fetchData" />
+            <DeleteModal :show="data.deleteOpen" :title="props.title" @close="data.deleteOpen = false" @saved="fetchData" />
+            <AssignCitiesModal :show="data.citiesOpen" :title="props.title" @close="data.citiesOpen = false" @saved="fetchData" />
 
-        <!-- EDIT MODAL -->
-        <EditModal
-            :show="data.editOpen"
-            :title="props.title"
-            @close="data.editOpen = false"
-            @saved="fetchItems"
-        />
+            <Button v-if="has('create region')" icon="pi pi-plus" label="Create" class="mr-2" @click="data.createOpen = true" />
+            <Button :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" @click="fetchData" />
 
-        <!-- DELETE MODAL -->
-        <DeleteModal
-            :show="data.deleteOpen"
-            :title="props.title"
-            @close="data.deleteOpen = false"
-            @saved="fetchItems"
-        />
+            <DataTable
+                v-if="regions"
+                :value="regions.data"
+                :rows="regions.per_page"
+                :totalRecords="regions.total"
+                :first="(regions.current_page - 1) * regions.per_page"
+                :loading="isLoading"
+                lazy paginator dataKey="id"
+                @page="onPageChange"
+                tableStyle="min-width: 50rem"
+            >
+                <template #header>
+                    <div class="flex justify-between">
+                        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearSearch" />
+                        <div class="font-semibold text-xl mb-1">regions_title</div>
+                        <div class="flex justify-end">
+                            <IconField>
+                                <InputIcon><i class="pi pi-search" /></InputIcon>
+                                <InputText v-model="params.search" placeholder="Keyword Search" />
+                            </IconField>
+                        </div>
+                    </div>
+                </template>
 
-        <!-- CITIES MODAL -->
-        <AssignCitiesModal
-            :show="data.citiesOpen"
-            :title="props.title"
-            @close="data.citiesOpen = false"
-            @saved="fetchItems"
-        />
+                <template #empty>No data found.</template>
+                <template #loading>Loading data. Please wait.</template>
 
-        <!-- CREATE GOMB -->
-        <Button
-            :show="has('create region')"
-            icon="pi pi-plus"
-            label="Create"
-            class="mr-2"
-            @click="data.createOpen = true" />
-
-        <!-- REFRESH GOMB -->
-        <Button
-            :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
-            @click="fetchItems"
-        />
-
-
+                <Column field="id" header="#" />
+                <Column field="name" header="Name" />
+                <Column field="country_name" header="Country" />
+                <Column field="cities_count" header="Cities" />
+                <Column :exportable="false" style="min-width: 12rem">
+                    <template #body="slotProps">
+                        <Button v-if="has('update region')" icon="pi pi-pencil" outlined rounded class="mr-2"
+                            @click="() => { data.editOpen = true; data.region = slotProps.data; }" />
+                        <Button v-if="has('delete region')" icon="pi pi-trash" outlined rounded severity="danger" class="mr-2"
+                            @click="() => { data.deleteOpen = true; data.region = slotProps.data; }" />
+                        <Button v-if="has('update region')" icon="pi pi-map-marker" outlined rounded severity="success"
+                            @click="() => { data.citiesOpen = true; data.region = slotProps.data; }" />
+                    </template>
+                </Column>
+            </DataTable>
         </div>
-
     </AuthLayout>
 </template>

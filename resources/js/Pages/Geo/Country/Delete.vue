@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits } from "vue";
+//import { defineProps, defineEmits } from "vue"; // ❌ NEM SZABAD
 import CountryService from "@/service/Geo/CountryService.js";
 
 const props = defineProps({

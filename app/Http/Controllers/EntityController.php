@@ -31,7 +31,7 @@ class EntityController extends Controller
 
     public function index(IndexEntityRequest $request): InertiaResponse
     {
-        $companies = Company::scopeToSelect();
+        $companies = Company::ToSelect();
 
         return Inertia::render('Entity/Index', [
             'title' => 'Entities',
