@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DeleteCalendarRequest extends FormRequest
+class Delete{{entity}}Request extends FormRequest
 {
     public function authorize(): bool
     {

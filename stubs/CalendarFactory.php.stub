@@ -2,12 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Calendar;
+use App\Models\{{entity}};
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CalendarFactory extends Factory
+class {{entity}}Factory extends Factory
 {
-    protected $model = Calendar::class;
+    protected $model = {{entity}}::class;
 
     public function definition(): array
     {

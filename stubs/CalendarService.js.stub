@@ -1,0 +1,14 @@
+export default {
+  async get{{entityPlural}}(params) {
+    return await axios.get(route('{{apiRoute}}.index'), { params });
+  },
+  async store{{entity}}(data) {
+    return await axios.post(route('{{apiRoute}}.store'), data);
+  },
+  async update{{entity}}(id, data) {
+    return await axios.put(route('{{apiRoute}}.update', id), data);
+  },
+  async delete{{entity}}(id) {
+    return await axios.delete(route('{{apiRoute}}.destroy', id));
+  }
+};

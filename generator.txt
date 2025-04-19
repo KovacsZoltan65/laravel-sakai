@@ -1,0 +1,6 @@
+// node crud-generator.cjs ./crud.config.cjs        # nem írja felül
+// node crud-generator.cjs ./crud.config.cjs --force # felülírja
+
+node crud-generator.cjs ./crud/crud.config.cjs        # nem írja felül
+node crud-generator.cjs ./crud/crud.config.cjs --force # felülírja
+
