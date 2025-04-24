@@ -1,20 +1,16 @@
 <script setup>
-import { onMounted, reactive, ref, watch, computed } from "vue";
-import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { onMounted, reactive } from "vue";
 import { Head } from "@inertiajs/vue3";
-//import { router } from "@inertiajs/vue3";
-import EntityService from '@/service/EntityService.js';
+import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import CreateModal from "@/Pages/Entity/Create.vue";
 import EditModal from "@/Pages/Entity/Edit.vue";
 import DeleteModal from "@/Pages/Entity/Delete.vue";
 
 import { usePermissions } from '@/composables/usePermissions';
+import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
+import EntityService from '@/service/EntityService.js';
+
 const { has } = usePermissions();
-
-import pkg from "lodash";
-const { _, debounce, pickBy } = pkg;
-
-const isLoading = ref(false);
 
 const props = defineProps({
     title: String,
@@ -22,202 +18,81 @@ const props = defineProps({
     companies: Array,
 });
 
-const entities = ref(null);
+// 👇 API hívás definíció
+const fetchEntities = async (params) => {
+    const response = await EntityService.getEntities(params);
+    return response.data;
+};
 
+// 👇 Hook használata
+const {
+    data: entities,
+    params,
+    isLoading,
+    fetchData,
+    onPageChange,
+    clearSearch
+} = useDataTableFetcher(props.filters, fetchEntities);
+
+// 👇 Modálvezérlés külön
 const data = reactive({
-    params: {
-        search: props.filters.search,
-        field: props.filters.field,
-        order: props.filters.order,
-        page: 1, // 👉 hozzáadva
-        createOpen: false,
-        editOpen: false,
-        deleteOpen: false,
-    },
+    createOpen: false,
+    editOpen: false,
+    deleteOpen: false,
     entity: null
 });
 
-const onPageChange = (event) => {
-    data.params.page = event.page + 1;
-    fetchItems();
-};
-
-/**
- * Lekéri az entitásokat a szerverről,
- * majd beállítja a `entities`-t a kapott adatokkal.
- *
- * @param {Object} [params={}] - a lekérdezés paraméterei
- * @property {number} [params.page=1] - az oldal száma
- * @property {string} [params.search] - a keresendő szöveg
- * @property {string} [params.field] - a rendezendő mez
- * @property {string} [params.order] - a rendezés iránya (asc/desc)
- *
- * @returns {Promise<void>}
- */
-const fetchItems = async () => {
-
-    isLoading.value = true;
-
-    const params = pickBy({
-        page: data.params.page ?? 1,
-        search: data.params.search,
-        field: data.params.field,
-        order: data.params.order,
-    });
-
-    try {
-        //const response = await axios.get(route('api.entities.fetch'), { params });
-        const response = await EntityService.getEntities(params);
-
-        entities.value = response.data;
-    } catch (error) {
-        console.error("Hiba az entitások lekérdezésekor", error);
-    } finally {
-        isLoading.value = false;
-    }
-};
-
-onMounted(() => {
-    fetchItems();
-});
-
-watch(
-    () => [data.params.search, data.params.field, data.params.order], // 🧠 kizárjuk a page-et
-    debounce(() => {
-        data.params.page = 1; // új keresés = első oldal
-        fetchItems();
-    }, 300)
-);
-
-const clearFilter = () => {
-    console.log('Clear Filters');
-};
-
+onMounted(fetchData);
 </script>
 
 <template>
     <AuthLayout>
 
         <Head :title="props.title" />
-
         <div class="card">
+            <CreateModal :show="data.createOpen" :title="props.title" @close="data.createOpen = false"
+                @saved="fetchData" />
+            <EditModal :show="data.editOpen" :entity="data.entity" :title="props.title" @close="data.editOpen = false"
+                @saved="fetchData" />
+            <DeleteModal :show="data.deleteOpen" :entity="data.entity" :title="props.title"
+                @close="data.deleteOpen = false" @deleted="fetchData" />
 
-            <!-- CREATE MODAL -->
-            <CreateModal
-                :show="data.createOpen"
-                :title="props.title"
-                @close="data.createOpen = false"
-                @saved="fetchItems" />
-
-            <!-- EDIT MODAL -->
-            <EditModal
-                :show="data.editOpen"
-                :entity="data.entity"
-                :title="props.title"
-                @close="data.editOpen = false"
-                @saved="fetchItems" />
-
-            <!-- DELETE MODAL -->
-            <DeleteModal
-                :show="data.deleteOpen"
-                :entity="data.entity"
-                :title="props.title"
-                @close="data.deleteOpen = false"
-                @deleted="fetchItems" />
-
-            <!-- CREATE BUTTON -->
-            <Button
-                v-show="has('create entity')"
-                icon="pi pi-plus"
-                label="Create"
-                @click="data.createOpen = true"
+            <Button v-if="has('create entity')" icon="pi pi-plus" label="Create" @click="data.createOpen = true"
                 class="mr-2" />
+            <Button @click="fetchData" :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />
 
-            <!-- REFRESH GOMB -->
-            <Button
-                @click="fetchItems"
-                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
-            />
-
-            <DataTable
-                v-if="entities"
-                :dataKey="'id'" lazy paginator
-                :value="entities.data"
-                :rows="entities.per_page"
-                :totalRecords="entities.total"
-                :first="(entities.current_page - 1) * entities.per_page"
-                :loading="isLoading"
-                @page="onPageChange"
-                tableStyle="min-width: 50rem">
-
+            <DataTable v-if="entities" :value="entities.data" :rows="entities.per_page" :totalRecords="entities.total"
+                :first="(entities.current_page - 1) * entities.per_page" :loading="isLoading" lazy paginator
+                dataKey="id" @page="onPageChange" tableStyle="min-width: 50rem">
                 <template #header>
                     <div class="flex justify-between">
-
-                        <!-- SZŰRÉS TÖRLÉSE -->
-                        <Button
-                            type="button"
-                            icon="pi pi-filter-slash"
-                            label="Clear"
-                            outlined
-                            @click="clearFilter()"
-                        />
-
-                        <!-- FELIRAT -->
-                        <div class="font-semibold text-xl mb-1">
-                            entities_title
-                        </div>
-
-                        <!-- KERESÉS-->
+                        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearSearch" />
+                        <div class="font-semibold text-xl mb-1">entities_title</div>
                         <div class="flex justify-end">
                             <IconField>
-                                <InputIcon>
-                                    <i class="pi pi-search" />
-                                </InputIcon>
-                                <InputText
-                                    v-model="data.params.search"
-                                    placeholder="Keyword Search"
-                                />
+                                <InputIcon><i class="pi pi-search" /></InputIcon>
+                                <InputText v-model="params.search" placeholder="Keyword Search" />
                             </IconField>
                         </div>
                     </div>
                 </template>
 
-                <template #empty> No data found. </template>
-                <template #loading> Loading data. Please wait. </template>
+                <template #empty>No data found.</template>
+                <template #loading>Loading data. Please wait.</template>
 
-                <Column field="id" header="#"></Column>
-                <Column field="name" header="Name"></Column>
-
-                <Column field="created_at" header="Created"></Column>
-                <Column field="updated_at" header="Updated"></Column>
+                <Column field="id" header="#" />
+                <Column field="name" header="Name" />
+                <Column field="created_at" header="Created" />
+                <Column field="updated_at" header="Updated" />
                 <Column :exportable="false" style="min-width: 12rem">
-
                     <template #body="slotProps">
-
-                        <Button
-                            v-show="has('update entity')"
-                            icon="pi pi-pencil"
-                            outlined rounded
-                            class="mr-2"
-                            @click="(
-                                (data.editOpen = true),
-                                (data.entity = slotProps.data)
-                            )" />
-
-                        <Button
-                            v-show="has('delete entity')"
-                            icon="pi pi-trash"
-                            outlined rounded
-                            severity="danger"
-                            @click="(
-                                (data.deleteOpen = true),
-                                (data.entity = slotProps.data)
-                            )" />
-
+                        <Button v-if="has('update entity')" icon="pi pi-pencil" outlined rounded class="mr-2"
+                            @click="() => { data.editOpen = true; data.entity = slotProps.data; }" />
+                        <Button v-if="has('delete entity')" icon="pi pi-trash" outlined rounded severity="danger"
+                            @click="() => { data.deleteOpen = true; data.entity = slotProps.data; }" />
                     </template>
                 </Column>
             </DataTable>
         </div>
-
     </AuthLayout>
 </template>

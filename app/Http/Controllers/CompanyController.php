@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexCompanyRequest;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +22,7 @@ class CompanyController extends Controller
         //
     }
 
-    public function index(Request $request): InertiaResponse
+    public function index(IndexCompanyRequest $request): InertiaResponse
     {
         return Inertia::render('Company/Index', [
             'title' => 'Companies',

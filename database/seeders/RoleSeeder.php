@@ -25,11 +25,21 @@ class RoleSeeder extends Seeder
             'delete user',
             'update user',
 
+            'read entity',
+            'create entity',
+            'delete entity',
+            'update entity',
+            
+            'read person',
+            'create person',
+            'delete person',
+            'update person',
+            
             'read company',
             'create company',
             'delete company',
             'update company',
-
+            
             'read role',
             'create role',
             'delete role',
@@ -39,11 +49,6 @@ class RoleSeeder extends Seeder
             'create permission',
             'delete permission',
             'update permission',
-
-            'read entity',
-            'create entity',
-            'delete entity',
-            'update entity',
 
             'read country',
             'create country',

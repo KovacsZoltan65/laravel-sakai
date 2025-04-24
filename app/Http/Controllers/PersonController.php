@@ -20,6 +20,12 @@ class PersonController extends Controller
 
     public function __construct(PersonRepository $personRepository)
     {
+        /*
+         | read permission, 
+         | create permission, 
+         | update permission
+         | delete permission
+         */
         $this->personRepository = $personRepository;
         
         //$this->middleware('permission:read person', ['only' => ['index', 'show', 'fetch', 'getPerson', 'getPersonByName']]);

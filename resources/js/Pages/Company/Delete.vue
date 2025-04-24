@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits } from "vue";
+//import { defineProps, defineEmits } from "vue"; // ❌ NEM SZABAD
 import CompanyService from "@/service/CompanyService";
 
 const props = defineProps({

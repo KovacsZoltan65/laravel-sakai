@@ -2,7 +2,8 @@
 
 class CompanyService extends BaseService
 {
-    constructor() {
+    constructor()
+    {
         super();
         this.url = "/companies";
     }

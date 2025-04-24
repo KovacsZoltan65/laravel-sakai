@@ -22,7 +22,16 @@ class SubdomainController extends Controller
 {
     public function __construct()
     {
-        //
+        /*
+         | read subdomain, 
+         | create subdomain, 
+         | update subdomain
+         | delete subdomain
+         */
+        //$this->middleware('permission:create permission', ['only' => ['create', 'store']]);
+        //$this->middleware('permission:read permission', ['only' => ['index', 'show']]);
+        //$this->middleware('permission:update permission', ['only' => ['edit', 'update']]);
+        //$this->middleware('permission:delete permission', ['only' => ['destroy', 'destroyBulk']]);
     }
 
     public function index(IndexSubdomainRequest $request)
@@ -52,8 +61,6 @@ class SubdomainController extends Controller
 
         $subdomains = $_subdomains->with('subdomainState')
                 ->paginate(10, ['*'], 'page', $request->page ?? 1);
-
-        //dd($subdomains);
 
         return response()->json($subdomains, Response::HTTP_OK);
     }

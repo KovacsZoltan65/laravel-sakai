@@ -2,13 +2,15 @@ import BaseService from "./BaseService.js";
 
 class EntityService extends BaseService
 {
-    constructor() {
+    constructor()
+    {
         super();
         this.url = "/entities";
     }
 
     // Az entitások listájának lekérése (a fetch endpoint-ot használja)
-    getEntities(params = {}) {
+    getEntities(params = {})
+    {
         return this.get(`${this.url}/fetch`, { params });
     }
 

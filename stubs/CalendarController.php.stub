@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Store{{entity}}Request;
+use App\Http\Requests\Update{{entity}}Request;
+use App\Http\Resources\{{entity}}Resource;
+use App\Models\{{entity}};
+use Illuminate\Http\Request;
+
+class {{entity}}Controller extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = {{entity}}::query();
+
+        if ($search = $request->get('search')) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if ($request->has('field') && $request->has('order')) {
+            $query->orderBy($request->get('field'), $request->get('order'));
+        }
+
+        $items = $query->paginate(10);
+
+        return {{entity}}Resource::collection($items);
+    }
+
+    public function store(Store{{entity}}Request $request)
+    {
+        $item = {{entity}}::create($request->validated());
+        return new {{entity}}Resource($item);
+    }
+
+    public function update(Update{{entity}}Request $request, {{entity}} ${{entityLower}})
+    {
+        ${{entityLower}}->update($request->validated());
+        return new {{entity}}Resource(${{entityLower}});
+    }
+
+    public function destroy({{entity}} ${{entityLower}})
+    {
+        ${{entityLower}}->delete();
+        return response()->noContent();
+    }
+}

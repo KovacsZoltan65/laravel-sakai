@@ -1,0 +1,8 @@
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+
+Route::get('{{entityPluralLower}}', function () {
+    return Inertia::render('{{namespace}}/Index', [
+        'title' => '{{entityPlural}}'
+    ]);
+})->middleware(['auth', 'verified']);

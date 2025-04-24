@@ -32,6 +32,11 @@ class PermissionSeeder extends Seeder
             ['name' => 'delete company'],
             ['name' => 'update company'],
             
+            ['name' => 'read person'],
+            ['name' => 'create person'],
+            ['name' => 'delete person'],
+            ['name' => 'update person'],
+            
             ['name' => 'read entity'],
             ['name' => 'create entity'],
             ['name' => 'delete entity'],

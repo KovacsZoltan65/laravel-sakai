@@ -1,0 +1,21 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\{{entity}};
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class {{entity}}Factory extends Factory
+{
+    protected $model = {{entity}}::class;
+
+    public function definition(): array
+    {
+        return [
+            'name' => $this->faker->words(3, true),
+            'starts_at' => $this->faker->dateTimeBetween('-1 week', '+1 week'),
+            'ends_at' => $this->faker->dateTimeBetween('+1 week', '+2 weeks'),
+            'color' => $this->faker->safeColorName(),
+        ];
+    }
+}

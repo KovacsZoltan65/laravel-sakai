@@ -1,0 +1,81 @@
+<script setup>
+import { onMounted, reactive } from 'vue';
+import { Head } from '@inertiajs/vue3';
+import AuthLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { usePermissions } from '@/composables/usePermissions';
+import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
+import {{entity}}Service from '@/service/{{namespace}}Service.js';
+
+const { has } = usePermissions();
+
+const props = defineProps({
+  title: String,
+  filters: Object
+});
+
+const fetch{{entity}} = async (params) => {
+  const response = await {{entity}}Service.get{{entityPlural}}(params);
+  return response.data;
+};
+
+const {
+  data: {{entityPluralLower}},
+  params,
+  isLoading,
+  fetchData,
+  onPageChange,
+  clearSearch
+} = useDataTableFetcher(props.filters, fetch{{entity}});
+
+const data = reactive({
+  createOpen: false,
+  editOpen: false,
+  deleteOpen: false,
+  {{entityLower}}: null
+});
+
+onMounted(fetchData);
+</script>
+
+<template>
+  <AuthLayout>
+    <Head :title="props.title" />
+    <div class="card">
+      <DataTable
+        v-if="{{entityPluralLower}}"
+        :value="{{entityPluralLower}}.data"
+        :rows="{{entityPluralLower}}.per_page"
+        :totalRecords="{{entityPluralLower}}.total"
+        :first="({{entityPluralLower}}.current_page - 1) * {{entityPluralLower}}.per_page"
+        :loading="isLoading"
+        lazy paginator dataKey="id"
+        @page="onPageChange"
+      >
+        <template #header>
+          <div class="flex justify-between">
+            <Button icon="pi pi-filter-slash" label="Clear" outlined @click="clearSearch" />
+            <div class="font-semibold text-xl">{{ props.title }}</div>
+            <div class="flex justify-end">
+              <InputText v-model="params.search" placeholder="Search..." />
+            </div>
+          </div>
+        </template>
+
+        <Column field="id" header="ID" />
+        <Column field="name" header="Name" />
+        <Column field="starts_at" header="Starts At" />
+        <Column field="ends_at" header="Ends At" />
+        <Column field="color" header="Color" />
+
+        <Column :exportable="false" header="Actions">
+          <template #body="slotProps">
+            <Button v-if="has('update {{entityLower}}')" icon="pi pi-pencil" outlined rounded class="mr-2"
+              @click="() => { data.editOpen = true; data.{{entityLower}} = slotProps.data }" />
+            <Button v-if="has('delete {{entityLower}}')" icon="pi pi-trash" outlined rounded severity="danger"
+              @click="() => { data.deleteOpen = true; data.{{entityLower}} = slotProps.data }" />
+          </template>
+        </Column>
+      </DataTable>
+    </div>
+  </AuthLayout>
+</template>
