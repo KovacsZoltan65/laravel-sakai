@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Person;
-use App\Repositories\PersonRepository;
+use App\Http\Requests\IndexPermissionRequest;
 use App\Http\Resources\PersonResource;
+use App\Models\Permission;
+use App\Repositories\PersonRepository;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
-use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class PersonController extends Controller
 {
@@ -21,29 +22,44 @@ class PersonController extends Controller
     public function __construct(PersonRepository $personRepository)
     {
         /*
-         | read permission, 
-         | create permission, 
+         | read permission,
+         | create permission,
          | update permission
          | delete permission
          */
         $this->personRepository = $personRepository;
-        
-        //$this->middleware('permission:read person', ['only' => ['index', 'show', 'fetch', 'getPerson', 'getPersonByName']]);
-        //$this->middleware('permission:create person', ['only' => ['storePerson']]);
-        //$this->middleware('permission:update person', ['only' => ['updatePerson', 'restorePerson']]);
-        //$this->middleware('permission:delete person', ['only' => ['deletePersons', 'deletePerson', 'realDeletePerson']]);
+
+        $this->middleware('permission:read person', ['only' => ['index', 'show', 'fetch', 'getPerson', 'getPersonByName']]);
+        $this->middleware('permission:create person', ['only' => ['storePerson']]);
+        $this->middleware('permission:update person', ['only' => ['updatePerson', 'restorePerson']]);
+        $this->middleware('permission:delete person', ['only' => ['deletePersons', 'deletePerson', 'realDeletePerson']]);
     }
-    
+
     public function index(Request $request): InertiaResponse
     {
-\Log::info('PersonController::index()');
-
-\Log::info('request->all(): ' . print_r($request->all(), true));
-
         return Inertia::render(component: 'Persons/Index', props: [
             'filters' => $request->all(['search', 'field', 'order']),
             'title' => 'Persons',
         ]);
+    }
+
+    public function fetch(IndexPermissionRequest $request): JsonResponse
+    {
+        $_permissions = Permission::query();
+
+        if( $search = $request->search ) {
+            $_permissions->where(function($query) use($search) {
+                $query->where('name', 'LIKE', "%{$search}%");
+            });
+        }
+
+        if( $request->has(['field', 'order']) ) {
+            $_permissions->orderBy($request->field, $request->order);
+        }
+
+        $permissions = $_permissions->paginate(10, ['*'], 'page', $request->page ?? 1);
+
+        return response()->json($permissions);
     }
 
     public function applySearch(Builder $query, string $search): Builder

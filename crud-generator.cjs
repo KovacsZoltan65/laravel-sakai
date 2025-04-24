@@ -8,19 +8,30 @@ const config = require(path.resolve(configFile));
 const baseOutput = path.resolve('./resources/js/Pages');
 
 //
-const vueOutputDir = path.resolve('./resources/js/Pages', ...config.namespace.split('/'));
-const serviceOutputDir = path.resolve('./resources/js/service', ...config.namespace.split('/'));
-const controllerOutputDir = path.resolve('./app/Http/Controllers', ...config.namespace.split('/'));
+// Vue oldalak kimeneti könyvtára
+const vueOutputDir = path.resolve(
+    './resources/js/Pages',
+    ...config.namespace.split('/')
+);
+
+// Szolgáltatás kimeneti könyvtár
+const serviceOutputDir = path.resolve(
+    './resources/js/service',
+    ...config.namespace.split('/')
+);
+
+// Vezérlő kimeneti könyvtára
+const controllerOutputDir = path.resolve(
+    './app/Http/Controllers',
+    ...config.namespace.split('/')
+);
+
 const requestOutputDir = path.resolve('./app/Http/Requests');
 const resourceOutputDir = path.resolve('./app/Http/Resources');
 const factoryOutputDir = path.resolve('./database/factories');
 const seederOutputDir = path.resolve('./database/seeders');
-
-
 const migrationOutputDir = path.resolve('./database/migrations');
-
 const modelOutputDir = path.resolve('./app/Models');
-
 const routeOutputDir = path.resolve('./routes');
 
 

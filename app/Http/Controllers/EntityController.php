@@ -29,7 +29,7 @@ class EntityController extends Controller
         $this->middleware('permission:delete entity', ['only' => ['deleteEntities', 'deleteEntity', 'realDeleteEntity']]);
     }
 
-    public function index(IndexEntityRequest $request): InertiaResponse
+    public function index(Request $request): InertiaResponse
     {
         $companies = Company::ToSelect();
 
@@ -40,7 +40,7 @@ class EntityController extends Controller
         ]);
     }
 
-    public function fetch(Request $request): JsonResponse
+    public function fetch(IndexEntityRequest $request): JsonResponse
     {
         $_entities = Entity::query();
 

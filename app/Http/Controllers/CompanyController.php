@@ -6,6 +6,8 @@ use App\Http\Requests\IndexCompanyRequest;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
+use App\Models\Entity;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -19,10 +21,13 @@ class CompanyController extends Controller
 {
     public function __construct()
     {
-        //
+        $this->middleware('permission:read company', ['only' => ['index', 'show', 'fetch', 'getCompany', 'getCompanyByName']]);
+        $this->middleware('permission:create company', ['only' => ['storeCompany']]);
+        $this->middleware('permission:update company', ['only' => ['updateCompany', 'restoreCompany']]);
+        $this->middleware('permission:delete company', ['only' => ['deleteCompanies', 'deleteCompany', 'realDeleteCompany']]);
     }
 
-    public function index(IndexCompanyRequest $request): InertiaResponse
+    public function index(Request $request): InertiaResponse
     {
         return Inertia::render('Company/Index', [
             'title' => 'Companies',
@@ -30,7 +35,7 @@ class CompanyController extends Controller
         ]);
     }
 
-    public function fetch(Request $request): JsonResponse
+    public function fetch(IndexCompanyRequest $request): JsonResponse
     {
         $_companies = Company::query();
 
@@ -47,7 +52,7 @@ class CompanyController extends Controller
 
         return response()->json($companies);
     }
-    
+
     public function getCompany(Request $request): JsonResponse
     {
         try {
@@ -66,7 +71,7 @@ class CompanyController extends Controller
             return response()->json(['error' => 'getCompany Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function getCompanyByName(string $name): JsonResponse
     {
         try {
@@ -85,14 +90,14 @@ class CompanyController extends Controller
             return response()->json(['error' => 'getCompanyByName Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function storeCompany(StoreCompanyRequest $request): JsonResponse
     {
         try {
 
             $company = DB::transaction(function() use($request): Company {
                 // 1. Entitás létrehozása
-                $_company = City::create($request->all());
+                $_company = Company::create($request->all());
 
                 // 2. Kapcsolódó rekordok létrehozása (pl. alapértelmezett beállítások)
                 $this->createDefaultSettings($_company);
@@ -111,7 +116,7 @@ class CompanyController extends Controller
             return response()->json(['error' => 'storeCity Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function updateCompany(UpdateCompanyRequest $request, int $id): JsonResponse
     {
         try {
@@ -142,7 +147,7 @@ class CompanyController extends Controller
             return response()->json(['error' => 'updateCompany Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function deleteCompanies(Request $request): JsonResponse
     {
         try {
@@ -156,7 +161,7 @@ class CompanyController extends Controller
             $deletedCount = DB::transaction(function () use ($ids): int {
                 // 1. Törlés - válaszd az egyik verziót:
                 // a) Observer nélküli, gyors SQL törlés:
-                $count = City::whereIn('id', $ids)->delete();
+                $count = Company::whereIn('id', $ids)->delete();
 
                 // b) Observer-kompatibilis, egyenkénti törlés:
                 //$_cities = City::whereIn('id', $ids)->lockForUpdate()->get();
@@ -183,8 +188,8 @@ class CompanyController extends Controller
             return response()->json(['error' => 'deleteCompanies Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
-    public function deleteCompany(GetCompanyRequest $request): JsonResponse
+
+    public function deleteCompany(Request $request): JsonResponse
     {
         try {
 
@@ -209,8 +214,8 @@ class CompanyController extends Controller
             return response()->json(['error' => 'deleteCompany Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
-    public function restoreCompany(GetCompanyRequest $request): JsonResponse
+
+    public function restoreCompany(Request $request): JsonResponse
     {
         try {
 
@@ -240,8 +245,8 @@ class CompanyController extends Controller
             return response()->json(['error' => 'restoreCompany Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
-    public function realDeleteCompany(GetCompanyRequest $request): JsonResponse
+
+    public function realDeleteCompany(Request $request): JsonResponse
     {
         try {
 
@@ -266,13 +271,13 @@ class CompanyController extends Controller
             return response()->json(['error' => 'realDeleteCompany Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
-    private function createDefaultSettings(City $city): void
+
+    private function createDefaultSettings(Company $entity): void
     {
         //
     }
 
-    private function updateDefaultSettings(City $city): void
+    private function updateDefaultSettings(Company $centity): void
     {
         //
     }

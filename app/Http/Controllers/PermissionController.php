@@ -17,15 +17,15 @@ class PermissionController extends Controller
     public function __construct()
     {
         /*
-         | read permission, 
-         | create permission, 
+         | read permission,
+         | create permission,
          | update permission
          | delete permission
          */
-        //$this->middleware('permission:create permission', ['only' => ['create', 'store']]);
-        //$this->middleware('permission:read permission', ['only' => ['index', 'show']]);
-        //$this->middleware('permission:update permission', ['only' => ['edit', 'update']]);
-        //$this->middleware('permission:delete permission', ['only' => ['destroy', 'destroyBulk']]);
+        $this->middleware('permission:read permission', ['only' => ['index', 'show', 'fetch', 'getPermission', 'getPermissionByName']]);
+        $this->middleware('permission:create permission', ['only' => ['storePermission']]);
+        $this->middleware('permission:update permission', ['only' => ['updatePermission', 'restorePermission']]);
+        $this->middleware('permission:delete permission', ['only' => ['deletePermissions', 'deletePermission', 'realDeletePermission']]);
     }
 
     /**
@@ -40,19 +40,17 @@ class PermissionController extends Controller
             $permissions->where('name', 'LIKE', "%" . $request->search . "%");
             $permissions->orWhere('guard_name', 'LIKE', "%" . $request->search . "%");
         }
-        
+
         if ($request->has(['field', 'order'])) {
             $permissions->orderBy($request->field, $request->order);
         }
-        
+
         $params = [
             'title'         => 'Permission',
             'filters'       => $request->all(['search', 'field', 'order']),
             'permissions'   => $permissions->paginate(10),
         ];
-        
-\Log::info('PermissionController@index $params: ' . print_r($params, true));
-        
+
         return Inertia::render('Permission/Index', $params);
     }
 
