@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
-use Inertia\Inertia;
-use Inertia\Response AS InertiaResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Requests\RoleIndexRequest;
+use App\Http\Requests\IndexRoleRequest;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use App\Models\Role;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
@@ -23,7 +23,7 @@ class RoleController extends Controller
         $this->middleware('permission:delete role', ['only' => ['destroy', 'destroyBulk']]);
     }
 
-    public function index(RoleIndexRequest $request): InertiaResponse
+    public function index(IndexRoleRequest $request): InertiaResponse
     {
         $roles = Role::query();
         if ($request->has('search')) {
@@ -83,8 +83,8 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Role  $role
-     * @return \Illuminate\Http\Response
+     * @param  Role  $role
+     * @return Response
      */
     public function destroy(Role $role)
     {

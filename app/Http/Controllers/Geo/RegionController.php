@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\Geo;
+//use App\Http\Requests\RegionIndexRequest;
+
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GetRegionRequest;
-use App\Http\Requests\RegionIndexRequest;
+use App\Http\Requests\IndexRegionRequest;
 use App\Http\Requests\StoreRegionRequest;
 use App\Http\Requests\UpdateRegionRequest;
 use App\Models\Geo\City;
@@ -16,7 +18,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response AS InertiaResponse;
+use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -30,7 +32,7 @@ class RegionController extends Controller
         $this->middleware('permission:delete region', ['only' => ['deleteRegions', 'deleteRegion', 'realDeleteRegion']]);
     }
 
-    public function index(RegionIndexRequest $request): InertiaResponse
+    public function index(IndexRegionRequest $request): InertiaResponse
     {
         $countries = Country::active()->select('name', 'id')->get();
         $cities = City::active()->select('name', 'id')->get();
