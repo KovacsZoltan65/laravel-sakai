@@ -22,12 +22,6 @@ class SubdomainController extends Controller
 {
     public function __construct()
     {
-        /*
-         | read subdomain, 
-         | create subdomain, 
-         | update subdomain
-         | delete subdomain
-         */
         //$this->middleware('permission:create permission', ['only' => ['create', 'store']]);
         //$this->middleware('permission:read permission', ['only' => ['index', 'show']]);
         //$this->middleware('permission:update permission', ['only' => ['edit', 'update']]);
