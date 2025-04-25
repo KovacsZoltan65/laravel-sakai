@@ -126,12 +126,6 @@ trait DateTime
      * ============================================
      */
 
-
-    public function aa()
-    {
-        Carbon::parse('')->getDays();
-    }
-
     public function getTranslatedDayName(string $date): string
     {
         return Carbon::parse($date)

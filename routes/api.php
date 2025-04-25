@@ -89,6 +89,11 @@ Route::middleware(['web', 'auth'])->group(function(){
     // =================================================
     Route::get('/subdomains/fetch', [App\Http\Controllers\Subdomains\SubdomainController::class, 'fetch'])->name('api.subdomains.fetch');
 
+    // =================================================
+    // CALENDARS
+    // =================================================
+    Route::get('/calendar/fetch', [App\Http\Controllers\Calendars\Calendar\CalendarController::class, 'fetch'])->name('api.calendar.fetch');
+
     /*
     Route::get('/companies', function(Request $reques){
         dd('route');

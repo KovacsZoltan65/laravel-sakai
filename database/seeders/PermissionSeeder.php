@@ -76,6 +76,11 @@ class PermissionSeeder extends Seeder
             ['name' => 'create subdomain_state'],
             ['name' => 'delete subdomain_state'],
             ['name' => 'update subdomain_state'],
+
+            ['name' => 'read calendar'],
+            ['name' => 'create calendar'],
+            ['name' => 'delete calendar'],
+            ['name' => 'update calendar'],
         ];
         
         $count = count($permissions);

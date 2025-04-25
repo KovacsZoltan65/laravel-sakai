@@ -4,8 +4,42 @@ import { Head } from '@inertiajs/vue3';
 import AuthLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { usePermissions } from '@/composables/usePermissions';
 import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
-import CalendarService from '@/service/Calendars/CalendarService.js';
+import CalendarService from '@/service/Calendars/Calendar/CalendarService.js';
 
+const { has } = usePermissions();
+
+const props = defineProps({
+    title: String,
+    filters: Object,
+});
+
+// 👇 API hívás definíció
+const fetchCalendar = async (params) => {
+    const response = await CalendarService.getCalendar(params);
+    return response.data;
+};
+
+// 👇 Hook használata
+const {
+    data: calendars,
+    params,
+    isLoading,
+    fetchData,
+    onPageChange,
+    clearSearch
+} = useDataTableFetcher(props.filters, fetchCalendar);
+
+// 👇 Modálvezérlés külön
+const data = reactive({
+    createOpen: false,
+    editOpen: false,
+    deleteOpen: false,
+    day: null
+});
+
+onMounted(fetchData);
+
+/*
 const { has } = usePermissions();
 
 const props = defineProps({
@@ -14,7 +48,7 @@ const props = defineProps({
 });
 
 const fetchCalendar = async (params) => {
-  const response = await CalendarService.getCalendars(params);
+  const response = await CalendarService.getCalendar(params);
   return response.data;
 };
 
@@ -35,12 +69,13 @@ const data = reactive({
 });
 
 onMounted(fetchData);
+*/
 </script>
 
 <template>
   <AuthLayout>
     <Head :title="props.title" />
-    <div class="card">
+    <!--<div class="card">
       <DataTable
         v-if="calendars"
         :value="calendars.data"
@@ -76,6 +111,6 @@ onMounted(fetchData);
           </template>
         </Column>
       </DataTable>
-    </div>
+    </div>-->
   </AuthLayout>
 </template>

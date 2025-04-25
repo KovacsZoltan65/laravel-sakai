@@ -74,6 +74,11 @@ class RoleSeeder extends Seeder
             'create subdomain_state',
             'delete subdomain_state',
             'update subdomain_state',
+
+            'read calendar',
+            'create calendar',
+            'delete calendar',
+            'update calendar',
         ]);
 
         // Admin szerepkör létrehozása

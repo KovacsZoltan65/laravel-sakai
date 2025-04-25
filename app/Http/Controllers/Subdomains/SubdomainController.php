@@ -44,8 +44,8 @@ class SubdomainController extends Controller
         $_subdomains = Subdomain::query();
 
         if( $search = $request->search ) {
-            $_subdomains->where(function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%");
+            $_subdomains->where(function ($_subdomains) use ($search) {
+                $_subdomains->where('name', 'like', "%{$search}%");
             });
         }
 

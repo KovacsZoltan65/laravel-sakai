@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\CompanyController;
+//use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DashboardController;
 use App\Models\User;
 use Inertia\Inertia;
@@ -108,6 +108,11 @@ Route::middleware('auth')->group(function () {
     // SUBDOMAINS
     // =================================================
     Route::get('/subdomains', [\App\Http\Controllers\Subdomains\SubdomainController::class, 'index'])->name('subdomains.index');
+
+    // =================================================
+    // CALENDAR
+    // =================================================
+    Route::get('/calendar', [App\Http\Controllers\Calendars\Calendar\CalendarController::class, 'index'])->name('calendar.index');
 });
 
 Route::get('/form', function () {

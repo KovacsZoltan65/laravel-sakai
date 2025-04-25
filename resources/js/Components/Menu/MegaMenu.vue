@@ -69,27 +69,46 @@ const items = ref([
                             label: 'Companies',
                             url: '/companies',
                             icon: "pi pi-fw pi-briefcase",
-                            class: 'p-menuitem'
+                            class: 'p-menuitem',
+                            visible: has('read company'),
                         }, {
                             label: 'Persons',
                             url: '/persons',
                             icon: "pi pi-fw pi-user",
+                            visible: has('read person'),
                         }, {
                             label: 'Entities',
                             url: '/entities',
                             icon: "pi pi-fw pi-user",
+                            visible: has('read entity'),
                         }, {
                             label: 'Subdomain States',
                             url: '/subdomain_states',
                             icon: "pi pi-fw pi-globe",
+                            visible: has('read subdomain_state'),
                         }, {
                             label: 'Subdomains',
                             url: '/subdomains',
                             icon: "pi pi-fw pi-globe",
+                            visible: has('read subdomain'),
                         }
                     ]
                 }
-            ],[
+            ],
+            [
+                {
+                    label: 'Calendars',
+                    items: [
+                        {
+                            label: 'Calendar',
+                            url: '',
+                            icon: "pi pi-fw pi-calendar",
+                            visible: has('read calendar'),
+                        }
+                    ]
+                }
+            ],
+            [
                 {
                     label: 'Geo',
                     items: [

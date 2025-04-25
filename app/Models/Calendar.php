@@ -13,10 +13,7 @@ class Calendar extends Model
     protected $table = 'calendars';
 
     protected $fillable = [
-        'name',
-        'starts_at',
-        'ends_at',
-        'color',
+        'date',
     ];
 
     public function scopeSearch(Builder $query, ?string $search)

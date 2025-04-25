@@ -1,3 +1,21 @@
+import BaseService from '../../BaseService.js';
+
+class CalendarService extends BaseService
+{
+    constructor()
+    {
+        super();
+        this.url = "/calendar";
+    }
+
+    getCalendar(params = {})
+    {
+        return this.get(`${this.url}/fetch`, { params });
+    }
+}
+
+export default new CalendarService();
+/*
 export default {
   async getCalendars(params) {
     return await axios.get(route('api/calendars.index'), { params });
@@ -12,3 +30,4 @@ export default {
     return await axios.delete(route('api/calendars.destroy', id));
   }
 };
+*/
