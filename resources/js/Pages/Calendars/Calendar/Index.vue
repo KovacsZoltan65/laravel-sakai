@@ -21,10 +21,25 @@ const props = defineProps({
     filters: Object,
 });
 
+const createDialogVisible = ref(false)
+const newEvent = ref({
+    title: '',
+    start: '',
+    end: ''
+});
+
+// Új változók a modál kezeléséhez
+const editDialogVisible = ref(false)
+const editedEvent = ref({
+    id: null,
+    title: '',
+    start: ''
+});
+
 // Eseménykezelő függvény
 const handleDateClick = (arg) => {
     console.log('date click! ', arg)
-}
+};
 
 const calendarOptions = reactive({
     plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
@@ -48,41 +63,28 @@ const calendarOptions = reactive({
         { id: 10, title: 'Mindenszentek napja', date:'2025-11-01' }, // Mindenszentek napja
         { id: 11, title: 'Karácsony els napja', date:'2025-12-25' }, // Karácsony els napja
         { id: 12, title: 'Karácsony második napja', date:'2025-12-26' }, // Karácsony második napja
-
         { id: 13, title: 'holiday', start: '2025-04-07', end: '2025-04-11' },
         // áthelyezett pihenőnapok
         {id: 14, title: '2025-05-02 -> 2025-05-17', date: '2025-05-02'},
-
         // áthelyezett munkanapok
         {id: 15, title: '2025-05-02 -> 2025-05-17', date: '2025-05-17'},
-
-        { 
-            id: 16, 
-            title: 'meeting 1', 
-            start: '2025-04-10 11:30:00',
-            end: '2025-04-10 12:00:00'
-        },
-
-        { 
-            id: 17, 
-            title: 'meeting 2', 
-            start: '2025-04-10 12:30:00',
-            end: '2025-04-10 13:00:00'
-        },
-
-        { 
-            id: 18, 
-            title: 'meeting 3', 
-            start: '2025-04-10 13:30:00',
-            end: '2025-04-10 14:00:00',
-        },
-
+        { id: 16, title: 'meeting 1', start: '2025-04-10 11:30:00', end: '2025-04-10 12:00:00' },
+        { id: 17, title: 'meeting 2', start: '2025-04-10 12:30:00', end: '2025-04-10 13:00:00' },
+        { id: 18, title: 'meeting 3', start: '2025-04-10 13:30:00', end: '2025-04-10 14:00:00', },
     ],
     eventColor: '#378006', // green
     headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+    },
+    eventClick: (info) => {
+        editedEvent.value = {
+            id: info.event.id,
+            title: info.event.title,
+            start: info.event.startStr // ISO formátumban
+        }
+        editDialogVisible.value = true
     }
 });
 
@@ -103,37 +105,112 @@ const toggleWeekends = () => {
     calendarOptions.weekends = !calendarOptions.weekends;
 };
 
+const saveEditedEvent = () => {
+    const index = calendarOptions.events.findIndex(e => e.id == editedEvent.value.id)
+    if (index !== -1) {
+        calendarOptions.events[index].title = editedEvent.value.title
+        calendarOptions.events[index].start = typeof editedEvent.value.start === 'string' ? editedEvent.value.start : editedEvent.value.start.toISOString().slice(0, 19)
+    }
+    editDialogVisible.value = false
+}
+
+const saveNewEvent = () => {
+    const newId = calendarOptions.events.length + 1; // Gyors ID generálás
+    calendarOptions.events.push({
+        id: newId,
+        title: newEvent.value.title,
+        start: typeof newEvent.value.start === 'string' ? newEvent.value.start : newEvent.value.start.toISOString().slice(0, 19),
+        end: typeof newEvent.value.end === 'string' ? newEvent.value.end : newEvent.value.end.toISOString().slice(0, 19)
+    });
+  
+    // Új esemény után tisztítjuk az űrlapot
+    newEvent.value = { title: '', start: '', end: '' };
+    createDialogVisible.value = false;
+}
+
+const confirmDeleteEvent = () => {
+    const index = calendarOptions.events.findIndex(e => e.id == editedEvent.value.id)
+    if (index !== -1) {
+        calendarOptions.events.splice(index, 1) // töröljük a tömbből
+    }
+    editDialogVisible.value = false
+}
+
 </script>
 
 <template>
   <AuthLayout>
     <Head :title="props.title" />
 
-        <div class="card">
-            <!-- CREATE MODAL -->
+    <div class="card">
+        <!-- CREATE MODAL -->
 
-            <!-- EDIT MODAL -->
+        <!-- EDIT MODAL -->
 
-            <!-- DELETE MODAL -->
+        <!-- DELETE MODAL -->
 
-            <!-- CREATE BUTTON -->
+        <!-- CREATE BUTTON -->
+        <Button 
+            v-if="has('create calendar')" 
+            icon="pi pi-plus" 
+            label="Új esemény" 
+            @click="createDialogVisible = true"
+            class="mr-2"
+        />
+
+
+        <!-- REFRESH BUTTON -->
             <Button 
-                v-if="has('create calendar')" 
-                icon="pi pi-plus" 
-                label="Create" 
-                @click="data.createOpen = true"
-                class="mr-2"
+            @click="toggleWeekends"
+            label="Toggle Weekends"
             />
 
-            <!-- REFRESH BUTTON -->
-             <Button 
-                @click="toggleWeekends"
-                label="Toggle Weekends"
-             />
+        <FullCalendar :options="calendarOptions" />
 
-            <FullCalendar :options="calendarOptions" />
+    </div>
 
+    <Dialog v-model:visible="editDialogVisible" header="Esemény szerkesztése" :modal="true" class="w-96">
+        <div class="p-fluid">
+            <div class="field">
+                <label for="title">Cím</label>
+                <InputText id="title" v-model="editedEvent.title" />
+            </div>
+            <div class="field">
+                <label for="start">Kezdés dátuma</label>
+                <Calendar id="start" v-model="editedEvent.start" showTime dateFormat="yy-mm-dd" hourFormat="24" />
+            </div>
         </div>
+
+        <template #footer>
+            <Button label="Törlés" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteEvent" />
+            <Button label="Mégse" icon="pi pi-times" @click="editDialogVisible = false" class="p-button-text" />
+            <Button label="Mentés" icon="pi pi-check" @click="saveEditedEvent" />
+        </template>
+    </Dialog>
+
+    <Dialog v-model:visible="createDialogVisible" header="Új esemény létrehozása" :modal="true" class="w-96">
+        <div class="p-fluid">
+            <div class="field">
+                <label for="newTitle">Cím</label>
+                <InputText id="newTitle" v-model="newEvent.title" />
+            </div>
+            <div class="field">
+                <label for="newStart">Kezdés</label>
+                <Calendar id="newStart" v-model="newEvent.start" showTime dateFormat="yy-mm-dd" hourFormat="24" />
+            </div>
+            <div class="field">
+                <label for="newEnd">Befejezés</label>
+                <Calendar id="newEnd" v-model="newEvent.end" showTime dateFormat="yy-mm-dd" hourFormat="24" />
+            </div>
+        </div>
+
+        <template #footer>
+            <Button label="Mégse" icon="pi pi-times" @click="createDialogVisible = false" class="p-button-text" />
+            <Button label="Létrehozás" icon="pi pi-check" @click="saveNewEvent" />
+        </template>
+    </Dialog>
+
+
   </AuthLayout>
 </template>
 
