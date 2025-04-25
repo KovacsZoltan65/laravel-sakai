@@ -79,6 +79,11 @@ const calendarOptions = reactive({
 
     ],
     eventColor: '#378006', // green
+    headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+    }
 });
 
 const fetchCalendar = async (params) => {
