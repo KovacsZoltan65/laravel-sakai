@@ -20,6 +20,7 @@ class CalendarController extends Controller
 
     public function index(Request $request)
     {
+\Log::info('CalendarController.index');
         return Inertia::render('Calendars/Calendar/Index', [
             'title' => 'Calendar',
             'filters' => $request->all(['search', 'field', 'order']),

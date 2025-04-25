@@ -50,16 +50,32 @@ onMounted(fetchData);
 
         <Head :title="props.title" />
         <div class="card">
-            <CreateModal :show="data.createOpen" :title="props.title" @close="data.createOpen = false"
-                @saved="fetchData" />
-            <EditModal :show="data.editOpen" :entity="data.entity" :title="props.title" @close="data.editOpen = false"
-                @saved="fetchData" />
+            <CreateModal 
+                :show="data.createOpen" 
+                :title="props.title" 
+                @close="data.createOpen = false"
+                @saved="fetchData"
+            />
+            <EditModal 
+                :show="data.editOpen" 
+                :entity="data.entity" 
+                :title="props.title" 
+                @close="data.editOpen = false"
+                @saved="fetchData"
+            />
             <DeleteModal :show="data.deleteOpen" :entity="data.entity" :title="props.title"
                 @close="data.deleteOpen = false" @deleted="fetchData" />
 
-            <Button v-if="has('create entity')" icon="pi pi-plus" label="Create" @click="data.createOpen = true"
-                class="mr-2" />
-            <Button @click="fetchData" :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />
+            <Button 
+                v-if="has('create entity')" 
+                icon="pi pi-plus" 
+                label="Create" @click="data.createOpen = true"
+                class="mr-2"
+            />
+            <Button 
+                @click="fetchData" 
+                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
+            />
 
             <DataTable v-if="entities" :value="entities.data" :rows="entities.per_page" :totalRecords="entities.total"
                 :first="(entities.current_page - 1) * entities.per_page" :loading="isLoading" lazy paginator

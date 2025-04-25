@@ -61,6 +61,20 @@ prettier:
 
     sass-migrator module --migrate-deps F:\wamp64\www\softc\laravel-sakai\resources\js\sakai\assets\styles.scss
 
+// ===============================
+// CALENDAR
+// ===============================
+https://fullcalendar.io/
+npm install primevue primeicons primeflex
+npm install 
+    @fullcalendar/vue3 
+    @fullcalendar/core 
+    @fullcalendar/daygrid 
+    @fullcalendar/interaction
+    @fullcalendar/list
+    @fullcalendar/multimonth
+    @fullcalendar/timegrid
+
 
 npm cache verify
 npm cache clean --force

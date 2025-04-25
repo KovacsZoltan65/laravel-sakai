@@ -101,7 +101,7 @@ const items = ref([
                     items: [
                         {
                             label: 'Calendar',
-                            url: '',
+                            url: '/calendar',
                             icon: "pi pi-fw pi-calendar",
                             visible: has('read calendar'),
                         }
