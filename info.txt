@@ -243,3 +243,28 @@ resources\js\Pages\Calendars\Calendar\Create.vue
 resources\js\Pages\Calendars\Calendar\Edit.vue
 resources\js\Pages\Calendars\Calendar\Delete.vue
 service\Calendars\CalendarService.js
+
+// -------------------------------
+// CALENDAR
+// -------------------------------
+Backend (Laravel)
+App\Models\Calendar.php
+App\Http\Controllers\CalendarController.php
+App\Interfaces\CalendarRepositoryInterface.php
+App\Repositories\CalendarRepository.php
+App\Http\Requests\IndexCalendarRequest.php
+App\Http\Requests\DeleteCalendarRequest.php
+App\Http\Requests\UpdateCalendarRequest.php
+App\Http\Requests\StoreCalendarRequest.php
+App\Http\Resources\CalendarResource.php
+database\migrations\CreateCalendarTable.php
+database\seeders\CalendarSeeder.php
+database\factories\CalendarFactory.php
+routes\web.php bejegyzés
+routes\api.php bejegyzés
+Frontend (Vue)
+resources\js\Pages\Calendars\Calendar\Index.vue
+resources\js\Pages\Calendars\Calendar\Create.vue
+resources\js\Pages\Calendars\Calendar\Edit.vue
+resources\js\Pages\Calendars\Calendar\Delete.vue
+service\Calendars\CalendarService.js

@@ -1,5 +1,22 @@
 import BaseService from '../../BaseService.js';
 
+const movedDaysByYear = {
+  2025: [
+    {
+      title: "Áthelyezett pihenőnap (május 2.)",
+      start: "2025-05-02",
+      allDay: true,
+      type: "workday",
+    },
+    {
+      title: "Áthelyezett munkanap (május 17.)",
+      start: "2025-05-17",
+      allDay: true,
+      type: "dayoff",
+    }
+  ],
+};
+
 class CalendarService extends BaseService
 {
     constructor()
@@ -12,22 +29,11 @@ class CalendarService extends BaseService
     {
         return this.get(`${this.url}/fetch`, { params });
     }
+
+    getMovedDays(year)
+    {
+        return movedDaysByYear[year] || [];
+    }
 }
 
 export default new CalendarService();
-/*
-export default {
-  async getCalendars(params) {
-    return await axios.get(route('api/calendars.index'), { params });
-  },
-  async storeCalendar(data) {
-    return await axios.post(route('api/calendars.store'), data);
-  },
-  async updateCalendar(id, data) {
-    return await axios.put(route('api/calendars.update', id), data);
-  },
-  async deleteCalendar(id) {
-    return await axios.delete(route('api/calendars.destroy', id));
-  }
-};
-*/

@@ -6,6 +6,8 @@ import { usePermissions } from '@/composables/usePermissions';
 import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
 import CalendarService from '@/service/Calendars/Calendar/CalendarService.js';
 
+import Holidays from "date-holidays";
+
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -48,30 +50,7 @@ const calendarOptions = reactive({
     dateClick: handleDateClick,
     weekends: true,
     locale: 'hu',
-    events: [
-        // ünnepnapok
-        { id:  0, title: 'Szilveszter', date: '2025-01-01' }, // Szilveszter
-        { id:  1, title: 'Nemzeti ünnepnap', date: '2025-03-15' }, // Nemzeti ünnepnap
-        { id:  2, title: 'Húsvét csütörtök', date: '2025-04-18' }, // Húsvét csütörtök
-        { id:  3, title: 'Húsvét szombat', date: '2025-04-20' }, // Húsvét szombat
-        { id:  4, title: 'Húsvét vasárnap', date: '2025-04-21' }, // Húsvét vasárnap
-        { id:  5, title: 'Május 1.', date: '2025-05-01' }, // Május 1.
-        { id:  6, title: 'Pünkösd vasárnap', date:'2025-06-08' }, // Pünkösd vasárnap
-        { id:  7, title: 'Pünkösd hete', date: '2025-06-09' }, // Pünkösd hétf
-        { id:  8, title: 'Szent István király ünnepe', date: '2025-08-20' }, // Szent István király ünnepe
-        { id:  9, title: '1956-os forradalom emleknapja', date:'2025-10-23' }, // Október 23. - 1956-os forradalom emléknapja
-        { id: 10, title: 'Mindenszentek napja', date:'2025-11-01' }, // Mindenszentek napja
-        { id: 11, title: 'Karácsony els napja', date:'2025-12-25' }, // Karácsony els napja
-        { id: 12, title: 'Karácsony második napja', date:'2025-12-26' }, // Karácsony második napja
-        { id: 13, title: 'holiday', start: '2025-04-07', end: '2025-04-11' },
-        // áthelyezett pihenőnapok
-        {id: 14, title: '2025-05-02 -> 2025-05-17', date: '2025-05-02'},
-        // áthelyezett munkanapok
-        {id: 15, title: '2025-05-02 -> 2025-05-17', date: '2025-05-17'},
-        { id: 16, title: 'meeting 1', start: '2025-04-10 11:30:00', end: '2025-04-10 12:00:00' },
-        { id: 17, title: 'meeting 2', start: '2025-04-10 12:30:00', end: '2025-04-10 13:00:00' },
-        { id: 18, title: 'meeting 3', start: '2025-04-10 13:30:00', end: '2025-04-10 14:00:00', },
-    ],
+    events: [],
     eventColor: '#378006', // green
     headerToolbar: {
         left: 'prev,next today',
@@ -85,8 +64,54 @@ const calendarOptions = reactive({
             start: info.event.startStr // ISO formátumban
         }
         editDialogVisible.value = true
+    },
+    eventDidMount: function(info) {
+        const tooltipText = info.event.extendedProps.type || info.event.title;
+        info.el.setAttribute('title', tooltipText);
     }
 });
+
+const loadHolidays = () => {
+    const hd = new Holidays('hu');  // Magyarország
+    const year = new Date().getFullYear();
+    const holidays = hd.getHolidays(year);
+
+    holidays.forEach((holiday, index) => {
+        calendarOptions.events.push({
+            id: `holiday-${index}`,
+            title: holiday.name,
+            start: holiday.date,
+            end: holiday.end ?? holiday.date, // ha nincs end, akkor starttal megegyező
+            editable: false, // <-- NEM lehessen áthelyezni/szerkeszteni
+            allDay: true, // ünnepnapok jellemzően egész naposak
+            color: '#28a745', // Zöld - állami ünnepnap
+            extendedProps: {
+                type: 'Állami ünnepnap'
+            }
+        });
+    });
+}
+
+const loadMovedDays = () => {
+    const year = new Date().getFullYear();
+    const movedDays = CalendarService.getMovedDays(year);
+
+    movedDays.forEach((day, index) => {
+        const isWorkday = day.type === 'workday';
+        calendarOptions.events.push({
+            id: `moved-${index}`,
+            title: day.title,
+            start: day.start,
+            end: day.end ?? day.start,
+            allDay: day.allDay ?? true,
+            editable: false, // <-- Nem módosítható
+            color: isWorkday ? '#dc3545' : '#fd7e14', // Piros a munkanap, narancs a pihenőnap
+            extendedProps: {
+                type: isWorkday ? 'Áthelyezett munkanap' : 'Áthelyezett pihenőnap'
+            }
+        });
+    });
+};
 
 const fetchCalendar = async (params) => {
 
@@ -99,7 +124,11 @@ const fetchCalendar = async (params) => {
         });
 };
 
-onMounted(fetchCalendar);
+onMounted(() => {
+    fetchCalendar();
+    loadHolidays(); // <-- itt töltjük be az ünnepnapokat is
+    loadMovedDays(); // áthelyezett napok
+});
 
 const toggleWeekends = () => {
     calendarOptions.weekends = !calendarOptions.weekends;
