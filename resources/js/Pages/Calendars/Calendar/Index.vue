@@ -1,9 +1,11 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import AuthLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { usePermissions } from '@/composables/usePermissions';
 import CalendarService from '@/service/Calendars/Calendar/CalendarService.js';
+
+import { useToast } from "primevue/usetoast";
 
 import Holidays from "date-holidays";
 
@@ -32,6 +34,23 @@ const contextMenuVisible = ref(false);
 const contextMenuX = ref(0);
 const contextMenuY = ref(0);
 const selectedEvent = ref(null);
+
+const toast = useToast();
+const showToast = (message) => {
+    toast.add({
+        severity: 'success',
+        summary: 'Sikeres művelet',
+        detail: message,
+        life: 3000
+    });
+};
+
+const activeFilters = ref({
+    company: true,
+    holidays: true,
+    movedDays: true,
+    birthdays: false
+});
 
 const handleDateClick = (arg) => {
     console.log('date click!', arg);
@@ -88,7 +107,24 @@ const calendarOptions = reactive({
             e.preventDefault();
             openContextMenu(e, info.event);
         });
-    }
+    },
+    eventDrop: (info) => {
+        const isEditable = info.event.extendedProps?.editable ?? true;
+        if (!isEditable) {
+            info.revert();
+            return;
+        }
+
+        const movedEventId = info.event.id;
+        const newStart = info.event.startStr;
+
+        const index = calendarOptions.events.findIndex(e => e.id == movedEventId);
+        if (index !== -1) {
+            calendarOptions.events[index].start = newStart;
+        }
+
+        showToast('Esemény sikeresen áthelyezve!');
+    },
 });
 
 const openContextMenu = (event, calendarEvent) => {
@@ -226,11 +262,26 @@ const deleteSelectedEvent = () => {
         closeContextMenu();
     }
 };
+
+const filteredEvents = computed(() => {
+    return calendarOptions.events.filter(event => {
+        const type = event.extendedProps?.type || '';
+
+        if (type.includes('Céges esemény') && activeFilters.value.company) return true;
+        if (type.includes('Állami ünnepnap') && activeFilters.value.holidays) return true;
+        if (type.includes('Áthelyezett') && activeFilters.value.movedDays) return true;
+        if (type.includes('Születésnap') && activeFilters.value.birthdays) return true;
+
+        return false;
+    });
+});
+
 </script>
 
 <template>
   <AuthLayout>
     <Head :title="props.title" />
+    <Toast />
 
     <div class="card relative">
         <!-- CREATE BUTTON -->
@@ -248,7 +299,14 @@ const deleteSelectedEvent = () => {
             label="Toggle Weekends"
         />
 
-        <FullCalendar :options="calendarOptions" />
+        <div class="flex gap-4 mb-4">
+            <label><input type="checkbox" v-model="activeFilters.company" /> Céges események</label>
+            <label><input type="checkbox" v-model="activeFilters.holidays" /> Ünnepnapok</label>
+            <label><input type="checkbox" v-model="activeFilters.movedDays" /> Áthelyezett napok</label>
+            <label><input type="checkbox" v-model="activeFilters.birthdays" /> Születésnapok</label>
+        </div>
+
+        <FullCalendar :options="{...calendarOptions, events: filteredEvents}" />
 
         <!-- CONTEXT MENU -->
         <div 
@@ -273,7 +331,7 @@ const deleteSelectedEvent = () => {
             </div>
             <div class="field">
                 <label for="start">Kezdés dátuma</label>
-                <Calendar id="start" v-model="editedEvent.start" showTime dateFormat="yy-mm-dd" hourFormat="24" />
+                <DatePicker id="start" v-model="editedEvent.start" showTime dateFormat="yy-mm-dd" hourFormat="24" />
             </div>
         </div>
 
@@ -293,11 +351,11 @@ const deleteSelectedEvent = () => {
             </div>
             <div class="field">
                 <label for="newStart">Kezdés</label>
-                <Calendar id="newStart" v-model="newEvent.start" showTime dateFormat="yy-mm-dd" hourFormat="24" />
+                <DatePicker id="newStart" v-model="newEvent.start" showTime dateFormat="yy-mm-dd" hourFormat="24" />
             </div>
             <div class="field">
                 <label for="newEnd">Befejezés</label>
-                <Calendar id="newEnd" v-model="newEvent.end" showTime dateFormat="yy-mm-dd" hourFormat="24" />
+                <DatePicker id="newEnd" v-model="newEvent.end" showTime dateFormat="yy-mm-dd" hourFormat="24" />
             </div>
         </div>
 
