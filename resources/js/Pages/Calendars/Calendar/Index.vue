@@ -4,6 +4,7 @@ import { Head } from '@inertiajs/vue3';
 import AuthLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { usePermissions } from '@/composables/usePermissions';
 import CalendarService from '@/service/Calendars/Calendar/CalendarService.js';
+import { getActualYear } from "../../../helpers/functions.js";
 
 import { useToast } from "primevue/usetoast";
 
@@ -91,9 +92,9 @@ const calendarOptions = reactive({
     events: [
     {
             id: `birthday`,
-            title: "Szülinap",
-            start: "2025-06-01",
-            end: "2025-06-01",
+            title: "Másnap",
+            start: "2025-06-02",
+            end: "2025-06-02",
             allDay: true,
             editable: true,
             color: '#28a745',
@@ -103,6 +104,11 @@ const calendarOptions = reactive({
             }
         }
     ],
+    /**
+     * A naptár fejlécében megjelen  elemek.
+     *
+     * @see https://fullcalendar.io/docs/headerToolbar
+     */
     headerToolbar: {
         left: 'prev,next today',
         center: 'title',
@@ -210,7 +216,7 @@ const loadHolidays = () => {
 }
 
 const loadMovedDays = () => {
-    const year = new Date().getFullYear();
+    const year = getActualYear();
     const movedDays = CalendarService.getMovedDays(year);
 
     movedDays.forEach((day, index) => {
@@ -231,6 +237,27 @@ const loadMovedDays = () => {
     });
 };
 
+const loadEntityDays = () => {
+    const year = getActualYear();
+    const entityDays = CalendarService.getEntityDays(year);
+
+    entityDays.forEach((day, index) => {
+        calendarOptions.events.push({
+            id: `entity-${index}`,
+            title: day.title,
+            start: day.start,
+            end: day.end ?? day.start,
+            allDay: true,
+            editable: true,
+            color: '#17a2b8',
+            extendedProps: {
+                type: 'Születésnap',
+                editable: true
+            }
+        });
+    });
+};
+
 const fetchCalendar = async (params) => {
     await CalendarService.getCalendar()
         .then((response) => {
@@ -246,6 +273,7 @@ onMounted(() => {
     fetchCalendar();
     loadHolidays();
     loadMovedDays();
+    loadEntityDays();
 });
 
 const toggleWeekends = () => {
@@ -331,16 +359,16 @@ const filteredEvents = computed(() => {
 
     <div class="card relative">
         <!-- CREATE BUTTON -->
-        <Button 
-            v-if="has('create calendar')" 
-            icon="pi pi-plus" 
-            label="Új esemény" 
+        <Button
+            v-if="has('create calendar')"
+            icon="pi pi-plus"
+            label="Új esemény"
             @click="createDialogVisible = true"
             class="mr-2"
         />
 
         <!-- TOGGLE WEEKENDS BUTTON -->
-        <Button 
+        <Button
             @click="toggleWeekends"
             label="Toggle Weekends"
         />
@@ -355,7 +383,7 @@ const filteredEvents = computed(() => {
         <FullCalendar :options="{...calendarOptions, events: filteredEvents}" locale="hu" />
 
         <!-- CONTEXT MENU -->
-        <div 
+        <div
             v-if="contextMenuVisible"
             :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }"
             class="absolute bg-white border rounded shadow-md p-2 z-50"
@@ -377,10 +405,10 @@ const filteredEvents = computed(() => {
             </div>
             <div class="field">
                 <label for="start">Kezdés dátuma</label>
-                <DatePicker 
-                    id="start" 
-                    v-model="editedEvent.start" 
-                    dateFormat="yy-mm-dd" 
+                <DatePicker
+                    id="start"
+                    v-model="editedEvent.start"
+                    dateFormat="yy-mm-dd"
                     hourFormat="24"
                     :locale="hungarianLocale"
                 />
@@ -395,10 +423,10 @@ const filteredEvents = computed(() => {
     </Dialog>
 
     <!-- CREATE EVENT DIALOG -->
-    <Dialog 
-        v-model:visible="createDialogVisible" 
-        header="Új esemény létrehozása" 
-        :modal="true" 
+    <Dialog
+        v-model:visible="createDialogVisible"
+        header="Új esemény létrehozása"
+        :modal="true"
         class="w-96"
     >
         <div class="p-fluid">
@@ -408,20 +436,20 @@ const filteredEvents = computed(() => {
             </div>
             <div class="field">
                 <label for="newStart">Kezdés</label>
-                <DatePicker 
-                    id="newStart" 
-                    v-model="newEvent.start" 
-                    dateFormat="yy-mm-dd" 
+                <DatePicker
+                    id="newStart"
+                    v-model="newEvent.start"
+                    dateFormat="yy-mm-dd"
                     hourFormat="24"
                     :locale="hungarianLocale"
                 />
             </div>
             <div class="field">
                 <label for="newEnd">Befejezés</label>
-                <DatePicker 
-                    id="newEnd" 
-                    v-model="newEvent.end" 
-                    dateFormat="yy-mm-dd" 
+                <DatePicker
+                    id="newEnd"
+                    v-model="newEvent.end"
+                    dateFormat="yy-mm-dd"
                     hourFormat="24"
                     :locale="hungarianLocale"
                 />

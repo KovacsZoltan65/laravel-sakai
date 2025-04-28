@@ -17,6 +17,24 @@ const movedDaysByYear = {
   ],
 };
 
+const entityDays = {
+    2025: [
+        {
+            id: `birthday`,
+            title: "Szülinap",
+            start: "2025-06-01",
+            end: "2025-06-01",
+            allDay: true,
+            editable: true,
+            color: '#28a745',
+            extendedProps: {
+                type: 'Születésnap',
+                editable: true
+            }
+        }
+    ]
+};
+
 class CalendarService extends BaseService
 {
     constructor()
@@ -33,6 +51,11 @@ class CalendarService extends BaseService
     getMovedDays(year)
     {
         return movedDaysByYear[year] || [];
+    }
+
+    getEntityDays(year)
+    {
+        return entityDays[year] || [];
     }
 }
 
