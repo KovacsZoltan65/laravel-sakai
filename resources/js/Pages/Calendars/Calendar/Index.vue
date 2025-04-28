@@ -15,6 +15,8 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 
+import { hungarianLocale } from '@/locale/datepickerLocale';
+
 const calendar = ref();
 
 const { has } = usePermissions();
@@ -49,11 +51,16 @@ const activeFilters = ref({
     company: true,
     holidays: true,
     movedDays: true,
-    birthdays: false
+    birthdays: true
 });
 
+/**
+ * Akkor hívódik meg, amikor egy dátumra kattintanak.
+ *
+ * @param {object} arg - Az arg objektum
+ * @param {string} arg.dateStr - A dátum karakterláncként
+ */
 const handleDateClick = (arg) => {
-    console.log('date click!', arg);
 
     newEvent.value = {
         title: '',
@@ -63,9 +70,21 @@ const handleDateClick = (arg) => {
     createDialogVisible.value = true;
 };
 
+/*
+Nézet neve   | Mit jelent?               | Példa
+dayGridMonth | Havi nézet (naptárrácsos) | Klasszikus teljes hónap
+dayGridWeek  | Heti nézet (naptárrácsos) | Teljes hét rácsban
+dayGridDay   | Napi nézet (naptárrácsos) | Egy nap rácsban
+timeGridWeek | Heti időalapú nézet       | Órákra lebontott hét
+timeGridDay  | Napi időalapú nézet       | Órákra lebontott nap
+listYear     | Éves lista nézet          | Események listázva egész évre
+listMonth    | Havi lista nézet          | Események listázva egy hónapra
+listWeek     | Heti lista nézet          | Események listázva egy hétre
+listDay      | Napi lista nézet          | Események listázva egy napra
+*/
 const calendarOptions = reactive({
     plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
-    initialView: 'listMonth',
+    initialView: 'dayGridMonth',
     dateClick: handleDateClick,
     weekends: true,
     locale: 'hu',
@@ -89,6 +108,15 @@ const calendarOptions = reactive({
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
     },
+    /**
+     * Amikor egy eventre kattintanak, akkor hívódik meg.
+     *
+     * @param {object} info - Az event információi
+     * @param {string} info.event.id - Az event azonosítója
+     * @param {string} info.event.title - Az event címe
+     * @param {string} info.event.startStr - Az event kezd  dátumának karakterlánckénti megadása
+     * @param {boolean} info.event.extendedProps.editable - Az event szerkeszthet ségének megadása
+     */
     eventClick: (info) => {
         if (info.event.extendedProps.editable !== false) {
             editedEvent.value = {
@@ -99,6 +127,16 @@ const calendarOptions = reactive({
             editDialogVisible.value = true;
         }
     },
+
+    /**
+     * Akkor aktiválódik, amikor egy esemény megjelenik a naptárban.
+     *
+     * @param {object} info - Információk a megrendezésre kerülő eseményről.
+     * @param {object} info.event - Az esemény objektum részleteivel.
+     * @param {string} info.event.extendedProps.type - Az esemény típusa, ha rendelkezésre áll.
+     * @param {string} info.event.title - Az esemény címe.
+     * @param {HTMLElement} info.el - Az esemény HTML eleme.
+     */
     eventDidMount: (info) => {
         const tooltipText = info.event.extendedProps.type || info.event.title;
         info.el.setAttribute('title', tooltipText);
@@ -108,6 +146,14 @@ const calendarOptions = reactive({
             openContextMenu(e, info.event);
         });
     },
+
+    /**
+     * Akkor aktiválódik, amikor egy eseményt áthelyeznek a naptárban.
+     *
+     * @param {object} info - Információk az áthelyezett eseményr  l.
+     * @param {string} info.event.id - Az esemény azonosítója.
+     * @param {string} info.event.startStr - Az esemény új kezd  dátumának karakterlánckénti megadása.
+     */
     eventDrop: (info) => {
         const isEditable = info.event.extendedProps?.editable ?? true;
         if (!isEditable) {
@@ -306,7 +352,7 @@ const filteredEvents = computed(() => {
             <label><input type="checkbox" v-model="activeFilters.birthdays" /> Születésnapok</label>
         </div>
 
-        <FullCalendar :options="{...calendarOptions, events: filteredEvents}" />
+        <FullCalendar :options="{...calendarOptions, events: filteredEvents}" locale="hu" />
 
         <!-- CONTEXT MENU -->
         <div 
@@ -331,7 +377,13 @@ const filteredEvents = computed(() => {
             </div>
             <div class="field">
                 <label for="start">Kezdés dátuma</label>
-                <DatePicker id="start" v-model="editedEvent.start" showTime dateFormat="yy-mm-dd" hourFormat="24" />
+                <DatePicker 
+                    id="start" 
+                    v-model="editedEvent.start" 
+                    dateFormat="yy-mm-dd" 
+                    hourFormat="24"
+                    :locale="hungarianLocale"
+                />
             </div>
         </div>
 
@@ -343,7 +395,12 @@ const filteredEvents = computed(() => {
     </Dialog>
 
     <!-- CREATE EVENT DIALOG -->
-    <Dialog v-model:visible="createDialogVisible" header="Új esemény létrehozása" :modal="true" class="w-96">
+    <Dialog 
+        v-model:visible="createDialogVisible" 
+        header="Új esemény létrehozása" 
+        :modal="true" 
+        class="w-96"
+    >
         <div class="p-fluid">
             <div class="field">
                 <label for="newTitle">Cím</label>
@@ -351,11 +408,23 @@ const filteredEvents = computed(() => {
             </div>
             <div class="field">
                 <label for="newStart">Kezdés</label>
-                <DatePicker id="newStart" v-model="newEvent.start" showTime dateFormat="yy-mm-dd" hourFormat="24" />
+                <DatePicker 
+                    id="newStart" 
+                    v-model="newEvent.start" 
+                    dateFormat="yy-mm-dd" 
+                    hourFormat="24"
+                    :locale="hungarianLocale"
+                />
             </div>
             <div class="field">
                 <label for="newEnd">Befejezés</label>
-                <DatePicker id="newEnd" v-model="newEvent.end" showTime dateFormat="yy-mm-dd" hourFormat="24" />
+                <DatePicker 
+                    id="newEnd" 
+                    v-model="newEvent.end" 
+                    dateFormat="yy-mm-dd" 
+                    hourFormat="24"
+                    :locale="hungarianLocale"
+                />
             </div>
         </div>
 
