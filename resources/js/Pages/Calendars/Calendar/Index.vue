@@ -3,7 +3,6 @@ import { onMounted, reactive, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import AuthLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { usePermissions } from '@/composables/usePermissions';
-import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
 import CalendarService from '@/service/Calendars/Calendar/CalendarService.js';
 
 import Holidays from "date-holidays";
@@ -24,55 +23,90 @@ const props = defineProps({
 });
 
 const createDialogVisible = ref(false)
-const newEvent = ref({
-    title: '',
-    start: '',
-    end: ''
-});
-
-// Új változók a modál kezeléséhez
 const editDialogVisible = ref(false)
-const editedEvent = ref({
-    id: null,
-    title: '',
-    start: ''
-});
 
-// Eseménykezelő függvény
+const newEvent = ref({ title: '', start: '', end: '' });
+const editedEvent = ref({ id: null, title: '', start: '' });
+
+const contextMenuVisible = ref(false);
+const contextMenuX = ref(0);
+const contextMenuY = ref(0);
+const selectedEvent = ref(null);
+
 const handleDateClick = (arg) => {
-    console.log('date click! ', arg)
+    console.log('date click!', arg);
+
+    newEvent.value = {
+        title: '',
+        start: arg.dateStr,
+        end: arg.dateStr
+    };
+    createDialogVisible.value = true;
 };
 
 const calendarOptions = reactive({
     plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
-    //initialView: 'dayGridMonth',
     initialView: 'listMonth',
     dateClick: handleDateClick,
     weekends: true,
     locale: 'hu',
-    events: [],
-    eventColor: '#378006', // green
+    events: [
+    {
+            id: `birthday`,
+            title: "Szülinap",
+            start: "2025-06-01",
+            end: "2025-06-01",
+            allDay: true,
+            editable: true,
+            color: '#28a745',
+            extendedProps: {
+                type: 'Születésnap',
+                editable: true
+            }
+        }
+    ],
     headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
     },
     eventClick: (info) => {
-        editedEvent.value = {
-            id: info.event.id,
-            title: info.event.title,
-            start: info.event.startStr // ISO formátumban
+        if (info.event.extendedProps.editable !== false) {
+            editedEvent.value = {
+                id: info.event.id,
+                title: info.event.title,
+                start: info.event.startStr
+            }
+            editDialogVisible.value = true;
         }
-        editDialogVisible.value = true
     },
-    eventDidMount: function(info) {
+    eventDidMount: (info) => {
         const tooltipText = info.event.extendedProps.type || info.event.title;
         info.el.setAttribute('title', tooltipText);
+
+        info.el.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            openContextMenu(e, info.event);
+        });
     }
 });
 
+const openContextMenu = (event, calendarEvent) => {
+    if (calendarEvent.extendedProps.editable === false) {
+        return; // Ha nem szerkeszthető, nincs menü
+    }
+    contextMenuX.value = event.clientX;
+    contextMenuY.value = event.clientY;
+    selectedEvent.value = calendarEvent;
+    contextMenuVisible.value = true;
+};
+
+const closeContextMenu = () => {
+    contextMenuVisible.value = false;
+};
+
 const loadHolidays = () => {
-    const hd = new Holidays('hu');  // Magyarország
+    const hd = new Holidays('hu');
     const year = new Date().getFullYear();
     const holidays = hd.getHolidays(year);
 
@@ -81,12 +115,13 @@ const loadHolidays = () => {
             id: `holiday-${index}`,
             title: holiday.name,
             start: holiday.date,
-            end: holiday.end ?? holiday.date, // ha nincs end, akkor starttal megegyező
-            editable: false, // <-- NEM lehessen áthelyezni/szerkeszteni
-            allDay: true, // ünnepnapok jellemzően egész naposak
-            color: '#28a745', // Zöld - állami ünnepnap
+            end: holiday.end ?? holiday.date,
+            allDay: true,
+            editable: false,
+            color: '#28a745',
             extendedProps: {
-                type: 'Állami ünnepnap'
+                type: 'Állami ünnepnap',
+                editable: false
             }
         });
     });
@@ -104,20 +139,21 @@ const loadMovedDays = () => {
             start: day.start,
             end: day.end ?? day.start,
             allDay: day.allDay ?? true,
-            editable: false, // <-- Nem módosítható
-            color: isWorkday ? '#dc3545' : '#fd7e14', // Piros a munkanap, narancs a pihenőnap
+            editable: false,
+            color: isWorkday ? '#dc3545' : '#fd7e14',
             extendedProps: {
-                type: isWorkday ? 'Áthelyezett munkanap' : 'Áthelyezett pihenőnap'
+                type: isWorkday ? 'Áthelyezett munkanap' : 'Áthelyezett pihenőnap',
+                editable: false
             }
         });
     });
 };
 
 const fetchCalendar = async (params) => {
-
     await CalendarService.getCalendar()
         .then((response) => {
             calendar.value = response.data;
+            // Itt majd később map-eljük be a céges eseményeket
         })
         .catch((error) => {
             console.error("getCalendar API Error:", error);
@@ -126,8 +162,8 @@ const fetchCalendar = async (params) => {
 
 onMounted(() => {
     fetchCalendar();
-    loadHolidays(); // <-- itt töltjük be az ünnepnapokat is
-    loadMovedDays(); // áthelyezett napok
+    loadHolidays();
+    loadMovedDays();
 });
 
 const toggleWeekends = () => {
@@ -144,15 +180,19 @@ const saveEditedEvent = () => {
 }
 
 const saveNewEvent = () => {
-    const newId = calendarOptions.events.length + 1; // Gyors ID generálás
+    const newId = calendarOptions.events.length + 1;
     calendarOptions.events.push({
         id: newId,
         title: newEvent.value.title,
         start: typeof newEvent.value.start === 'string' ? newEvent.value.start : newEvent.value.start.toISOString().slice(0, 19),
-        end: typeof newEvent.value.end === 'string' ? newEvent.value.end : newEvent.value.end.toISOString().slice(0, 19)
+        end: typeof newEvent.value.end === 'string' ? newEvent.value.end : newEvent.value.end.toISOString().slice(0, 19),
+        allDay: false,
+        color: '#007bff', // Céges esemény színe
+        extendedProps: {
+            type: 'Céges esemény',
+            editable: true
+        }
     });
-  
-    // Új esemény után tisztítjuk az űrlapot
     newEvent.value = { title: '', start: '', end: '' };
     createDialogVisible.value = false;
 }
@@ -160,24 +200,39 @@ const saveNewEvent = () => {
 const confirmDeleteEvent = () => {
     const index = calendarOptions.events.findIndex(e => e.id == editedEvent.value.id)
     if (index !== -1) {
-        calendarOptions.events.splice(index, 1) // töröljük a tömbből
+        calendarOptions.events.splice(index, 1)
     }
     editDialogVisible.value = false
 }
 
+const editSelectedEvent = () => {
+    if (selectedEvent.value) {
+        editedEvent.value = {
+            id: selectedEvent.value.id,
+            title: selectedEvent.value.title,
+            start: selectedEvent.value.startStr ?? selectedEvent.value.start
+        };
+        editDialogVisible.value = true;
+        closeContextMenu();
+    }
+};
+
+const deleteSelectedEvent = () => {
+    if (selectedEvent.value) {
+        const index = calendarOptions.events.findIndex(e => e.id == selectedEvent.value.id);
+        if (index !== -1) {
+            calendarOptions.events.splice(index, 1);
+        }
+        closeContextMenu();
+    }
+};
 </script>
 
 <template>
   <AuthLayout>
     <Head :title="props.title" />
 
-    <div class="card">
-        <!-- CREATE MODAL -->
-
-        <!-- EDIT MODAL -->
-
-        <!-- DELETE MODAL -->
-
+    <div class="card relative">
         <!-- CREATE BUTTON -->
         <Button 
             v-if="has('create calendar')" 
@@ -187,17 +242,29 @@ const confirmDeleteEvent = () => {
             class="mr-2"
         />
 
-
-        <!-- REFRESH BUTTON -->
-            <Button 
+        <!-- TOGGLE WEEKENDS BUTTON -->
+        <Button 
             @click="toggleWeekends"
             label="Toggle Weekends"
-            />
+        />
 
         <FullCalendar :options="calendarOptions" />
 
+        <!-- CONTEXT MENU -->
+        <div 
+            v-if="contextMenuVisible"
+            :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }"
+            class="absolute bg-white border rounded shadow-md p-2 z-50"
+            @click="closeContextMenu"
+        >
+            <ul class="space-y-2">
+                <li class="cursor-pointer hover:text-primary" @click="editSelectedEvent">✏️ Szerkesztés</li>
+                <li class="cursor-pointer hover:text-red-500" @click="deleteSelectedEvent">🗑️ Törlés</li>
+            </ul>
+        </div>
     </div>
 
+    <!-- EDIT EVENT DIALOG -->
     <Dialog v-model:visible="editDialogVisible" header="Esemény szerkesztése" :modal="true" class="w-96">
         <div class="p-fluid">
             <div class="field">
@@ -217,6 +284,7 @@ const confirmDeleteEvent = () => {
         </template>
     </Dialog>
 
+    <!-- CREATE EVENT DIALOG -->
     <Dialog v-model:visible="createDialogVisible" header="Új esemény létrehozása" :modal="true" class="w-96">
         <div class="p-fluid">
             <div class="field">
@@ -238,11 +306,14 @@ const confirmDeleteEvent = () => {
             <Button label="Létrehozás" icon="pi pi-check" @click="saveNewEvent" />
         </template>
     </Dialog>
-
-
   </AuthLayout>
 </template>
 
 <style scoped>
-
+/* egyszerűbb context menü stílus */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 </style>
