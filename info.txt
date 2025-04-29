@@ -268,3 +268,53 @@ resources\js\Pages\Calendars\Calendar\Create.vue
 resources\js\Pages\Calendars\Calendar\Edit.vue
 resources\js\Pages\Calendars\Calendar\Delete.vue
 service\Calendars\CalendarService.js
+
+// -------------------------------
+// COMPANY CALENDAR
+// -------------------------------
+Backend (Laravel)
+App\Models\CompanyCalendar.php
+App\Http\Controllers\CompanyCalendarController.php
+App\Interfaces\CompanyCalendarRepositoryInterface.php
+App\Repositories\CompanyCalendarRepository.php
+App\Http\Requests\IndexCompanyCalendarRequest.php
+App\Http\Requests\DeleteCompanyCalendarRequest.php
+App\Http\Requests\UpdateCompanyCalendarRequest.php
+App\Http\Requests\StoreCompanyCalendarRequest.php
+App\Http\Resources\CompanyCalendarResource.php
+database\migrations\CompanyCreateCalendarTable.php
+database\seeders\CompanyCalendarSeeder.php
+database\factories\CompanyCalendarFactory.php
+routes\web.php bejegyzés
+routes\api.php bejegyzés
+Frontend (Vue)
+resources\js\Pages\Calendars\CompanyCalendar\Index.vue
+resources\js\Pages\Calendars\CompanyCalendar\Create.vue
+resources\js\Pages\Calendars\CompanyCalendar\Edit.vue
+resources\js\Pages\Calendars\CompanyCalendar\Delete.vue
+service\Calendars\CompanyCalendarService.js
+
+// -------------------------------
+// ENTITY CALENDAR
+// -------------------------------
+Backend (Laravel)
+App\Models\EntityCalendar.php
+App\Http\Controllers\EntityCalendarController.php
+App\Interfaces\EntityCalendarRepositoryInterface.php
+App\Repositories\EntityCalendarRepository.php
+App\Http\Requests\IndexEntityCalendarRequest.php
+App\Http\Requests\DeleteEntityCalendarRequest.php
+App\Http\Requests\UpdateEntityCalendarRequest.php
+App\Http\Requests\StoreEntityCalendarRequest.php
+App\Http\Resources\EntityCalendarResource.php
+database\migrations\CreateEntityCalendarTable.php
+database\seeders\EntityCalendarSeeder.php
+database\factories\EntityCalendarFactory.php
+routes\web.php bejegyzés
+routes\api.php bejegyzés
+Frontend (Vue)
+resources\js\Pages\Calendars\EntityCalendar\Index.vue
+resources\js\Pages\Calendars\EntityCalendar\Create.vue
+resources\js\Pages\Calendars\EntityCalendar\Edit.vue
+resources\js\Pages\Calendars\EntityCalendar\Delete.vue
+service\Calendars\EntityCalendarService.js
