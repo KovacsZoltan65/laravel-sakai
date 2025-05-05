@@ -66,10 +66,10 @@ prettier:
 // ===============================
 https://fullcalendar.io/
 npm install primevue primeicons primeflex
-npm install 
-    @fullcalendar/vue3 
-    @fullcalendar/core 
-    @fullcalendar/daygrid 
+npm install
+    @fullcalendar/vue3
+    @fullcalendar/core
+    @fullcalendar/daygrid
     @fullcalendar/interaction
     @fullcalendar/list
     @fullcalendar/multimonth
@@ -298,6 +298,14 @@ service\Calendars\CompanyCalendarService.js
 // ENTITY CALENDAR
 // -------------------------------
 Backend (Laravel)
+
+php artisan make:request StoreEntityCalendarRequest
+php artisan make:request UpdateEntityCalendarRequest
+php artisan make:model EntityCalendar
+php artisan make:migration CreateViewEntityCalendarDaily
+php artisan make:seeder EntityCalendarSeeder
+php artisan make:factory EntityCalendarFactory
+
 App\Models\EntityCalendar.php
 App\Http\Controllers\EntityCalendarController.php
 App\Interfaces\EntityCalendarRepositoryInterface.php
