@@ -318,3 +318,38 @@ resources\js\Pages\Calendars\EntityCalendar\Create.vue
 resources\js\Pages\Calendars\EntityCalendar\Edit.vue
 resources\js\Pages\Calendars\EntityCalendar\Delete.vue
 service\Calendars\EntityCalendarService.js
+
+// -------------------------------
+// WORKTIME LIMIT (munkaidőkeret)
+// -------------------------------
+php artisan make:model WorktimeLimit
+
+// -------------------------------
+// WORKPLAN (munkarend)
+// -------------------------------
+php artisan make:model Workplan
+php artisan make:controller WorkplanController
+php artisan make:repository Workplan
+php artisan make:migration CreateWorkplanTable
+php artisan make:seeder WorkplanSeeder
+php artisan make:factory WorkplanFactory
+php artisan make:resource WorkplanResource
+php artisan make:request IndexWorkplanRequest
+php artisan make:request DeletWorkplantRequest
+php artisan make:request StoreWorkplanRequest
+php artisan make:request UpdateWorkplanRequest
+
+// -------------------------------
+// SHIFT (műszak)
+// -------------------------------
+php artisan make:model Shift
+php artisan make:controller ShiftController
+php artisan make:repository Shift
+php artisan make:migration CreateShiftTable
+php artisan make:seeder ShiftSeeder
+php artisan make:factory ShiftFactory
+php artisan make:resource ShiftResource
+php artisan make:request IndexShiftRequest
+php artisan make:request DeleteShiftRequest
+php artisan make:request StoreShiftRequest
+php artisan make:request UpdateShiftRequest
