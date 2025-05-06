@@ -17,7 +17,8 @@ use Carbon\Carbon;
 class Entity extends Model
 {
     use HasFactory,
-        SoftDeletes,LogsActivity;
+        SoftDeletes,
+        LogsActivity;
 
     protected $table = 'entities';
     protected $fillable = [
