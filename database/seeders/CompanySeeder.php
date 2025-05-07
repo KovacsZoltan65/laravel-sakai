@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class CompanySeeder extends Seeder
 {
@@ -12,6 +13,30 @@ class CompanySeeder extends Seeder
      */
     public function run(): void
     {
-        $company = Company::factory(20)->create();
+        // Külső kulcsok tiltása, tábla ürítése
+        Schema::disableForeignKeyConstraints();
+        Company::truncate();
+        Schema::enableForeignKeyConstraints();
+
+        // Logolás letiltása (ha Spatie Activitylog van használatban)
+        activity()->disableLogging();
+
+        $count = 20;
+
+        $this->command->warn("Creating {$count} companies...");
+        $this->command->getOutput()->progressStart($count);
+
+        for ($i = 0; $i < $count; $i++) {
+            $company = Company::factory()->create();
+
+            // Haladás jelzése
+            $this->command->getOutput()->progressAdvance();
+        }
+
+        $this->command->getOutput()->progressFinish();
+        $this->command->info("{$count} companies created.");
+
+        activity()->enableLogging();
+        //$company = Company::factory(20)->create();
     }
 }
