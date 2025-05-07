@@ -22,6 +22,10 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id')->index()->comment('Cég azonosító.');
             $table->foreign('company_id')->references('id')->on('companies')->cascadeOnDelete();
             
+            $table->unsignedSmallInteger('duration_minutes')->default(0)->comment('Műszak hossza percben');
+            $table->boolean('crosses_midnight')->default(false)->comment('Átnyúlik-e másnapra');
+
+
             $table->boolean('active')->default(1)->index()->comment('Aktív');
             
             $table->timestamps();
