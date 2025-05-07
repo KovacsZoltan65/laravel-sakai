@@ -24,11 +24,12 @@ class WorkplanFactory extends Factory
         $endDate = (clone $startDate)->modify('+6 months');
 
         return [
-            'name' => 'Munkaterv', // majd a seederből egészíted ki a sorszámmal
+            'name' => 'Munkarend', // majd a seederből egészíted ki a sorszámmal
             'code' => strtoupper($this->faker->unique()->bothify('WP####')),
             'company_id' => null, // ezt a seederben adjuk meg
-            'start_date' => null, // seeder számolja
-            'end_date' => null,   // seeder számolja
+            'daily_workhours' => 8,
+            //'start_date' => null, // seeder számolja
+            //'end_date' => null,   // seeder számolja
             'active' => $this->faker->boolean(80),
         ];
     }

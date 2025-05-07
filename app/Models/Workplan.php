@@ -21,15 +21,21 @@ class Workplan extends Model
 
     protected $fillable = [
         'name', 'code',
-        'company_id','start_date','end_date', 'active'
+        'company_id',
+        'daily_workhours',
+        //'start_date','end_date', 
+        'active'
     ];
 
-    protected $attributes = [];
+    protected $attributes = [
+        'daily_workhours' => 8
+    ];
 
     protected $casts = [
         'active' => 'integer',
-        'start_date' => 'datetime:Y-m-d',
-        'end_date' => 'datetime:Y-m-d',
+        //'start_date' => 'datetime:Y-m-d',
+        //'end_date' => 'datetime:Y-m-d',
+        'daily_workhours' => 'integer'
     ];
 
     public function getStartDateAttribute($value)
@@ -68,10 +74,11 @@ class Workplan extends Model
 
     // Ha szeretnéd, hogy minden mezőt automatikusan naplózzon:
     protected static $logAttributes = [
-        'name', 'email',
-        'start_date', 'end_date',
-        'last_export', 'user_id',
-        'company_id', 'active'
+        'name', 'code',
+        'company_id',
+        'daily_workhours',
+        //'start_date','end_date', 
+        'active'
     ];
     protected static $logOnlyDirty = true; // Csak a változásokat naplózza
     protected static $logName = 'workplans'; // Naplózás név

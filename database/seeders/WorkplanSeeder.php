@@ -42,11 +42,12 @@ class WorkplanSeeder extends Seeder
         $endDate = (clone $startDate)->modify('+'.rand(3, 6).' months');
 
         Workplan::factory()->create([
-            'name' => sprintf('Munkaterv %02d', $i),
+            'name' => sprintf('Munkarend %02d', $i),
             'code' => strtoupper($faker->unique()->bothify('WP####')),
             'company_id' => Arr::random($company_ids),
-            'start_date' => $startDate->format('Y-m-d'),
-            'end_date' => $endDate->format('Y-m-d'),
+            'daily_workhours' => 8,
+            //'start_date' => $startDate->format('Y-m-d'),
+            //'end_date' => $endDate->format('Y-m-d'),
         ]);
 
         $currentDate = $endDate;

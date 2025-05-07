@@ -19,8 +19,10 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id')->index()->comment('Cég azonosító.');
             $table->foreign('company_id')->references('id')->on('companies')->cascadeOnDelete();
 
-            $table->date('start_date')->comment('Kezdés dátuma');
-            $table->date('end_date')->comment('Zárás dátuma');
+            $table->integer('daily_workhours')->default(8)->comment('Napi munkaóra');
+
+            //$table->date('start_date')->comment('Kezdés dátuma');
+            //$table->date('end_date')->comment('Zárás dátuma');
 
             $table->boolean('active')->default(1)->index()->comment('Aktív');
 
