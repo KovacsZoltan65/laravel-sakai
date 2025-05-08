@@ -20,7 +20,8 @@ const props = defineProps({
 
 // 👇 API hívás definíció
 const fetchLimits = async (params) => {
-    //
+    const response = await WorktimeLimitService.getLimits(params);
+    return response.data;
 };
 
 // 👇 Hook használata
@@ -50,14 +51,14 @@ onMounted(fetchData);
 
         <div class="card">
 
-            <CreateModal 
+            <CreateModal
                 :show="data.createOpen"
                 :title="props.title"
                 @close="data.createOpen = false"
                 @saved="fetchData"
             />
 
-            <EditModal 
+            <EditModal
                 :show="data.editOpen"
                 :title="props.title"
                 :limit="data.limit"
@@ -73,21 +74,21 @@ onMounted(fetchData);
                 @deleted="fetchData"
             />
 
-            <Button 
-                v-if="has('create worktime_limit')" 
-                icon="pi pi-plus" 
+            <Button
+                v-if="has('create worktime_limit')"
+                icon="pi pi-plus"
                 label="Create" @click="data.createOpen = true"
                 class="mr-2"
             />
-            
-            <Button 
-                @click="fetchData" 
+
+            <Button
+                @click="fetchData"
                 :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
             />
 
             <DataTable
                 v-if="limits"
-                :value="limits.value"
+                :value="limits.data"
                 :rows="limits.per_page"
                 :totalRecords="limits.total"
                 :first="(limits.current_page - 1) * limits.per_page"
@@ -96,13 +97,13 @@ onMounted(fetchData);
                 @page="onPageChange"
                 tableStyle="min-width: 50rem"
             >
-                
+
                 <template #header>
                     <div class="flex justify-between">
-                        <Button 
-                            type="button" 
-                            icon="pi pi-filter-slash" 
-                            label="Clear" outlined 
+                        <Button
+                            type="button"
+                            icon="pi pi-filter-slash"
+                            label="Clear" outlined
                             @click="clearSearch"
                         />
                         <div class="font-semibold text-xl mb-1">entities_title</div>
