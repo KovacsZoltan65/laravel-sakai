@@ -94,6 +94,11 @@ Route::middleware(['web', 'auth'])->group(function(){
     // =================================================
     Route::get('/calendar/fetch', [App\Http\Controllers\Calendars\Calendar\CalendarController::class, 'fetch'])->name('api.calendar.fetch');
 
+    // =================================================
+    // WORKTIME LIMITS
+    // =================================================
+    Route::get('/worktime_limits/fetch', [App\Http\Controllers\WorktimeLimitController::class, 'fetch'])->name('api.worktime_limit.fetch');
+
     /*
     Route::get('/companies', function(Request $reques){
         dd('route');

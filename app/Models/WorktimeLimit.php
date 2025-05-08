@@ -75,6 +75,11 @@ class WorktimeLimit extends Model
         return $query->withTrashed();
     }
     
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
     /*
      * ==============================================================
      * LOGOLÁS

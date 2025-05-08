@@ -33,6 +33,9 @@ const model = ref([
                 ],
             },
             { label: "subdomain_states", icon: "", to: "/subdomain_states", },
+            { label: "Shifts", icon: "pi pi-calendar", to: "", },
+            { label: "Workplans", icon: "pi pi-calendar", to: "", },
+            { label: "Worktime Limits", icon: "pi pi-calendar", to: "/worktime_limits", },
         ],
     },
     {

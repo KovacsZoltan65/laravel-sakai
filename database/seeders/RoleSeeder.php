@@ -22,63 +22,68 @@ class RoleSeeder extends Seeder
         $superadmin->givePermissionTo([
             'read user',
             'create user',
-            'delete user',
             'update user',
+            'delete user',
 
             'read entity',
             'create entity',
-            'delete entity',
             'update entity',
+            'delete entity',
             
             'read person',
             'create person',
-            'delete person',
             'update person',
+            'delete person',
             
             'read company',
             'create company',
-            'delete company',
             'update company',
+            'delete company',
             
             'read role',
             'create role',
-            'delete role',
             'update role',
+            'delete role',
 
             'read permission',
             'create permission',
-            'delete permission',
             'update permission',
+            'delete permission',
 
             'read country',
             'create country',
-            'delete country',
             'update country',
+            'delete country',
 
             'read region',
             'create region',
-            'delete region',
             'update region',
+            'delete region',
 
             'read city',
             'create city',
-            'delete city',
             'update city',
+            'delete city',
             
             'read subdomain',
             'create subdomain',
-            'delete subdomain',
             'update subdomain',
+            'delete subdomain',
             
             'read subdomain_state',
             'create subdomain_state',
-            'delete subdomain_state',
             'update subdomain_state',
+            'delete subdomain_state',
 
             'read calendar',
             'create calendar',
-            'delete calendar',
             'update calendar',
+            'delete calendar',
+
+            'read worktime_limit',
+            'create worktime_limit',
+            'update worktime_limit',
+            'delete worktime_limit',
         ]);
 
         // Admin szerepkör létrehozása

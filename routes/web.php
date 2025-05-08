@@ -2,6 +2,7 @@
 
 //use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\WorktimeLimitController;
 use App\Models\User;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
@@ -113,6 +114,11 @@ Route::middleware('auth')->group(function () {
     // CALENDAR
     // =================================================
     Route::get('/calendar', [App\Http\Controllers\Calendars\Calendar\CalendarController::class, 'index'])->name('calendar.index');
+
+    // =================================================
+    // WORKTIME LIMITS
+    // =================================================
+    Route::get('/worktime_limits', [WorktimeLimitController::class, 'index'])->name('worktime_limits.index');
 });
 
 Route::get('/form', function () {

@@ -26,6 +26,8 @@ return new class extends Migration
 
             $table->timestamps();
 			$table->softDeletes()->comment('Lágy törlés dátuma');
+
+			$table->unique(['company_id', 'start_date', 'end_date'], 'uniq_company_period');
 		});
 	}
 

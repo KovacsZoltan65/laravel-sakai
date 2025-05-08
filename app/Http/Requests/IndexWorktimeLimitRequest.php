@@ -11,7 +11,7 @@ class IndexWorktimeLimitRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class IndexWorktimeLimitRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'field' => [
+                'in:name,company_id,start_date,end_date',
+            ],
+            'order' => ['in:asc,desc'],
+            'perPage' => ['numeric'],
         ];
     }
 }

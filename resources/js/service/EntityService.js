@@ -15,17 +15,20 @@ class EntityService extends BaseService
     }
 
     // Új entitás létrehozása
-    createEntity(payload) {
+    createEntity(payload)
+    {
         return this.post(this.url, payload);
     }
 
     // Meglévő entitás frissítése
-    updateEntity(id, payload) {
+    updateEntity(id, payload)
+    {
         return this.put(`${this.url}/${id}`, payload);
     }
 
     // Entitás törlése
-    deleteEntity(id) {
+    deleteEntity(id)
+    {
         return this.delete(`${this.url}/${id}`);
     }
 }

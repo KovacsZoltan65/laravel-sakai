@@ -35,6 +35,8 @@ class DatabaseSeeder extends Seeder
 
             SubdomainStateSeeder::class,
             SubdomainSeeder::class,
+
+            WorktimeLimitSeeder::class,
         ]);
     }
 }

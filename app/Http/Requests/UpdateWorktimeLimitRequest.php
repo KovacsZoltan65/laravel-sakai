@@ -11,7 +11,7 @@ class UpdateWorktimeLimitRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class UpdateWorktimeLimitRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['sometimes', 'string', 'max:255'],
+            'company_id' => ['sometimes', 'exists:companies,id'],
+            'start_date' => ['sometimes', 'date'],
+            'end_date' => ['sometimes', 'date', 'after_or_equal:start_date'],
+            'active' => ['sometimes', 'boolean'],
         ];
     }
 }

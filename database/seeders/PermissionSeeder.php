@@ -24,63 +24,68 @@ class PermissionSeeder extends Seeder
         $permissions = [
             ['name' => 'read user'],
             ['name' => 'create user'],
-            ['name' => 'delete user'],
             ['name' => 'update user'],
+            ['name' => 'delete user'],
             
             ['name' => 'read company'],
             ['name' => 'create company'],
-            ['name' => 'delete company'],
             ['name' => 'update company'],
+            ['name' => 'delete company'],
             
             ['name' => 'read person'],
             ['name' => 'create person'],
-            ['name' => 'delete person'],
             ['name' => 'update person'],
+            ['name' => 'delete person'],
             
             ['name' => 'read entity'],
             ['name' => 'create entity'],
-            ['name' => 'delete entity'],
             ['name' => 'update entity'],
+            ['name' => 'delete entity'],
 
             ['name' => 'read role'],
             ['name' => 'create role'],
-            ['name' => 'delete role'],
             ['name' => 'update role'],
+            ['name' => 'delete role'],
 
             ['name' => 'read permission'],
             ['name' => 'create permission'],
-            ['name' => 'delete permission'],
             ['name' => 'update permission'],
+            ['name' => 'delete permission'],
 
             ['name' => 'read country'],
             ['name' => 'create country'],
-            ['name' => 'delete country'],
             ['name' => 'update country'],
+            ['name' => 'delete country'],
 
             ['name' => 'read region'],
             ['name' => 'create region'],
-            ['name' => 'delete region'],
             ['name' => 'update region'],
+            ['name' => 'delete region'],
 
             ['name' => 'read city'],
             ['name' => 'create city'],
-            ['name' => 'delete city'],
             ['name' => 'update city'],
+            ['name' => 'delete city'],
             
             ['name' => 'read subdomain'],
             ['name' => 'create subdomain'],
-            ['name' => 'delete subdomain'],
             ['name' => 'update subdomain'],
+            ['name' => 'delete subdomain'],
             
             ['name' => 'read subdomain_state'],
             ['name' => 'create subdomain_state'],
-            ['name' => 'delete subdomain_state'],
             ['name' => 'update subdomain_state'],
+            ['name' => 'delete subdomain_state'],
 
             ['name' => 'read calendar'],
             ['name' => 'create calendar'],
-            ['name' => 'delete calendar'],
             ['name' => 'update calendar'],
+            ['name' => 'delete calendar'],
+
+            ['name' => 'read worktime_limit'],
+            ['name' => 'create worktime_limit'],
+            ['name' => 'update worktime_limit'],
+            ['name' => 'delete worktime_limit'],
         ];
         
         $count = count($permissions);
