@@ -94,6 +94,11 @@ Route::middleware(['web', 'auth'])->group(function(){
     // =================================================
     Route::get('/calendar/fetch', [App\Http\Controllers\Calendars\Calendar\CalendarController::class, 'fetch'])->name('api.calendar.fetch');
 
+    // =================================================
+    // SHIFTS
+    // =================================================
+    Route::get('/shifts/fetch', [App\Http\Controllers\ShiftController::class, 'fetch'])->name('api.shift.fetch');
+
     /*
     Route::get('/companies', function(Request $reques){
         dd('route');

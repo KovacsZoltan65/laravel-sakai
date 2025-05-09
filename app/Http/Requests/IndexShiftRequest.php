@@ -11,7 +11,7 @@ class IndexShiftRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class IndexShiftRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'field' => ['in:name,code,start_time,end_time,company_id,active'],
+            'order' => ['in:asc,desc'],
+            'perPage' => ['numeric'],
         ];
     }
 }

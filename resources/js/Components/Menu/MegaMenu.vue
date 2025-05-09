@@ -137,6 +137,24 @@ const items = ref([
     {
         label: "System",
         items: [
+            [
+                {
+                    label: "Shifts & Workplans",
+                    items: [
+                        {
+                            label: "Worktime Limits",
+                            url: "/worktime_limits",
+                            icon: "pi pi-calendar",
+                            visible: true
+                        },{
+                            label: "Shifts",
+                            url: "/shifts",
+                            icon: "pi pi-calendar",
+                            visible: true
+                        }
+                    ]
+                }
+            ],
             [{
                 label: 'Logs',
                 items: [

@@ -113,6 +113,11 @@ Route::middleware('auth')->group(function () {
     // CALENDAR
     // =================================================
     Route::get('/calendar', [App\Http\Controllers\Calendars\Calendar\CalendarController::class, 'index'])->name('calendar.index');
+
+    // =================================================
+    // SHIFTS
+    // =================================================
+    Route::get('/shifts', [App\Http\Controllers\ShiftController::class, 'index'])->name('shifts.index');
 });
 
 Route::get('/form', function () {

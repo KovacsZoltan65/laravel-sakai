@@ -77,9 +77,17 @@ onMounted(fetchData);
                 :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
             />
 
-            <DataTable v-if="entities" :value="entities.data" :rows="entities.per_page" :totalRecords="entities.total"
-                :first="(entities.current_page - 1) * entities.per_page" :loading="isLoading" lazy paginator
-                dataKey="id" @page="onPageChange" tableStyle="min-width: 50rem">
+            <DataTable 
+                v-if="entities" 
+                :value="entities.data" 
+                :rows="entities.per_page" 
+                :totalRecords="entities.total"
+                :first="(entities.current_page - 1) * entities.per_page" 
+                :loading="isLoading" lazy paginator
+                dataKey="id" 
+                @page="onPageChange" 
+                tableStyle="min-width: 50rem">
+                
                 <template #header>
                     <div class="flex justify-between">
                         <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearSearch" />
