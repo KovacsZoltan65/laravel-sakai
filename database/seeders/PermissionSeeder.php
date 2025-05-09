@@ -81,6 +81,11 @@ class PermissionSeeder extends Seeder
             ['name' => 'create calendar'],
             ['name' => 'delete calendar'],
             ['name' => 'update calendar'],
+
+            ['name' => 'read shift'],
+            ['name' => 'create shift'],
+            ['name' => 'delete shift'],
+            ['name' => 'update shift'],
         ];
         
         $count = count($permissions);

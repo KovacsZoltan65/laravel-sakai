@@ -44,6 +44,18 @@ class Shift extends Model
         return $query->withTrashed();
     }
 
+    /**
+     * =========================================================
+     * Egy Shift lekérdezése, amelyhez tartozó Company-k vannak
+     * =========================================================
+     * $shift = Shift::find(1);
+     * $companies = $shift->company;
+     */
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
     /*
      * ==============================================================
      * LOGOLÁS

@@ -62,12 +62,14 @@ onMounted(fetchData);
                 @close="data.createOpen = false" 
                 @saved="fetchData" 
             />
+
             <EditModal 
                 :show="data.editOpen" 
                 :title="props.title" 
                 @close="data.editOpen = false" 
                 @saved="fetchData"
             />
+
             <DeleteModal 
                 :show="data.deleteOpen" 
                 :title="props.title" 
@@ -75,6 +77,7 @@ onMounted(fetchData);
                 @saved="fetchData"
             />
 
+            <!-- CREATE BUTTON -->
             <Button 
                 v-if="has('create shift')" 
                 icon="pi pi-plus" 
@@ -82,6 +85,7 @@ onMounted(fetchData);
                 class="mr-2" 
                 @click="data.createOpen = true"
             />
+            <!-- REFRESH BUTTON -->
             <Button 
                 :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" 
                 @click="fetchData"
@@ -101,7 +105,7 @@ onMounted(fetchData);
 
                 <template #header>
                     <div class="flex justify-between">
-
+                        <!-- CLEAR FILTER -->
                         <Button 
                             type="button" 
                             icon="pi pi-filter-slash" 
@@ -110,6 +114,7 @@ onMounted(fetchData);
                         />
 
                         <div class="font-semibold text-xl mb-1">shifts_title</div>
+
                         <div class="flex justify-end">
                             <IconField>
                                 <InputIcon><i class="pi pi-search" /></InputIcon>
@@ -125,6 +130,35 @@ onMounted(fetchData);
 
                 <Column field="id" header="#" />
                 <Column field="name" header="Name" />
+                <Column field="code" header="Code" />
+                <Column field="start_time" header="Start" />
+                <Column field="end_time" header="End" />
+
+                <Column>
+                    <template #body="slotProps">
+                        <Button 
+                            v-if="has('update shift')" 
+                            icon="pi pi-pencil" 
+                            outlined rounded 
+                            class="mr-2" 
+                            @click="() => {
+                                data.editOpen = true;
+                                data.shift = slotProps.data;
+                            }"
+                        />
+
+                        <Button 
+                            v-if="has('delete shift')" 
+                            icon="pi pi-trash" 
+                            outlined rounded 
+                            severity="danger"
+                            @click="() => {
+                                data.deleteOpen = true;
+                                data.company = slotProps.data;
+                            }"
+                        />
+                    </template>
+                </Column>
 
             </DataTable>
 

@@ -55,12 +55,14 @@ onMounted(fetchData);
         <Head :title="props.title" />
 
         <div class="card">
+
             <CreateModal
                 :show="data.createOpen"
                 :title="props.title"
                 @close="data.createOpen = false"
                 @saved="fetchData"
             />
+            
             <EditModal
                 :show="data.editOpen"
                 :company="data.company"
@@ -75,7 +77,11 @@ onMounted(fetchData);
                 @close="data.deleteOpen = false"
                 @deleted="fetchData" />
 
-            <Button v-if="has('create company')" icon="pi pi-plus" label="Create" @click="data.createOpen = true"
+            <Button 
+                v-if="has('create company')" 
+                icon="pi pi-plus" 
+                label="Create" 
+                @click="data.createOpen = true"
                 class="mr-2" />
 
             <Button @click="fetchData" :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />

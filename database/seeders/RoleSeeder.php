@@ -79,6 +79,11 @@ class RoleSeeder extends Seeder
             'create calendar',
             'delete calendar',
             'update calendar',
+
+            'read shift',
+            'create shift',
+            'delete shift',
+            'update shift',
         ]);
 
         // Admin szerepkör létrehozása
