@@ -86,4 +86,9 @@ class User extends Authenticatable
             ->orderBy('name', 'asc')
             ->get()->toArray();
     }
+    
+    public function companies()
+    {
+        return $this->belongsToMany(Company::class);
+    }
 }

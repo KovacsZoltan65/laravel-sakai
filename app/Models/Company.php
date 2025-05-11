@@ -55,4 +55,9 @@ class Company extends Model
     {
         return $this->hasMany(Entity::class);
     }
+    
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

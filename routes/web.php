@@ -1,5 +1,7 @@
 <?php
 
+include "../app/Http/Controllers/CompanySelectorController.php";
+
 //use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DashboardController;
 use App\Models\User;
@@ -113,6 +115,16 @@ Route::middleware('auth')->group(function () {
     // CALENDAR
     // =================================================
     Route::get('/calendar', [App\Http\Controllers\Calendars\Calendar\CalendarController::class, 'index'])->name('calendar.index');
+    
+    
+    // =================================================
+    // COMPANY SELECTOR
+    // =================================================
+    Route::get('/select-company', [App\Http\Controllers\CompanySelectorController::class, 'show'])->name('company.select');
+    Route::post('/select-company', [App\Http\Controllers\CompanySelectorController::class, 'store'])->name('company.store');
+
+    
+    
 });
 
 Route::get('/form', function () {

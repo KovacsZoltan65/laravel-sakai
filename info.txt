@@ -66,10 +66,10 @@ prettier:
 // ===============================
 https://fullcalendar.io/
 npm install primevue primeicons primeflex
-npm install 
-    @fullcalendar/vue3 
-    @fullcalendar/core 
-    @fullcalendar/daygrid 
+npm install
+    @fullcalendar/vue3
+    @fullcalendar/core
+    @fullcalendar/daygrid
     @fullcalendar/interaction
     @fullcalendar/list
     @fullcalendar/multimonth
@@ -318,3 +318,7 @@ resources\js\Pages\Calendars\EntityCalendar\Create.vue
 resources\js\Pages\Calendars\EntityCalendar\Edit.vue
 resources\js\Pages\Calendars\EntityCalendar\Delete.vue
 service\Calendars\EntityCalendarService.js
+
+// -------------------------------
+// USER - COMPANY CONNECT
+// -------------------------------

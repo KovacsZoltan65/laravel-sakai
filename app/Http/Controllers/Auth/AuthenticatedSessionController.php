@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Company;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,11 +32,32 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        $companies = $user->role === 'superadmin'
+            ? Company::all()
+            : $user->companies;
+
+        if ($companies->count() === 1) {
+            session(['active_company_id' => $companies->first()->id]);
+            return redirect()->intended(RouteServiceProvider::HOME);
+        }
+
+        // Ha több cég van, akkor cégválasztó felület
+        return redirect()->route('company.select');
+    }
+    /*
+    public function store(LoginRequest $request): RedirectResponse
+    {
+        $request->authenticate();
 
         $request->session()->regenerate();
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
+    */
 
     /**
      * Destroy an authenticated session.
