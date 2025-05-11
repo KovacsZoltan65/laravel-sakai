@@ -151,6 +151,8 @@ onMounted(async () => {
                 <Column field="start_time" header="Start" />
                 <Column field="end_time" header="End" />
 
+                <Column field="company.name" header="Company" />
+
                 <Column>
                     <template #body="slotProps">
                         <Button
