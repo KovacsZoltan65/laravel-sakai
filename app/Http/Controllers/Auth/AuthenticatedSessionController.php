@@ -46,7 +46,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         // Ha több cég van, akkor cégválasztó felület
-        return redirect()->route('company.select');
+        return redirect()->route('companySelector.select');
     }
     /*
     public function store(LoginRequest $request): RedirectResponse

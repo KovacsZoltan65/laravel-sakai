@@ -1,19 +1,9 @@
 <?php
 
-include "../app/Http/Controllers/CompanySelectorController.php";
-
-//use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\DashboardController;
-use App\Models\User;
 use Inertia\Inertia;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\UserController;
 use Spatie\Permission\Models\Permission;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,20 +28,20 @@ Route::get('/dashboard', function () {
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 */
-Route::get('/dashboard', [DashboardController::class, 'index'])
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('/user', UserController::class)->except('create', 'show', 'edit');
-    Route::post('/user/destroy-bulk', [UserController::class, 'destroyBulk'])->name('user.destroy-bulk');
+    Route::resource('/user', App\Http\Controllers\UserController::class)->except('create', 'show', 'edit');
+    Route::post('/user/destroy-bulk', [App\Http\Controllers\UserController::class, 'destroyBulk'])->name('user.destroy-bulk');
 
-    Route::resource('/role', RoleController::class)->except('create', 'show', 'edit');
+    Route::resource('/role', App\Http\Controllers\RoleController::class)->except('create', 'show', 'edit');
 
-    Route::resource('/permission', PermissionController::class)->except('create', 'show', 'edit');
+    Route::resource('/permission', App\Http\Controllers\PermissionController::class)->except('create', 'show', 'edit');
 
     // =================================================
     // COMPANIES
@@ -120,8 +110,16 @@ Route::middleware('auth')->group(function () {
     // =================================================
     // COMPANY SELECTOR
     // =================================================
-    Route::get('/select-company', [App\Http\Controllers\CompanySelectorController::class, 'show'])->name('company.select');
-    Route::post('/select-company', [App\Http\Controllers\CompanySelectorController::class, 'store'])->name('company.store');
+    Route::get(
+        '/select-company', 
+        [App\Http\Controllers\CompanySelectorController::class, 'show'
+        ]
+    )->name('companySelector.select');
+    Route::post(
+        '/select-company', 
+        [App\Http\Controllers\CompanySelectorController::class, 'store'
+        ]
+    )->name('companySelector.store');
 
     
     
