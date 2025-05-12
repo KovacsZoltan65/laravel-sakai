@@ -44,8 +44,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('/user', UserController::class)->except('create', 'show', 'edit');
-    Route::post('/user/destroy-bulk', [UserController::class, 'destroyBulk'])->name('user.destroy-bulk');
+    // =================================================
+    // USERS
+    // =================================================
+    Route::get('/user', [App\Http\Controllers\UserController::class, 'index'])->name('user.index');
+    //Route::post('', ['', ''])->name('');
+    //Route::resource('/user', UserController::class)->except('create', 'show', 'edit');
+    //Route::post('/user/destroy-bulk', [UserController::class, 'destroyBulk'])->name('user.destroy-bulk');
 
     Route::resource('/role', RoleController::class)->except('create', 'show', 'edit');
 

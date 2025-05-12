@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
@@ -11,6 +10,9 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\IndexUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController extends Controller
 {
@@ -22,11 +24,37 @@ class UserController extends Controller
         $this->middleware('permission:delete user', ['only' => ['destroy', 'destroyBulk']]);
     }
 
+    public function index(Request $request): InertiaResponse
+    {
+        return Inertia::render('User/Index', [
+            'title' => 'Users',
+            'filters' => $request->all(['search', 'field', 'order']),
+        ]);
+    }
+
+    public function fetch(IndexUserRequest $request): JsonResponse
+    {
+        $_users = User::query();
+
+        if( $request->has(key: 'search') ) {
+            $_users->whereRaw("CONCAT(name, ' ', email) LIKE ?", ["%{$request->search}%"]);
+        }
+
+        if ($request->has('field') && $request->has('order')) {
+            $_users->orderBy($request->field, $request->order);
+        }
+
+        $users = $_users->paginate(10, ['*'], 'page', $request->page ?? 1);
+
+        return response()->json($users);
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+    /*
     public function index(IndexUserRequest $request)
     {
         $users = User::query();
@@ -100,5 +128,5 @@ class UserController extends Controller
             return back()->with('error', 'Error deleting ' . $user->name . $th->getMessage());
         }
     }
-
+*/
 }

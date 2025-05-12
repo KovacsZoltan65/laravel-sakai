@@ -20,64 +20,75 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware(['web', 'auth'])->group(function(){
     // =================================================
+    // USERS
+    // =================================================
+    Route::get(
+        '/users/fetch', 
+        [App\Http\Controllers\UserController::class, 'fetch']
+    )->name('api.users.fetch');
+    Route::post(
+        '/users', 
+        [App\Http\Controllers\UserController::class, 'create']
+    )->name('api.users.create');
+    // =================================================
     // COMPANIES
     // =================================================
     Route::get(
-        uri: '/companies/fetch',
-        action: [App\Http\Controllers\CompanyController::class, 'fetch']
-    )->name(name: 'api.companies.fetch');
+        '/companies/fetch',
+        [App\Http\Controllers\CompanyController::class, 'fetch']
+    )->name('api.companies.fetch');
     Route::post(
-        uri:'/companies',
-        action: [App\Http\Controllers\CompanyController::class, 'create']
-    )->name(name: 'api.companies.create');
+        '/companies',
+        [App\Http\Controllers\CompanyController::class, 'create']
+    )->name('api.companies.create');
 
     // =================================================
     // ENTITIES
     // =================================================
     Route::get(
-        uri: '/entities/fetch',
-        action: [App\Http\Controllers\EntityController::class, 'fetch']
-    )->name(name: 'api.entities.fetch');
+        '/entities/fetch',
+        [App\Http\Controllers\EntityController::class, 'fetch']
+    )->name('api.entities.fetch');
     Route::post(
-        uri: '/entities',
-        action: [App\Http\Controllers\EntityController::class, 'create']
-    )->name(name: 'api.entities.create');
+        '/entities',
+        [App\Http\Controllers\EntityController::class, 'create']
+    )->name('api.entities.create');
 
     // =================================================
     // PERSONS
     // =================================================
     Route::get(
-        uri: '/persons/fetch',
-        action: [App\Http\Controllers\PersonController::class, 'fetch']
-    )->name(name: 'api.persons');
+        '/persons/fetch',
+        [App\Http\Controllers\PersonController::class, 'fetch']
+    )->name('api.persons');
     Route::post(
-        uri: '/persons',
-        action: [App\Http\Controllers\PersonController::class, 'create']
-    )->name(name: 'api.persons.create');
+        '/persons',
+        [App\Http\Controllers\PersonController::class, 'create']
+    )->name('api.persons.create');
 
     // =================================================
     // COUNTRIES
     // =================================================
     Route::get(
-        uri: '/countries/fetch',
-        action: [App\Http\Controllers\Geo\CountryController::class, 'fetch']
-    )->name(name: 'api.countries.index');
+        '/countries/fetch',
+        [App\Http\Controllers\Geo\CountryController::class, 'fetch']
+    )->name('api.countries.index');
 
     // =================================================
     // REGIONS
     // =================================================
     Route::get(
-        uri: '/regions/fetch',
-        action: [App\Http\Controllers\Geo\RegionController::class, 'fetch']
-    )->name(name:'api.regions.index');
+        '/regions/fetch',
+        [App\Http\Controllers\Geo\RegionController::class, 'fetch']
+    )->name('api.regions.index');
 
     // =================================================
     // CITIES
     // =================================================
     Route::get(
-        uri: '/cities/fetch',
-        action: [App\Http\Controllers\Geo\CityController::class, 'fetch']
-    )->name(name: 'api.cities.index');
+        '/cities/fetch',
+        [App\Http\Controllers\Geo\CityController::class, 'fetch']
+    )->name('api.cities.index');
 
     // =================================================
     // SUBDOMAIN STATES
