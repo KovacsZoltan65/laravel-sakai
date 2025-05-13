@@ -38,6 +38,7 @@ watchEffect(() => {
 </script>
 
 <template>
+
     <Dialog
         v-model:visible="props.show" modal
         position="center"
@@ -116,7 +117,7 @@ watchEffect(() => {
                     <Select
                         v-model="form.role"
                         :options="props.roles"
-                        optionValue="code"
+                        optionValue="id"
                         optionLabel="name"
                         placeholder="Select"
                     />
@@ -132,8 +133,11 @@ watchEffect(() => {
                         label="Cancel"
                         severity="secondary"
                         @click="emit('close')"
-                    ></Button>
-                    <Button type="submit" label="Save"></Button>
+                    />
+                    <Button 
+                        type="submit" 
+                        label="Save"
+                    />
                 </div>
 
             </div>

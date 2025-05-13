@@ -26,9 +26,17 @@ class UserController extends Controller
 
     public function index(Request $request): InertiaResponse
     {
+        $role = auth()->user()->roles->pluck('name')[0];
+
+        $roles = Role::get();
+        if ($role != 'superadmin') {
+            $roles = Role::where('name', '<>', 'superadmin')->get();
+        }
+
         return Inertia::render('User/Index', [
-            'title' => 'Users',
+            'title'   => 'Users',
             'filters' => $request->all(['search', 'field', 'order']),
+            'roles'   => $roles,
         ]);
     }
 
@@ -44,7 +52,7 @@ class UserController extends Controller
             $_users->orderBy($request->field, $request->order);
         }
 
-        $users = $_users->paginate(10, ['*'], 'page', $request->page ?? 1);
+        $users = $_users->with('roles')->paginate(10, ['*'], 'page', $request->page ?? 1);
 
         return response()->json($users);
     }
@@ -54,7 +62,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    /*
+/*
     public function index(IndexUserRequest $request)
     {
         $users = User::query();

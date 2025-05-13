@@ -49,9 +49,15 @@ watchEffect(() => {
         :style="{ width: '30rem' }"
         :closable="false"
     >
+
+<pre>
+    {{ form }}
+</pre>
+
         <form @submit.prevent="update">
             <div class="flex flex-col gap-4">
 
+                <!-- NAME -->
                 <div class="flex flex-col gap-2">
                     <label for="name">Name</label>
                     <InputText
@@ -66,6 +72,7 @@ watchEffect(() => {
                     </small>
                 </div>
 
+                <!-- EMAIL -->
                 <div class="flex flex-col gap-2">
                     <label for="email">Email</label>
                     <InputText
@@ -80,6 +87,7 @@ watchEffect(() => {
                     }}</small>
                 </div>
 
+                <!-- PASSWORD -->
                 <div class="flex flex-col gap-2">
                     <label for="password">Password</label>
                     <InputText
@@ -93,6 +101,7 @@ watchEffect(() => {
                     }}</small>
                 </div>
 
+                <!-- PASSWORD COONFIRM -->
                 <div class="flex flex-col gap-2">
                     <label for="password_confirmation"
                         >Confirmation Password</label
@@ -110,12 +119,13 @@ watchEffect(() => {
                     >
                 </div>
 
+                <!-- ROLE -->
                 <div class="flex flex-col gap-2">
                     <label for="role">Role</label>
                     <Select
                         v-model="form.role"
                         :options="props.roles"
-                        optionValue="code"
+                        optionValue="id"
                         optionLabel="name"
                         placeholder="Select"
                     />

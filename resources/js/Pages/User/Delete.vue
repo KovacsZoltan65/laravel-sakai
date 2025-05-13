@@ -26,5 +26,5 @@ const closeModal = () => {
 </script>
 
 <template>
-    <div>INDEX</div>
+    <div>DELETE</div>
 </template>

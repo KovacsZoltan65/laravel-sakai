@@ -75,14 +75,31 @@ onMounted(fetchData);
                 @close="data.deleteOpen = false"
                 @deleted="fetchData" />
 
-            <Button v-if="has('create company')" icon="pi pi-plus" label="Create" @click="data.createOpen = true"
-                class="mr-2" />
+            <Button 
+                v-if="has('create company')" 
+                icon="pi pi-plus" 
+                label="Create" 
+                @click="data.createOpen = true"
+                class="mr-2"
+            />
 
-            <Button @click="fetchData" :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />
+            <Button 
+                @click="fetchData" 
+                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
+            />
 
-            <DataTable v-if="companies" :value="companies.data" :rows="companies.per_page"
-                :totalRecords="companies.total" :first="(companies.current_page - 1) * companies.per_page"
-                :loading="isLoading" lazy paginator dataKey="id" @page="onPageChange" tableStyle="min-width: 50rem">
+            <DataTable 
+                v-if="companies" 
+                :value="companies.data" 
+                :rows="companies.per_page"
+                :totalRecords="companies.total" 
+                :first="(companies.current_page - 1) * companies.per_page"
+                :loading="isLoading" 
+                lazy paginator 
+                dataKey="id" 
+                @page="onPageChange" 
+                tableStyle="min-width: 50rem"
+            >
                 <template #header>
                     <div class="flex justify-between">
                         <Button

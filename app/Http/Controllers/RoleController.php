@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IndexRoleRequest;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use App\Models\Permission;
 use App\Models\Role;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
-use Spatie\Permission\Models\Permission;
+//use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
@@ -23,6 +26,35 @@ class RoleController extends Controller
         $this->middleware('permission:delete role', ['only' => ['destroy', 'destroyBulk']]);
     }
 
+    public function index(Request $request): InertiaResponse
+    {
+        $permissions = Permission::toSelect();
+
+        return Inertia::render('Role/Index', [
+            'title'   => 'Roles',
+            'filters' => $request->all(['search', 'field', 'order']),
+            'permissions' => $permissions,
+        ]);
+    }
+
+    public function fetch(IndexRoleRequest $request) : JsonResponse
+    {
+        $_roles = Role::query();
+
+        if( $request->has(key: 'search') ) {
+            $_roles->whereRaw("CONCAT(name) LIKE ?", ["%{$request->search}%"]);
+        }
+
+        if ($request->has('field') && $request->has('order')) {
+            $_roles->orderBy($request->field, $request->order);
+        }
+
+        $roles = $_roles->paginate(10, ['*'], 'page', $request->page ?? 1);
+
+        return response()->json($roles);
+    }
+
+    /*
     public function index(IndexRoleRequest $request): InertiaResponse
     {
         $roles = Role::query();
@@ -80,12 +112,6 @@ class RoleController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Role  $role
-     * @return Response
-     */
     public function destroy(Role $role)
     {
         try {
@@ -95,4 +121,5 @@ class RoleController extends Controller
             return back()->with('error', 'Error deleting ' . $role->name . $th->getMessage());
         }
     }
+    */
 }

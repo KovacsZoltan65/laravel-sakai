@@ -122,10 +122,23 @@ watch(
                 <Column field="updated_at" header="Updated"></Column>
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
-                        <Button v-show="can(['update user'])" icon="pi pi-pencil" outlined rounded class="mr-2"  @click="
-                                                    (data.editOpen = true),
-                                                        (data.user = slotProps.data)" />
-                        <Button v-show="can(['delete user'])" icon="pi pi-trash" outlined rounded severity="danger" @click="deleteDialog = true; data.user = slotProps.data" />
+                        <Button 
+                            v-show="can(['update user'])" 
+                            icon="pi pi-pencil" 
+                            outlined rounded 
+                            class="mr-2"  
+                            @click="
+                                (data.editOpen = true),
+                                (data.user = slotProps.data)" />
+
+                        <Button 
+                            v-show="can(['delete user'])" 
+                            icon="pi pi-trash" 
+                            outlined rounded 
+                            severity="danger" 
+                            @click="
+                                deleteDialog = true; 
+                                data.user = slotProps.data" />
                     </template>
                 </Column>
             </DataTable>
@@ -139,8 +152,14 @@ watch(
                     >
                 </div>
                 <template #footer>
-                    <Button label="No" icon="pi pi-times" text @click="deleteDialog = false" />
-                    <Button label="Yes" icon="pi pi-check" @click="deleteData" />
+                    <Button 
+                        label="No" 
+                        icon="pi pi-times" text 
+                        @click="deleteDialog = false" />
+                    <Button 
+                        label="Yes" 
+                        icon="pi pi-check" 
+                        @click="deleteData" />
                 </template>
             </Dialog>
         </div>
