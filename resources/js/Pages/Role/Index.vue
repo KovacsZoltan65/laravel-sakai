@@ -6,6 +6,7 @@ import AuthLayout from "@/Layouts/AuthenticatedLayout.vue";
 import CreateModal from "@/Pages/User/Create.vue";
 import EditModal from "@/Pages/User/Edit.vue";
 import DeleteModal from "@/Pages/User/Delete.vue";
+import PermissionsModal from "./Permissions.vue";
 
 import RoleService from '@/service/RoleService.js';
 
@@ -22,6 +23,7 @@ const props = defineProps({
 
 const fetchRoles = async (params) => {
     const response = await RoleService.getRoles(params);
+    console.log(response);
     return response.data;
 };
 
@@ -40,6 +42,7 @@ const data = reactive({
     createOpen: false,
     editOpen: false,
     deleteOpen: false,
+    permissionsOpen: false,
     role: null
 });
 
@@ -84,6 +87,13 @@ onMounted(fetchData);
                 @close="data.deleteOpen = false"
                 @deleted="fetchData" />
 
+            <!-- PERMISSIONS MODAL -->
+            <PermissionsModal
+                :show="data.permissionsOpen"
+                @close="data.permissionsOpen = false"
+            />
+
+
             <!-- NEW BUTTON -->
             <Button
                 v-if="has('create role')"
@@ -97,7 +107,18 @@ onMounted(fetchData);
                 @click="fetchData" 
                 :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />
 
-            <DataTable>
+            <DataTable 
+                v-if="roles" 
+                :value="roles.data" 
+                :rows="roles.per_page"
+                :totalRecords="roles.total" 
+                :first="(roles.current_page - 1) * roles.per_page"
+                :loading="isLoading" 
+                lazy paginator 
+                dataKey="id" 
+                @page="onPageChange" 
+                tableStyle="min-width: 50rem"
+            >
 
                 <template #header>
                     <div class="flex justify-between">
@@ -130,6 +151,38 @@ onMounted(fetchData);
                 <template #loading>Loading data. Please wait.</template>
 
                 <Column field="name" header="Name" />
+                <Column field="guard_name" header="Guard"></Column>
+
+                <Column header="Permission">
+                    <template #body="slotProps">
+                        <div
+                            @click="
+                                ((permissionDialog = true),
+                                (data.role = slotProps.data))
+                            "
+                            v-if="
+                                slotProps.data.permissions.length ==
+                                props.permissions.length
+                            "
+                            class="whitespace-nowrap cursor-pointer text-blue-600 dark:text-blue-400 font-bold underline"
+                        >
+                            All Permission
+                        </div>
+                        <div
+                            @click="(
+                                (permissionDialog = true),
+                                (data.role = slotProps.data)
+                            )"
+                            v-else-if="slotProps.data.permissions.length > 0"
+                            class="whitespace-nowrap cursor-pointer text-blue-600 dark:text-blue-400 font-bold underline"
+                        >
+                            {{ slotProps.data.permissions.length }} Permission
+                        </div>
+                        <div v-else>
+                            {{ slotProps.data.permissions.length }} Permission
+                        </div>
+                    </template>
+                </Column>
 
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">

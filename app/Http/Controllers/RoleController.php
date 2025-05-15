@@ -30,6 +30,12 @@ class RoleController extends Controller
     {
         $permissions = Permission::toSelect();
 
+        $role = auth()->user()->roles->pluck('name')[0];
+
+        if ($role != 'superadmin') {
+            $permissions = Permission::whereNotIn('name', ['create permission', 'read permission', 'update permission', 'delete permission'])->latest();
+        }
+
         return Inertia::render('Role/Index', [
             'title'   => 'Roles',
             'filters' => $request->all(['search', 'field', 'order']),
@@ -45,12 +51,20 @@ class RoleController extends Controller
             $_roles->whereRaw("CONCAT(name) LIKE ?", ["%{$request->search}%"]);
         }
 
+        // A hitelesített felhasználó első szerepkör nevének lekérése
+        $role = auth()->user()->roles->pluck('name')[0];
+        
+        // Kizárja a „szuperadmin” szerepkört, ha a felhasználó szerepköre nem „szuperadmin”
+        if ($role !== 'superadmin') {
+            $_roles->where('name', '<>', 'superadmin');
+        }
+
         if ($request->has('field') && $request->has('order')) {
             $_roles->orderBy($request->field, $request->order);
         }
 
-        $roles = $_roles->paginate(10, ['*'], 'page', $request->page ?? 1);
-
+        $roles = $_roles->with('permissions')->paginate(10, ['*'], 'page', $request->page ?? 1);
+        
         return response()->json($roles);
     }
 

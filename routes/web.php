@@ -52,8 +52,14 @@ Route::middleware('auth')->group(function () {
     //Route::resource('/user', UserController::class)->except('create', 'show', 'edit');
     //Route::post('/user/destroy-bulk', [UserController::class, 'destroyBulk'])->name('user.destroy-bulk');
 
+    // =================================================
+    // ROLES
+    // =================================================
     Route::resource('/role', RoleController::class)->except('create', 'show', 'edit');
 
+    // =================================================
+    // PERMISSIONS
+    // =================================================
     Route::resource('/permission', PermissionController::class)->except('create', 'show', 'edit');
 
     // =================================================

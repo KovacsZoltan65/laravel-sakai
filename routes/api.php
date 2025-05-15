@@ -19,6 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware(['web', 'auth'])->group(function(){
+
     // =================================================
     // USERS
     // =================================================
@@ -30,6 +31,23 @@ Route::middleware(['web', 'auth'])->group(function(){
         '/users', 
         [App\Http\Controllers\UserController::class, 'create']
     )->name('api.users.create');
+
+    // =================================================
+    // ROLES
+    // =================================================
+    Route::get(
+        '/roles/fetch', 
+        [App\Http\Controllers\RoleController::class, 'fetch']
+    )->name('api.roles.fetch');
+
+    // =================================================
+    // PERMISSIONS
+    // =================================================
+    Route::get(
+        '/permissions/fetch', 
+        [App\Http\Controllers\PermissionController::class, 'fetch']
+    )->name('api.permissions.fetch');
+
     // =================================================
     // COMPANIES
     // =================================================

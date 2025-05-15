@@ -55,6 +55,7 @@ const selectAll = (event) => {
         });
     }
 };
+
 const select = () => {
     if (props.permissions.length == form.permissions.length) {
         data.multipleSelect = true;
