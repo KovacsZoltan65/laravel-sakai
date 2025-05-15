@@ -23,7 +23,7 @@ const props = defineProps({
 
 const fetchRoles = async (params) => {
     const response = await RoleService.getRoles(params);
-    console.log(response);
+    
     return response.data;
 };
 
@@ -90,6 +90,7 @@ onMounted(fetchData);
             <!-- PERMISSIONS MODAL -->
             <PermissionsModal
                 :show="data.permissionsOpen"
+                :role="data.role"
                 @close="data.permissionsOpen = false"
             />
 
@@ -156,23 +157,14 @@ onMounted(fetchData);
                 <Column header="Permission">
                     <template #body="slotProps">
                         <div
-                            @click="
-                                ((permissionDialog = true),
-                                (data.role = slotProps.data))
-                            "
-                            v-if="
-                                slotProps.data.permissions.length ==
-                                props.permissions.length
-                            "
+                            @click="((data.permissionsOpen = true), (data.role = slotProps.data))"
+                            v-if="slotProps.data.permissions.length == props.permissions.length"
                             class="whitespace-nowrap cursor-pointer text-blue-600 dark:text-blue-400 font-bold underline"
                         >
                             All Permission
                         </div>
                         <div
-                            @click="(
-                                (permissionDialog = true),
-                                (data.role = slotProps.data)
-                            )"
+                            @click="((data.permissionsOpen = true), (data.role = slotProps.data))"
                             v-else-if="slotProps.data.permissions.length > 0"
                             class="whitespace-nowrap cursor-pointer text-blue-600 dark:text-blue-400 font-bold underline"
                         >

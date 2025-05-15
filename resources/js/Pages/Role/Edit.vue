@@ -136,9 +136,8 @@ const select = () => {
                         type="button"
                         label="Cancel"
                         severity="secondary"
-                        @click="emit('close')"
-                    ></Button>
-                    <Button type="submit" label="Update"></Button>
+                        @click="emit('close')" />
+                    <Button type="submit" label="Update" />
                 </div>
             </div>
         </form>
