@@ -94,7 +94,8 @@ onMounted(fetchData);
                 <Column field="name" header="Name" />
                 <Column field="country_name" header="Country" />
                 <Column field="cities_count" header="Cities" />
-                <Column :exportable="false" style="min-width: 12rem">
+                <Column :exportable="false" 
+                    style="width: 150px; min-width: 150px; max-width: 150px;">
                     <template #body="slotProps">
                         <Button v-if="has('update region')" icon="pi pi-pencil" outlined rounded class="mr-2"
                             @click="() => { data.editOpen = true; data.region = slotProps.data; }" />

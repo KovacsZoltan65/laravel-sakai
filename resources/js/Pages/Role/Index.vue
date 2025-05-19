@@ -151,6 +151,7 @@ onMounted(fetchData);
 
                 <template #loading>Loading data. Please wait.</template>
 
+                <Column field="id" header="#" />
                 <Column field="name" header="Name" />
                 <Column field="guard_name" header="Guard"></Column>
 
@@ -176,7 +177,8 @@ onMounted(fetchData);
                     </template>
                 </Column>
 
-                <Column :exportable="false" style="min-width: 12rem">
+                <Column header="Actions" :exportable="false" 
+                    style="width: 150px; min-width: 150px; max-width: 150px;">
                     <template #body="slotProps">
                         <Button 
                             v-if="has('update role')" 

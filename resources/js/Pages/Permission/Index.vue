@@ -126,11 +126,13 @@ watch(
                     </template>
                 </Column>
 
+                <Column field="id" header="#"></Column>
                 <Column field="name" header="Name"></Column>
                 <Column field="guard_name" header="Guard"></Column>
                 <Column field="created_at" header="Created"></Column>
                 <Column field="updated_at" header="Updated"></Column>
-                <Column :exportable="false" style="min-width: 12rem">
+                <Column :exportable="false" 
+                    style="width: 150px; min-width: 150px; max-width: 150px;">
                     <template #body="slotProps">
                         <Button
                             v-show="can(['update permission'])"

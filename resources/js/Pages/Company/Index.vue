@@ -125,12 +125,14 @@ onMounted(fetchData);
                 <template #empty>No data found.</template>
                 <template #loading>Loading data. Please wait.</template>
 
+                <Column field="id" header="#" />
                 <Column field="name" header="Name" />
                 <Column field="email" header="Email" />
                 <Column field="address" header="Address" />
                 <Column field="phone" header="Phone" />
                 <Column field="entities_count" header="Entities" />
-                <Column :exportable="false" style="min-width: 12rem">
+                <Column :exportable="false" 
+                    style="width: 150px; min-width: 150px; max-width: 150px;">
                     <template #body="slotProps">
                         <Button v-if="has('update company')" icon="pi pi-pencil" outlined rounded class="mr-2" @click="() => {
                             data.editOpen = true;

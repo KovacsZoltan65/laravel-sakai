@@ -60,8 +60,7 @@ const select = () => {
 <template>
     <Dialog
         v-model:visible="props.show"
-        position="center"
-        modal
+        position="center" modal
         :header="'Add ' + props.title"
         :style="{ width: '50rem' }"
         :closable="false"

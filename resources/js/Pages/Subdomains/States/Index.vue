@@ -8,6 +8,10 @@ import StateService from '@/service/Subdomains/SubdomainStateService.js';
 import { usePermissions } from '@/composables/usePermissions';
 import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
 
+import CreateDialog from "@/Pages/Subdomains/States/Create.vue";
+import EditDialog from "@/Pages/Subdomains/States/Edit.vue";
+import DeleteDialog from "@/Pages/Subdomains/States/Delete.vue";
+
 const { has } = usePermissions();
 
 const props = defineProps({
@@ -45,6 +49,27 @@ onMounted(fetchData);
         <Head :title="props.title" />
 
         <div class="card">
+            <!-- CREATE MODAL -->
+            <CreateDialog 
+                :show="data.createOpen" 
+                :title="props.title" 
+                @close="data.createOpen = false" 
+                @saved="fetchData" />
+
+            <!-- EDIT MODAL -->
+            <EditDialog 
+                :show="data.editOpen" 
+                :title="props.title" 
+                @close="data.editOpen = false" 
+                @saved="fetchData" />
+
+            <!-- DELETE MODAL -->
+            <DeleteDialog 
+                :show="data.deleteOpen" 
+                :title="props.title" 
+                @close="data.deleteOpen = false" 
+                @saved="fetchData" />
+
             <!-- CREATE BUTTON -->
             <Button
                 v-if="has('create subdomain_state')"
@@ -102,7 +127,9 @@ onMounted(fetchData);
 
                 <Column field="id" header="ID" />
                 <Column field="name" header="Name" />
-                <Column :exportable="false" style="min-width: 12rem" header="Actions">
+                <Column :exportable="false" 
+                    style="width: 150px; min-width: 150px; max-width: 150px;" 
+                    header="Actions">
                     <template #body="slotProps">
                         <Button
                             v-if="has('update subdomain_state')"

@@ -144,7 +144,8 @@ onMounted(fetchData);
                     </template>                 
                 </Column>
 
-                <Column :exportable="false" style="min-width: 12rem">
+                <Column :exportable="false" 
+                    style="width: 150px; min-width: 150px; max-width: 150px;">
                     <template #body="slotProps">
                         <Button 
                             v-if="has('update company')" 
